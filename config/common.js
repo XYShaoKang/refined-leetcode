@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path')
+const UserscriptPlugin = require('../src/userscriptPlugin')
 
 /**
  * @type {import('webpack').Configuration}
@@ -32,7 +33,7 @@ const common = {
       },
     ],
   },
-  plugins: [],
+  plugins: [new UserscriptPlugin()],
 }
 
 module.exports = { common }

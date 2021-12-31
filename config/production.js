@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const UserscriptPlugin = require('../src/userscriptPlugin')
 
 /**
  * @type {import('webpack').Configuration}
@@ -11,7 +10,6 @@ const production = {
     react: 'React',
     'react-dom': 'ReactDOM',
   },
-  plugins: [new UserscriptPlugin()],
 }
 
 module.exports = { production }

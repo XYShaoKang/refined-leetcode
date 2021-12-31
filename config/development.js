@@ -18,6 +18,10 @@ const development = {
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
+    onBeforeSetupMiddleware: devServer => {
+      devServer.app.get('/', (req, res) => res.redirect('/main.user.js'))
+    },
+    static: false,
   },
   plugins: [
     new ReactRefreshWebpackPlugin({
