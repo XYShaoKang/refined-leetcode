@@ -11,4 +11,26 @@ function download(str: string, filename = 'contest.md'): void {
   document.body.removeChild(a)
 }
 
-export { download }
+function getElement(
+  query: string,
+  fn: (e: NodeListOf<Element>) => boolean = e => e.length > 0,
+  timeout = 10000
+): Promise<NodeListOf<Element>> {
+  const delay = 100
+  return new Promise(function (resolve, reject) {
+    const timer = setInterval(() => {
+      const element = document.querySelectorAll(query)
+      if (fn(element)) {
+        clearInterval(timer)
+        resolve(element)
+      }
+      if (timeout <= 0) {
+        clearInterval(timer)
+        reject('超时')
+      }
+      timeout -= delay
+    }, delay)
+  })
+}
+
+export { download, getElement }
