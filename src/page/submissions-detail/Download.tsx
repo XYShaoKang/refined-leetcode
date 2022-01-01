@@ -1,8 +1,8 @@
 import React, { FC, useState } from 'react'
 import styled, { css } from 'styled-components/macro'
 
-import { LeetCodeApi } from './leetcode-api'
-import { download } from './utils'
+import { LeetCodeApi } from '../../leetcode-api'
+import { download } from '../../utils'
 
 const Container = styled.div`
   display: flex;
@@ -29,7 +29,7 @@ const Button = styled.a<{ primary?: boolean }>`
     `}
 `
 
-const App: FC = () => {
+const Download: FC = () => {
   const [option, setOption] = useState({ runtime: true, memory: false })
   const [isDownloading, setDownloading] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -125,4 +125,4 @@ const App: FC = () => {
   )
 }
 
-export default App
+export default Download

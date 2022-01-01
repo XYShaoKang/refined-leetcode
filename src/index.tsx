@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { render } from 'react-dom'
 import minimatch from 'minimatch'
 
-import App from './App'
+import Download from './page/submissions-detail/Download'
 import { getElement } from './utils'
 
 function loadDownload(parent: Element) {
@@ -14,7 +14,7 @@ function loadDownload(parent: Element) {
 
     render(
       <StrictMode>
-        <App />
+        <Download />
       </StrictMode>,
       root
     )
