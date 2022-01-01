@@ -256,16 +256,28 @@ class LeetCodeApi {
     return this.graphqlApi({ body }).then(({ data }) => data.submissionDetail)
   }
   private async getDistributionLocal(submissionId: string): Promise<{
-    runtimeDistribution?: { lang: string; distribution: [string, number][] }
-    memoryDistribution?: { lang: string; distribution: [string, number][] }
+    runtimeDistribution: {
+      lang: string
+      distribution: [string, number][]
+    } | null
+    memoryDistribution: {
+      lang: string
+      distribution: [string, number][]
+    } | null
   }> {
     const runtimeApi = `/submissions/api/runtime_distribution/${submissionId}/`
-    const runtimeDistribution = await this.baseApi(runtimeApi).then(data =>
-      JSON.parse(data.runtime_distribution_formatted)
+    const runtimeDistribution = await this.baseApi(runtimeApi).then(
+      ({ runtime_distribution_formatted }) =>
+        runtime_distribution_formatted
+          ? JSON.parse(runtime_distribution_formatted)
+          : null
     )
     const memoryApi = `/submissions/api/memory_distribution/${submissionId}/`
-    const memoryDistribution = await this.baseApi(memoryApi).then(data =>
-      JSON.parse(data.memory_distribution_formatted)
+    const memoryDistribution = await this.baseApi(memoryApi).then(
+      ({ memory_distribution_formatted }) =>
+        memory_distribution_formatted
+          ? JSON.parse(memory_distribution_formatted)
+          : null
     )
 
     return { runtimeDistribution, memoryDistribution }
@@ -320,8 +332,15 @@ class LeetCodeApi {
       return {
         ...data,
         questionId: data.question.questionId,
-        runtimeDistribution,
-        memoryDistribution,
+        runtimeDistribution: runtimeDistribution
+          ? runtimeDistribution
+          : { lang: data.lang, distribution: [] },
+        memoryDistribution: memoryDistribution
+          ? memoryDistribution
+          : {
+              lang: data.lang,
+              distribution: [],
+            },
       }
     } else {
       const data = await this.getSubmissionDetailByGlobal(submissionId)
