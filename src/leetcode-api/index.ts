@@ -30,6 +30,47 @@ interface GlobalSubmissionDetail {
   nonSufficientMsg: string
 }
 
+type CheckReturnType =
+  | { state: 'STARTED' }
+  | ({
+      status_code: number
+      lang: string
+      run_success: boolean
+      status_runtime: string
+      memory: number
+      question_id: string
+      elapsed_time: number
+      compare_result: string
+      code_output: string
+      std_output: string
+      last_testcase: string
+      expected_output: string
+      task_finish_time: number
+      task_name: string
+      finished: boolean
+      state: 'SUCCESS'
+      fast_submit: boolean
+      total_correct: number
+      total_testcases: number
+      submission_id: string
+      status_memory: string
+      memory_percentile: number
+      pretty_lang: string
+    } & (
+      | {
+          status_msg: 'Accepted'
+          runtime_percentile: number
+          memory_percentile: number
+        }
+      | {
+          status_msg: 'Wrong Answer'
+          runtime_percentile: null
+          memory_percentile: null
+          input_formatted: string
+          input: string
+        }
+    ))
+
 class LeetCodeApi {
   public graphqlApi: (
     { method, body }: { method?: string; body?: unknown },
@@ -167,12 +208,7 @@ class LeetCodeApi {
         }
       `,
     }
-    return this.graphqlApi({ body })
-      .then(d => {
-        console.log(d)
-        return d
-      })
-      .then(({ data }) => data.submissionList)
+    return this.graphqlApi({ body }).then(({ data }) => data.submissionList)
   }
 
   private async getSubmissionDetailByLocal(submissionId: string): Promise<{
@@ -378,9 +414,13 @@ class LeetCodeApi {
     memory: string
   ): Promise<string> {
     const api = `/submissions/api/detail/${questionId}/${lang}/memory/${memory}/`
-    // submissions/api/detail/1/javascript/memory/39400/
 
     return this.baseApi(api).then(data => data.code)
+  }
+
+  public check(submissionId: string): Promise<CheckReturnType> {
+    const api = `/submissions/detail/${submissionId}/check/`
+    return this.baseApi(api)
   }
 }
 
