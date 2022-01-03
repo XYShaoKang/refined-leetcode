@@ -60,6 +60,12 @@
 
 ![](docs/assets/restart.png)
 
+> 2022-01-03 自动添加标记的功能
+
+当成功提交之后,会将当前所有时间自动添加到对应提交的标记中
+
+![](docs/assets/mark.png)
+
 此功能源码 [Clock.tsx](./src/page/problems/Clock.tsx)
 
 ## 开发

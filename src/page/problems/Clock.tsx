@@ -3,7 +3,7 @@ import styled from 'styled-components/macro'
 
 import { LeetCodeApi } from '../../leetcode-api'
 import { sleep } from '../../leetcode-api/utils'
-import { getElement } from '../../utils'
+import { getElement, submissionOnMarkChange } from '../../utils'
 
 const Container = styled.div`
   display: flex;
@@ -82,12 +82,27 @@ const Clock: FC = () => {
     }
     sleep(500)
     const state = await leetCodeApi.check(submissionId)
-    console.log(state)
+
     if (state.state === 'STARTED') {
       check(submissionId, retry + 1)
     } else if (state.status_msg === 'Accepted') {
+      // 成功提交
       setIsDone(true)
       setHidden(false)
+
+      setTime(time => {
+        // 对当前提交添加备注
+        void (async function updateMask() {
+          await leetCodeApi.submissionCreateOrUpdateSubmissionComment(
+            submissionId,
+            'RED',
+            time.map(t => t.toString().padStart(2, '0')).join(' : ')
+          )
+
+          submissionOnMarkChange(submissionId)
+        })()
+        return time
+      })
     }
   }
 

@@ -422,6 +422,41 @@ class LeetCodeApi {
     const api = `/submissions/detail/${submissionId}/check/`
     return this.baseApi(api)
   }
+
+  public submissionCreateOrUpdateSubmissionComment(
+    submissionId: string,
+    flagType: 'BLUE' | 'ORANGE' | 'GREEN' | 'PURPLE' | 'RED',
+    comment: string
+  ): Promise<{ ok: boolean; __typename: string }> {
+    const body = {
+      operationName: 'submissionCreateOrUpdateSubmissionComment',
+      variables: {
+        submissionId: submissionId,
+        flagType: flagType,
+        comment: comment,
+      },
+      query: /* GraphQL */ `
+        mutation submissionCreateOrUpdateSubmissionComment(
+          $submissionId: ID!
+          $flagType: SubmissionFlagTypeEnum!
+          $comment: String!
+        ) {
+          submissionCreateOrUpdateSubmissionComment(
+            comment: $comment
+            flagType: $flagType
+            submissionId: $submissionId
+          ) {
+            ok
+            __typename
+          }
+        }
+      `,
+    }
+
+    return this.graphqlApi({ body }).then(
+      ({ data }) => data.submissionCreateOrUpdateSubmissionComment
+    )
+  }
 }
 
 export { LeetCodeApi }
