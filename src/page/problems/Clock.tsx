@@ -4,6 +4,7 @@ import styled from 'styled-components/macro'
 import { LeetCodeApi } from '../../leetcode-api'
 import { sleep } from '../../leetcode-api/utils'
 import { getElement, submissionOnMarkChange } from '../../utils'
+import { useTimer } from './useTimer'
 
 const Container = styled.div`
   display: flex;
@@ -32,31 +33,14 @@ const Button = styled.button<{ primary?: boolean }>`
   cursor: pointer;
 `
 
-function formatTime(time: number) {
-  time = time / 1000
-  const house = Math.floor(time / 3600)
-  const minute = Math.floor((time / 60) % 60)
-  const second = Math.floor(time % 60)
-  return [house, minute, second]
-}
-
 const Clock: FC = () => {
   const pathnames = location.pathname.split('/').filter(Boolean)
 
   const slug = pathnames[1]
-  const [start, setStart] = useState(new Date())
   const [leetCodeApi] = useState(new LeetCodeApi(location.origin))
-  const [isDone, setIsDone] = useState(false)
   const [hidden, setHidden] = useState(false)
 
-  const [time, setTime] = useState(formatTime(0))
-
-  const handleRestart = () => {
-    console.log(123)
-    setStart(new Date())
-    setTime(formatTime(0))
-    setIsDone(false)
-  }
+  const { time, isDone, done, restart } = useTimer()
 
   const handleHidden = () => {
     setHidden(hidden => !hidden)
@@ -87,27 +71,23 @@ const Clock: FC = () => {
       check(submissionId, retry + 1)
     } else if (state.status_msg === 'Accepted') {
       // 成功提交
-      setIsDone(true)
-      setHidden(false)
-
-      setTime(time => {
+      done(async time => {
         // 对当前提交添加备注
-        void (async function updateMask() {
-          await leetCodeApi.submissionCreateOrUpdateSubmissionComment(
-            submissionId,
-            'RED',
-            time.map(t => t.toString().padStart(2, '0')).join(' : ')
-          )
+        await leetCodeApi.submissionCreateOrUpdateSubmissionComment(
+          submissionId,
+          'RED',
+          time.map(t => t.toString().padStart(2, '0')).join(' : ')
+        )
 
-          submissionOnMarkChange(submissionId)
-        })()
-        return time
+        submissionOnMarkChange(submissionId)
       })
+
+      setHidden(false)
     }
   }
 
   useEffect(() => {
-    let cancal: (() => void) | null = null
+    let cancel: (() => void) | null = null
 
     void (async function () {
       const submitBtn = (await getElement('.submit__-6u9'))[0]
@@ -115,29 +95,14 @@ const Clock: FC = () => {
         getsubmissionId()
       }
       submitBtn.addEventListener('click', handleClick)
-      cancal = () => {
+      cancel = () => {
         submitBtn.removeEventListener('click', handleClick)
       }
     })()
     return () => {
-      if (cancal) cancal()
+      if (cancel) cancel()
     }
   }, [])
-
-  useEffect(() => {
-    let timer: ReturnType<typeof setInterval>
-    if (!isDone) {
-      timer = setInterval(async () => {
-        setTime(formatTime(new Date().valueOf() - start.valueOf()))
-      }, 1000)
-    }
-
-    return () => {
-      if (timer) {
-        clearInterval(timer)
-      }
-    }
-  }, [isDone])
 
   return (
     <Container>
@@ -158,7 +123,7 @@ const Clock: FC = () => {
           {hidden ? '显示计时' : '隐藏'}
         </Button>
       ) : (
-        <Button onClick={handleRestart}>重新开始</Button>
+        <Button onClick={restart}>重新开始</Button>
       )}
     </Container>
   )
