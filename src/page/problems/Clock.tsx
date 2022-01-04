@@ -46,29 +46,35 @@ const Clock: FC = () => {
     setHidden(hidden => !hidden)
   }
 
-  async function getsubmissionId(retry = 1) {
-    if (retry > 10) return
+  async function getSubmissionId(
+    retry = 1,
+    time = new Date()
+  ): Promise<string> {
+    if (retry > 10) throw new Error('获取 SubmissionId 失败')
+
+    await sleep(500)
     const { submissions } = await leetCodeApi.getSubmissions(slug)
     const pendingSubmission = submissions.find(
-      ({ isPending }) => isPending === 'Pending'
+      ({ timestamp, isPending }) =>
+        isPending === 'Pending' ||
+        new Date((Number(timestamp) + 1) * 1000) > time
     )
+
     if (!pendingSubmission) {
-      getsubmissionId(retry + 1)
+      return getSubmissionId(retry + 1, time)
     } else {
-      check(pendingSubmission.id)
-      sleep(200)
+      return pendingSubmission.id
     }
   }
 
   async function check(submissionId: string, retry = 1) {
-    if (retry > 10) {
-      return
-    }
-    sleep(500)
+    if (retry > 10) return
+
+    await sleep(500)
     const state = await leetCodeApi.check(submissionId)
 
     if (state.state === 'STARTED') {
-      check(submissionId, retry + 1)
+      await check(submissionId, retry + 1)
     } else if (state.status_msg === 'Accepted') {
       // 成功提交
       done(async time => {
@@ -92,7 +98,8 @@ const Clock: FC = () => {
     void (async function () {
       const submitBtn = (await getElement('.submit__-6u9'))[0]
       const handleClick: EventListenerOrEventListenerObject = async () => {
-        getsubmissionId()
+        const submissionId = await getSubmissionId()
+        await check(submissionId)
       }
       submitBtn.addEventListener('click', handleClick)
       cancel = () => {
