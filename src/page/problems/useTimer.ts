@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 function formatTime(time: number) {
   time = time / 1000
@@ -19,7 +19,8 @@ const useTimer = (): UseTimeReturn => {
   const [start, setStart] = useState(new Date())
   const [isDone, setIsDone] = useState(false)
   const [time, setTime] = useState(formatTime(0))
-
+  const cacheTime = useRef(time)
+  cacheTime.current = time
   useEffect(() => {
     let timer: ReturnType<typeof setInterval>
     if (!isDone) {
@@ -43,12 +44,10 @@ const useTimer = (): UseTimeReturn => {
 
   const done = (fn?: (time: number[]) => void) => {
     setIsDone(true)
-    setTime(time => {
-      if (fn) {
-        fn(time)
-      }
-      return time
-    })
+
+    if (fn) {
+      fn(cacheTime.current)
+    }
   }
 
   return { time, isDone, done, restart }

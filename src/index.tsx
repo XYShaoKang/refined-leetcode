@@ -40,7 +40,6 @@ if (minimatch(location.href, 'https://leetcode-cn.com/problems/**')) {
   window.onload = async () => {
     const parent = (await getElement('.container__Kjnx>.action__KaAP'))[0]
     if (parent && parent instanceof HTMLElement) {
-      console.log(parent)
       const root = document.createElement('div')
       parent.prepend(root)
       root.style.display = 'flex'

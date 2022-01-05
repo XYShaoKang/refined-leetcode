@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components/macro'
 
-import { LeetCodeApi } from '../../leetcode-api'
+import { LeetCodeApi, SuccessCheckReturnType } from '../../leetcode-api'
 import { sleep } from '../../leetcode-api/utils'
 import { getElement, submissionOnMarkChange } from '../../utils'
 import { useTimer } from './useTimer'
@@ -67,28 +67,19 @@ const Clock: FC = () => {
     }
   }
 
-  async function check(submissionId: string, retry = 1) {
-    if (retry > 10) return
+  async function check(
+    submissionId: string,
+    retry = 1
+  ): Promise<SuccessCheckReturnType> {
+    if (retry > 10) throw new Error('获取提交状态结果超时')
 
     await sleep(500)
     const state = await leetCodeApi.check(submissionId)
 
-    if (state.state === 'STARTED') {
-      await check(submissionId, retry + 1)
-    } else if (state.status_msg === 'Accepted') {
-      // 成功提交
-      done(async time => {
-        // 对当前提交添加备注
-        await leetCodeApi.submissionCreateOrUpdateSubmissionComment(
-          submissionId,
-          'RED',
-          time.map(t => t.toString().padStart(2, '0')).join(' : ')
-        )
-
-        submissionOnMarkChange(submissionId)
-      })
-
-      setHidden(false)
+    if (state.state === 'SUCCESS') {
+      return state
+    } else {
+      return await check(submissionId, retry + 1)
     }
   }
 
@@ -99,8 +90,26 @@ const Clock: FC = () => {
       const submitBtn = (await getElement('.submit__-6u9'))[0]
       const handleClick: EventListenerOrEventListenerObject = async () => {
         const submissionId = await getSubmissionId()
-        await check(submissionId)
+        const state = await check(submissionId)
+
+        if (state.status_msg === 'Accepted') {
+          // 提交成功
+          done(async time => {
+            // 对当前提交添加备注
+            await leetCodeApi.submissionCreateOrUpdateSubmissionComment(
+              submissionId,
+              'RED',
+              time.map(t => t.toString().padStart(2, '0')).join(' : ')
+            )
+
+            await sleep(1000)
+            submissionOnMarkChange(submissionId)
+          })
+
+          setHidden(false)
+        }
       }
+
       submitBtn.addEventListener('click', handleClick)
       cancel = () => {
         submitBtn.removeEventListener('click', handleClick)

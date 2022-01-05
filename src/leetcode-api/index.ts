@@ -30,46 +30,49 @@ interface GlobalSubmissionDetail {
   nonSufficientMsg: string
 }
 
+export type SuccessCheckReturnType = {
+  status_code: number
+  lang: string
+  run_success: boolean
+  status_runtime: string
+  memory: number
+  question_id: string
+  elapsed_time: number
+  compare_result: string
+  code_output: string
+  std_output: string
+  last_testcase: string
+  expected_output: string
+  task_finish_time: number
+  task_name: string
+  finished: boolean
+  state: 'SUCCESS'
+  fast_submit: boolean
+  total_correct: number
+  total_testcases: number
+  submission_id: string
+  status_memory: string
+  memory_percentile: number
+  pretty_lang: string
+} & (
+  | {
+      status_msg: 'Accepted'
+      runtime_percentile: number
+      memory_percentile: number
+    }
+  | {
+      status_msg: 'Wrong Answer'
+      runtime_percentile: null
+      memory_percentile: null
+      input_formatted: string
+      input: string
+    }
+)
+
 type CheckReturnType =
   | { state: 'STARTED' }
-  | ({
-      status_code: number
-      lang: string
-      run_success: boolean
-      status_runtime: string
-      memory: number
-      question_id: string
-      elapsed_time: number
-      compare_result: string
-      code_output: string
-      std_output: string
-      last_testcase: string
-      expected_output: string
-      task_finish_time: number
-      task_name: string
-      finished: boolean
-      state: 'SUCCESS'
-      fast_submit: boolean
-      total_correct: number
-      total_testcases: number
-      submission_id: string
-      status_memory: string
-      memory_percentile: number
-      pretty_lang: string
-    } & (
-      | {
-          status_msg: 'Accepted'
-          runtime_percentile: number
-          memory_percentile: number
-        }
-      | {
-          status_msg: 'Wrong Answer'
-          runtime_percentile: null
-          memory_percentile: null
-          input_formatted: string
-          input: string
-        }
-    ))
+  | { state: 'PENDING' }
+  | SuccessCheckReturnType
 
 class LeetCodeApi {
   public graphqlApi: (

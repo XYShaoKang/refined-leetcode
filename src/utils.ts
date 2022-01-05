@@ -97,9 +97,10 @@ function getObjByPaths(root: { [key: string]: unknown }, paths: string[]): any {
 }
 
 function submissionOnMarkChange(submissionId: string): void {
-  const root =
-    document.getElementById('app')?._reactRootContainer?._internalRoot?.current
+  const root = document.querySelectorAll('.css-7xpffu-LeftContainer')?.[0]
+
   if (!root) {
+    console.log(`leetcode-extend: 未找到提交记录容器的 root`)
     return
   }
 
@@ -107,7 +108,7 @@ function submissionOnMarkChange(submissionId: string): void {
 
   searchProperty({ name: 'root', node: root }, (paths, key, node) => {
     if (key === 'submissionId' && node?.value === submissionId) {
-      const parent = getObjByPaths(root, paths.slice(1))
+      const parent = getObjByPaths(root as any, paths.slice(1))
       if (Object.prototype.hasOwnProperty.call(parent, 'onMarkChange')) {
         onMarkChange = parent.onMarkChange
         return true
@@ -118,6 +119,8 @@ function submissionOnMarkChange(submissionId: string): void {
 
   if (onMarkChange) {
     onMarkChange(submissionId)
+  } else {
+    console.log(`leetcode-extend: 未找到 onMarkChange`)
   }
 }
 
