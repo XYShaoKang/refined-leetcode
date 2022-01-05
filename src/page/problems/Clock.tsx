@@ -57,7 +57,7 @@ const Clock: FC = () => {
     const pendingSubmission = submissions.find(
       ({ timestamp, isPending }) =>
         isPending === 'Pending' ||
-        new Date((Number(timestamp) + 1) * 1000) > time
+        new Date((Number(timestamp) + 2) * 1000) >= time
     )
 
     if (!pendingSubmission) {
