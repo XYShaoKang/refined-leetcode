@@ -73,7 +73,7 @@ const Clock: FC = () => {
   ): Promise<SuccessCheckReturnType> {
     if (retry > 10) throw new Error('获取提交状态结果超时')
 
-    await sleep(500)
+    await sleep(1000 + retry * 500)
     const state = await leetCodeApi.check(submissionId)
 
     if (state.state === 'SUCCESS') {
