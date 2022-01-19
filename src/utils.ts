@@ -96,8 +96,21 @@ function getObjByPaths(root: { [key: string]: unknown }, paths: string[]): any {
   return root
 }
 
+function getFiber(el: Element): FiberRoot | null {
+  for (const key in el) {
+    if (Reflect.hasOwnProperty.call(el, key)) {
+      if (/^__reactFiber\$/.test(key)) {
+        return Reflect.get(el, key)
+      }
+    }
+  }
+  return null
+}
+
 function submissionOnMarkChange(submissionId: string): void {
-  const root = document.querySelectorAll('.css-7xpffu-LeftContainer')?.[0]
+  const root = getFiber(
+    document.querySelectorAll(`[data-row-key="${submissionId}"]`)?.[0]
+  )
 
   if (!root) {
     console.log(`leetcode-extend: 未找到提交记录容器的 root`)
