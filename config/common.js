@@ -1,20 +1,25 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path')
-const UserscriptPlugin = require('../src/userscriptPlugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 /**
  * @type {import('webpack').Configuration}
  */
 const common = {
-  entry: path.join(__dirname, '../src/index.tsx'),
+  entry: {
+    popup: path.join(__dirname, '../src/popup/index.tsx'),
+    content: path.join(__dirname, '../src/content/index.tsx'),
+    'content-load': path.join(__dirname, '../src/content/load.ts'),
+    background: path.join(__dirname, '../src/background/index.ts'),
+  },
   output: {
-    filename: 'main.user.js',
+    filename: '[name].bundle.js',
     path: path.join(__dirname, '../dist'),
+    publicPath: '/',
     clean: true,
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
-    fallback: { path: false },
   },
   module: {
     rules: [
@@ -33,7 +38,14 @@ const common = {
       },
     ],
   },
-  plugins: [new UserscriptPlugin()],
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, '../public', 'popup.html'),
+      chunks: ['popup'],
+      filename: 'popup.html',
+      publicPath: '/',
+    }),
+  ],
 }
 
 module.exports = { common }
