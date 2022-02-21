@@ -9,8 +9,9 @@
   "scripts": {
     "start": "webpack serve --node-env development",
     "dev": "webpack serve --node-env development",
-    "build": "webpack --node-env production",
-    "lint": "yarn lint:prettier && yarn lint:eslint",
+    "build": "webpack --node-env production && node packcrx.js",
+    "packcrx": "node packcrx.js",
+    "lint": "pnpm lint:prettier && pnpm lint:eslint",
     "lint:prettier": "prettier --check src",
     "lint:eslint": "eslint \"src/**/*.{ts,tsx}\"",
     "test": "jest"
@@ -43,6 +44,7 @@
     "babel-plugin-macros": "^3.1.0",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^10.2.0",
+    "crx": "^5.0.1",
     "eslint": "^8.7.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.4",
