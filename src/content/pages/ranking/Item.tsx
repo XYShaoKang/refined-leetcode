@@ -7,7 +7,7 @@ type ItmeType = {
 }
 
 function getParam() {
-  const [, contestId, , pageStr = '0'] = location.pathname
+  const [, contestId, , pageStr = '1'] = location.pathname
     .split('/')
     .filter(Boolean)
   const page = Number(pageStr)
