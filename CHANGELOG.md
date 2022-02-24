@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/XYShaoKang/leetcode-extend/compare/v0.2.0...v0.2.1) (2022-02-24)
+
+
+### Bug Fixes
+
+* 页数应该从 1 开始 ([b4b0715](https://github.com/XYShaoKang/leetcode-extend/commit/b4b071512ba93b6c95bfcbd510a814a110e43266))
+
 # [0.2.0](https://github.com/XYShaoKang/leetcode-extend/compare/v0.1.0...v0.2.0) (2022-02-24)
 
 
