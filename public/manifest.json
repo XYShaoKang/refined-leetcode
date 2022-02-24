@@ -1,7 +1,7 @@
 {
   "name": "LeetCode-exten",
   "description": "LeetCode 网页扩展",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "manifest_version": 3,
   "action": {
     "default_popup": "popup.html"
