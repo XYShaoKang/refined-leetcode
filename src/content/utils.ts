@@ -33,4 +33,10 @@ function getElement(
   })
 }
 
-export { download, getElement }
+function getExtensionId(): string | undefined {
+  const extensionId =
+    document.getElementById('leetcode-extension')?.dataset.extensionid
+  return extensionId
+}
+
+export { download, getElement, getExtensionId }
