@@ -1,3 +1,15 @@
+# [0.2.0](https://github.com/XYShaoKang/leetcode-extend/compare/v0.1.0...v0.2.0) (2022-02-24)
+
+
+### Bug Fixes
+
+* 限制只在答题页加载计时器 ([78bbd9a](https://github.com/XYShaoKang/leetcode-extend/commit/78bbd9ad1a3ac54b901200d43725a6f21c722cb9))
+
+
+### Features
+
+* 竞赛排名页面显示对应的预测分数 ([a59e531](https://github.com/XYShaoKang/leetcode-extend/commit/a59e531640a5d35c48c157aabad0c4fef3999257))
+
 # 0.1.0 (2022-02-24)
 
 
