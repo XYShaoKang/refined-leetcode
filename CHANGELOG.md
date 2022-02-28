@@ -1,3 +1,10 @@
+## [0.2.2](https://github.com/XYShaoKang/leetcode-extend/compare/v0.2.1...v0.2.2) (2022-02-28)
+
+
+### Bug Fixes
+
+* add redundant api ([115467f](https://github.com/XYShaoKang/leetcode-extend/commit/115467f29921d42b78e4fae7e87b1b1fac2af7ab))
+
 ## [0.2.1](https://github.com/XYShaoKang/leetcode-extend/compare/v0.2.0...v0.2.1) (2022-02-24)
 
 
