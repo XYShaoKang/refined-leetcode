@@ -11,6 +11,7 @@ specifiers:
   '@redux-devtools/cli': ^1.0.4
   '@reduxjs/toolkit': ^1.7.1
   '@semantic-release/changelog': ^6.0.1
+  '@semantic-release/error': ^3.0.0
   '@semantic-release/git': ^10.0.1
   '@testing-library/dom': ^8.11.2
   '@testing-library/jest-dom': ^5.16.1
@@ -26,6 +27,7 @@ specifiers:
   '@types/webpack-env': ^1.16.3
   '@typescript-eslint/eslint-plugin': ^5.9.1
   '@typescript-eslint/parser': ^5.9.1
+  archiver: ^5.3.0
   babel-jest: ^27.4.6
   babel-loader: ^8.2.3
   babel-plugin-macros: ^3.1.0
@@ -82,6 +84,7 @@ devDependencies:
   '@pmmmwh/react-refresh-webpack-plugin': 0.5.4_9bd18400545d80a0f198e316da1f92c2
   '@redux-devtools/cli': 1.0.6_167a9b643e8dbb78200dc112fcd0fd48
   '@semantic-release/changelog': 6.0.1_semantic-release@19.0.2
+  '@semantic-release/error': 3.0.0
   '@semantic-release/git': 10.0.1_semantic-release@19.0.2
   '@testing-library/dom': 8.11.3
   '@testing-library/jest-dom': 5.16.2
@@ -97,6 +100,7 @@ devDependencies:
   '@types/webpack-env': 1.16.3
   '@typescript-eslint/eslint-plugin': 5.12.0_c467cf9bb49b295941e83ce479a578b7
   '@typescript-eslint/parser': 5.12.0_eslint@8.9.0+typescript@4.5.5
+  archiver: 5.3.0
   babel-jest: 27.5.1_@babel+core@7.17.4
   babel-loader: 8.2.3_f5bfe0f6da95a4c8764b0d9191d88a0a
   babel-plugin-macros: 3.1.0
@@ -3787,6 +3791,19 @@ packages:
       zip-stream: 2.1.3
     dev: true
 
+  /archiver/5.3.0:
+    resolution: {integrity: sha512-iUw+oDwK0fgNpvveEsdQ0Ase6IIKztBJU2U0E9MzszMfmVVUyv1QJhS2ITW9ZCqx8dktAxVAjWWkKehuZE8OPg==}
+    engines: {node: '>= 10'}
+    dependencies:
+      archiver-utils: 2.1.0
+      async: 3.2.3
+      buffer-crc32: 0.2.13
+      readable-stream: 3.6.0
+      readdir-glob: 1.1.1
+      tar-stream: 2.2.0
+      zip-stream: 4.1.0
+    dev: true
+
   /are-we-there-yet/1.1.7:
     resolution: {integrity: sha512-nxwy40TuMiUGqMyRHgCSWZ9FM4VAoRP4xUYSTv5ImRog+h9yISPbVH7H8fASCIzYn9wlEv4zvFL7uKDMCFQm3g==}
     dependencies:
@@ -3812,7 +3829,7 @@ packages:
     resolution: {integrity: sha512-o/HelwhuKpTj/frsOsbNLNgnNGVIFsVP/SW2BSF14gVl7kAfMOJ6/8wUAUvG1R1NHKrfG+2sHZTu0yauT1qBrA==}
     engines: {node: '>=6.0'}
     dependencies:
-      '@babel/runtime': 7.16.3
+      '@babel/runtime': 7.17.2
       '@babel/runtime-corejs3': 7.16.3
     dev: true
 
@@ -4715,6 +4732,16 @@ packages:
       readable-stream: 2.3.7
     dev: true
 
+  /compress-commons/4.1.1:
+    resolution: {integrity: sha512-QLdDLCKNV2dtoTorqgxngQCMA+gWXkM/Nwu7FpeBhk/RdkzimqC3jueb/FDmaZeXh+uby1jkBqE3xArsLBE5wQ==}
+    engines: {node: '>= 10'}
+    dependencies:
+      buffer-crc32: 0.2.13
+      crc32-stream: 4.0.2
+      normalize-path: 3.0.0
+      readable-stream: 3.6.0
+    dev: true
+
   /compressible/2.0.18:
     resolution: {integrity: sha512-AF3r7P5dWxL8MxyITRMlORQNaOA2IkAFaTr4k7BUumjPtRpGDTZpl0Pb1XCO6JeDCBdp126Cgs9sMxqSjgYyRg==}
     engines: {node: '>= 0.6'}
@@ -4941,6 +4968,15 @@ packages:
       yaml: 1.10.2
     dev: true
 
+  /crc-32/1.2.1:
+    resolution: {integrity: sha512-Dn/xm/1vFFgs3nfrpEVScHoIslO9NZRITWGz/1E/St6u4xw99vfZzVkW0OSnzx2h9egej9xwMCEut6sqwokM/w==}
+    engines: {node: '>=0.8'}
+    hasBin: true
+    dependencies:
+      exit-on-epipe: 1.0.1
+      printj: 1.3.1
+    dev: true
+
   /crc/3.8.0:
     resolution: {integrity: sha512-iX3mfgcTMIq3ZKLIsVFAbv7+Mc10kxabAGQb8HvjA1o3T1PIYprbakQ65d3I+2HGHt6nSKkM9PYjgoJO2KcFBQ==}
     dependencies:
@@ -4952,6 +4988,14 @@ packages:
     engines: {node: '>= 6.9.0'}
     dependencies:
       crc: 3.8.0
+      readable-stream: 3.6.0
+    dev: true
+
+  /crc32-stream/4.0.2:
+    resolution: {integrity: sha512-DxFZ/Hk473b/muq1VJ///PMNLj0ZMnzye9thBpmjpJKCc5eMgB95aK8zCGrGfQ90cWo561Te6HK9D+j4KPdM6w==}
+    engines: {node: '>= 10'}
+    dependencies:
+      crc-32: 1.2.1
       readable-stream: 3.6.0
     dev: true
 
@@ -5970,6 +6014,11 @@ packages:
       onetime: 5.1.2
       signal-exit: 3.0.6
       strip-final-newline: 2.0.0
+    dev: true
+
+  /exit-on-epipe/1.0.1:
+    resolution: {integrity: sha512-h2z5mrROTxce56S+pnvAV890uu7ls7f1kEvVGJbw1OlFH3/mlJ5bkXu0KRyW94v37zzHPiUd55iLn3DA7TjWpw==}
+    engines: {node: '>=0.8'}
     dev: true
 
   /exit/0.1.2:
@@ -9745,6 +9794,12 @@ packages:
       react-is: 17.0.2
     dev: true
 
+  /printj/1.3.1:
+    resolution: {integrity: sha512-GA3TdL8szPK4AQ2YnOe/b+Y1jUFwmmGMMK/qbY7VcE3Z7FU8JstbKiKRzO6CIiAKPhTO8m01NoQ0V5f3jc4OGg==}
+    engines: {node: '>=0.8'}
+    hasBin: true
+    dev: true
+
   /process-nextick-args/2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
     dev: true
@@ -10098,6 +10153,12 @@ packages:
       inherits: 2.0.4
       string_decoder: 1.3.0
       util-deprecate: 1.0.2
+    dev: true
+
+  /readdir-glob/1.1.1:
+    resolution: {integrity: sha512-91/k1EzZwDx6HbERR+zucygRFfiPl2zkIYZtv3Jjr6Mn7SkKcVct8aVO+sSRiGMc6fLf72du3d92/uY63YPdEA==}
+    dependencies:
+      minimatch: 3.0.4
     dev: true
 
   /readdirp/3.6.0:
@@ -12384,5 +12445,14 @@ packages:
     dependencies:
       archiver-utils: 2.1.0
       compress-commons: 2.1.1
+      readable-stream: 3.6.0
+    dev: true
+
+  /zip-stream/4.1.0:
+    resolution: {integrity: sha512-zshzwQW7gG7hjpBlgeQP9RuyPGNxvJdzR8SUM3QhxCnLjWN2E7j3dOvpeDcQoETfHx0urRS7EtmVToql7YpU4A==}
+    engines: {node: '>= 10'}
+    dependencies:
+      archiver-utils: 2.1.0
+      compress-commons: 4.1.1
       readable-stream: 3.6.0
     dev: true

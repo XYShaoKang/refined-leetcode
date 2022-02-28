@@ -32,14 +32,10 @@ jobs:
 
       - name: Build
         run: pnpm build
-        env:
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-
-      - name: Zip extension
-        run: zip extension.zip ./dist/* -r
 
       - name: Release
         env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_AUTHOR_NAME: github-actions
           GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com

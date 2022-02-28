@@ -5,6 +5,13 @@ module.exports = {
     '@semantic-release/commit-analyzer',
     '@semantic-release/release-notes-generator',
     [
+      './semantic-release-build',
+      {
+        dist: 'dist',
+        name: 'leetcode-extension',
+      },
+    ],
+    [
       '@semantic-release/changelog',
       {
         changelogFile: 'CHANGELOG.md',
@@ -13,14 +20,14 @@ module.exports = {
     [
       '@semantic-release/git',
       {
-        assets: ['CHANGELOG.md'],
+        assets: ['CHANGELOG.md', 'package.json'],
         message: 'chore(release): ${nextRelease.version} [skip ci]',
       },
     ],
     [
       '@semantic-release/github',
       {
-        assets: ['leetcode-extend.crx', 'extension.zip'],
+        assets: ['leetcode-extension.crx', 'leetcode-extension.zip'],
       },
     ],
   ],
