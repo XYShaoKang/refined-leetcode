@@ -1,15 +1,50 @@
 // Leetcode Rating Predictor
 
-const LCRP_API =
-  'https://leetcode-rating-predictor.herokuapp.com/api/v1/predictions'
-const RETRY_COUNT = 10
+// @see: https://github.com/SysSn13/leetcode-rating-predictor/blob/4a7f4057bd5bf94727723b0bc02d781be573a3eb/chrome-extension/background.js#L26
+const LCRP_API = [
+  'https://leetcode-rating-predictor.herokuapp.com/api/v1/predictions',
+  'https://leetcode-predictor.herokuapp.com/api/v1/predictions',
+]
+let API_INDEX = 0
+const RETRY_COUNT = 5
 
-async function api(url: string, retry = 1): Promise<any> {
-  const res = await fetch(url)
+function sleep(time: number): Promise<void> {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, time)
+  })
+}
+
+const changeApiIndex = (() => {
+  let enable = true
+  return () => {
+    if (enable) {
+      API_INDEX = (API_INDEX + 1) % LCRP_API.length
+
+      enable = false
+      setTimeout(() => {
+        enable = true
+      }, 2000)
+    }
+  }
+})()
+
+async function api(
+  { contestId, handles }: { contestId: string; handles: string[] },
+  retry = 1
+): Promise<any> {
+  const baseUrl = LCRP_API[API_INDEX]
+  const url = new URL(baseUrl)
+  url.searchParams.set('contestId', contestId)
+  url.searchParams.set('handles', handles.join(';'))
+  console.log(baseUrl, retry)
+  const res = await fetch(url.toString())
   if (res.status === 200) {
     return res.json()
   } else if (retry < RETRY_COUNT) {
-    return api(url, retry + 1)
+    // 换一个 API 试试
+    changeApiIndex()
+    await sleep(2 ** retry * 100)
+    return api({ contestId, handles }, retry + 1)
   } else {
     throw new Error('获取数据失败')
   }
@@ -92,11 +127,8 @@ async function getPrediction(
     usernames = message.usernames
   }
 
-  const url = new URL(LCRP_API)
-  url.searchParams.set('contestId', contestId)
-  url.searchParams.set('handles', usernames.join(';'))
   try {
-    const data = (await api(url.toString())) as PredictorType
+    const data = (await api({ contestId, handles: usernames })) as PredictorType
     const itemMap = new Map<string, PredictorType['items']['0']>()
     for (const item of data.items) {
       itemMap.set(item._id, item)

@@ -1,13 +1,13 @@
 {
   "name": "LeetCode-exten",
   "description": "LeetCode 网页扩展",
-  "version": "0.2.1",
+  "version": "0.0.0",
   "manifest_version": 3,
   "action": {
     "default_popup": "popup.html"
   },
   "content_security_policy": {
-    "extension_pages": "default-src 'self'; script-src 'self'; script-src-elem 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://leetcode-rating-predictor.herokuapp.com https://leetcode-cn.com"
+    "extension_pages": "default-src 'self'; script-src 'self'; script-src-elem 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://leetcode-rating-predictor.herokuapp.com https://leetcode-predictor.herokuapp.com https://leetcode-cn.com"
   },
   "permissions": ["storage", "scripting", "background", "activeTab"],
   "web_accessible_resources": [
@@ -18,7 +18,8 @@
   ],
   "host_permissions": [
     "https://leetcode-cn.com/*",
-    "https://leetcode-rating-predictor.herokuapp.com/*"
+    "https://leetcode-rating-predictor.herokuapp.com/*",
+    "https://leetcode-predictor.herokuapp.com/*"
   ],
   "content_scripts": [
     {
