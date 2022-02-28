@@ -4,7 +4,7 @@ const webpack = require('webpack')
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
 
-const ChromeExtensionsDevHMRPlugin = require('../src/plugin/ChromeExtensionsDevHMRPlugin')
+const ChromeExtensionsDevHMRPlugin = require('./ChromeExtensionsDevHMRPlugin')
 
 /**
  * @type {import('webpack').Configuration}
