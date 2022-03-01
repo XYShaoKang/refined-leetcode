@@ -1,42 +1,28 @@
 # 力扣扩展
 
-> 注意: 我不确定力扣官方对于爬取提交记录中的代码的行为是怎样的态度,所以提醒一下,使用此扩展最好是使用小号进行,以避免影响正常账号的使用.
->
-> 默认所有使用此扩展的,人均已了解其中的风险.所有因使用此扩展而产生的问题,本人概不负责,也与本人无关!
+[![semantic-release][semantic-release-image]][semantic-release-url] [![GitHub Action][actions-release-image]][actions-release-url]
+
+[semantic-release-image]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
+[semantic-release-url]: https://github.com/semantic-release/semantic-release
+[actions-release-image]: https://github.com/XYShaoKang/leetcode-extend/actions/workflows/release.yml/badge.svg?branch=extension
+[actions-release-url]: https://github.com/XYShaoKang/leetcode-extend/actions?query=workflow%3ARelease
+
+## 下载
+
+从 https://github.com/XYShaoKang/leetcode-extend/releases 下载最新版本的 leetcode-extension.zip,解压 leetcode-extension.zip
 
 ## 安装使用
 
-需要先在浏览器里安装 [Tampermonkey](https://www.tampermonkey.net/) 或者 [Violentmonkey](https://violentmonkey.github.io/) 扩展,然后打开使用下面其中一个链接安装:
-
-- [GitHub 链接](https://github.com/XYShaoKang/leetcode-extend/raw/master/dist/main.user.js)
-- 如果访问不了 GitHub 可以使用这个 [FastGit 链接](https://hub.fastgit.org/XYShaoKang/leetcode-extend/raw/master/dist/main.user.js)
+1. 打开 Chrome 浏览器
+2. 转到 chrome://extensions/ 页面
+3. 打开页面右上角的开发者模式
+4. 点击页面左上角的 `加载以解压的扩展程序` 按钮
+5. 选择上面解压的 leetcode-extension 文件夹,再点击确定即可
 
 ## 功能
 
-- [提交记录下载](#提交记录下载)
 - [答题页计时](#答题页计时)
-
-### 提交记录下载
-
-> 支持下载国服和外服在提交记录页面,下载时间分布图和内存分布图中的代码,保存到一个 Markdown 文件
-
-安装好之后,进入力扣的提交记录页面(选择一个题目 -> 提交记录 -> 点击提交结果列中的链接),右上角能看到如下按钮
-
-> 外服也在同样的位置
-
-![](docs/assets/submission-detail-download.png)
-
-按钮左边可以选择下载哪些代码,分布图里的代码,或者内存分布图里面的代码,或者两个都选,然后点击选择,可以下载
-
-点击下载之后,会显示下载进度
-
-![](docs/assets/submission-detail-download-progress.png)
-
-> 在频繁调用之后,会返回`429 Too Many Requests`的错误,这时需要等一下,再去请求.这个 API 容忍度好像比较低,需要等的久一些,测试过比较久的每次需要等一分钟左右才能再次成功请求,所以如果发现进度停住了,不要着急,耐心等一下,如果需要下载的数量比较多的时候,挂着过几分钟在回来看看.
->
-> 比如两数之和这题 TypeScript 的代码总共有 405 个,下载完成总共花了 6 分钟
-
-此功能源码 [Download.tsx](./src/page/submissions-detail/Download.tsx)
+- [竞赛排名页面显示预测](#竞赛排名页面显示预测)
 
 ### 答题页计时
 
@@ -66,13 +52,23 @@
 
 ![](docs/assets/mark.png)
 
-此功能源码 [Clock.tsx](./src/page/problems/Clock.tsx)
+此功能源码 [src/content/pages/problems](./src/content/pages/problems/)
+
+### 竞赛排名页面显示预测
+
+> 2022-02-24 添加
+
+效果如下,预测数据来自 https://lcpredictor.herokuapp.com/
+
+![rating-predictor](./docs/assets/rating-predictor.png)
+
+此功能源码 [src/content/pages/ranking](./src/content/pages/ranking)
 
 ## 开发
 
-首先需要安装 [Tampermonkey](https://www.tampermonkey.net/) 或者 [Violentmonkey](https://violentmonkey.github.io/) 扩展
+首先需要安装运行环境 [Node.js](https://nodejs.org/en/download/)(>=v14),以及依赖管理工具 [PNpm](https://pnpm.io/)
 
-以及 [Node.js](https://nodejs.org/en/download/)(>=v14)
+> 依赖管理工具可以使用 yarn 或者 npm 替代,下面使用 pnpm 演示
 
 ### 下载
 
@@ -83,30 +79,28 @@ cd leetcode-extend
 
 ### 安装依赖
 
-包管理工具,我推荐使用的是 [pnpm](https://pnpm.io/),不过使用 `yarn` 和 `npm` 也可以
-
 ```sh
-pnpm install # 或者 yarn 或者 npm install
+pnpm install
 ```
 
 ### 运行
 
 ```sh
-pnpm dev # 或者 yarn dev 或者 npm run dev
+pnpm dev
 ```
 
-然后打开 http://localhost:9000/ ,应该会自动跳转到安装脚本的界面.
+### 加载扩展
 
-> 另外记得如果有安装了正式版的脚本,需要先把正式版的关掉,不然会出现两个按钮
+运行之后会在项目中生成 dist 文件夹,之后进行如下操作
 
-### 热加载
+1. 打开 Chrome 浏览器
+2. 转到 chrome://extensions/ 页面
+3. 打开页面右上角的开发者模式
+4. 点击页面左上角的 `加载以解压的扩展程序` 按钮
+5. 选择到 dist 路径,再点击确定即可
 
-开发模式下,我已经配置好了[热加载](https://webpack.js.org/concepts/hot-module-replacement/),在开发模式下运行,每次源码的修改,会实时反应到页面中,非常方便
+### 热模块加载
 
-### 编译
+对于 content 的页面开发,已经配置好了热模块加载([Hot Module Replacement](https://webpack.js.org/concepts/hot-module-replacement/))功能,React 组件内的大多数修改应该都能实时反应到页面中,可能有些特殊情况或者是修改 React 外部的代码时,页面会重新加载,不过这些都会自动完成.
 
-```sh
-pnpm build # 或者 yarn build 或者 npm run build
-```
-
-编译好之后,会在 dist 文件夹下生成 `main.user.js` 文件,可以直接拖到浏览器中安装
+如果是需要修改 background 中的代码,保存之后,等待编译完成,需要到扩展页面,手动按刷新按钮才行.
