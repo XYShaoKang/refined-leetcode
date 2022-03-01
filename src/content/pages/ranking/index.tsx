@@ -49,10 +49,9 @@ async function loadPredictor() {
 }
 
 const urlMatchReg = /https:\/\/leetcode-cn\.com\/contest\/([\d\D]+)\/ranking\//
-window.onload = () => {
-  if (urlMatchReg.test(location.href)) {
-    loadPredictor()
-  }
+
+if (urlMatchReg.test(location.href)) {
+  loadPredictor()
 }
 
 initUrlChangeEvent()
