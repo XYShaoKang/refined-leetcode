@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 import { useGetPredictionQuery } from './rankSlice'
 
@@ -20,28 +20,14 @@ function getParam() {
 }
 
 function useUrlChange() {
-  const oldUrl = useRef(location.href)
   const [param, setParam] = useState(getParam())
   useEffect(() => {
-    const body = document.querySelector('body')!
-
-    const observer = new MutationObserver(function (mutations) {
-      mutations.forEach(function (_mutation) {
-        if (oldUrl.current != location.href) {
-          oldUrl.current = location.href
-          setParam(getParam())
-        }
-      })
-    })
-
-    const config = {
-      childList: true,
-      subtree: true,
+    const handle = () => {
+      setParam(getParam())
     }
-
-    observer.observe(body, config)
+    window.addEventListener('afterurlchange', handle)
     return () => {
-      observer.disconnect()
+      window.removeEventListener('afterurlchange', handle)
     }
   }, [])
   useEffect(() => {
