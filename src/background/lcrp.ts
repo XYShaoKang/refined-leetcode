@@ -36,7 +36,7 @@ async function api(
   const url = new URL(baseUrl)
   url.searchParams.set('contestId', contestId)
   url.searchParams.set('handles', handles.join(';'))
-  console.log(baseUrl, retry)
+
   const res = await fetch(url.toString())
   if (res.status === 200) {
     return res.json()
