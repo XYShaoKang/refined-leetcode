@@ -1,3 +1,10 @@
+## [0.2.4](https://github.com/XYShaoKang/leetcode-extend/compare/v0.2.3...v0.2.4) (2022-03-01)
+
+
+### Bug Fixes
+
+* 修复加载组件时机 ([5c7c3a2](https://github.com/XYShaoKang/leetcode-extend/commit/5c7c3a2f75102b8a18b63bd3cd04d5e7d47a46b3))
+
 ## [0.2.3](https://github.com/XYShaoKang/leetcode-extend/compare/v0.2.2...v0.2.3) (2022-03-01)
 
 
