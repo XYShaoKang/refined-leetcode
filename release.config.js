@@ -27,7 +27,16 @@ module.exports = {
     [
       '@semantic-release/github',
       {
-        assets: ['leetcode-extension.crx', 'leetcode-extension.zip'],
+        assets: [
+          {
+            path: 'leetcode-extension.crx',
+            name: 'leetcode-extension-${nextRelease.gitTag}.crx',
+          },
+          {
+            path: 'leetcode-extension.zip',
+            name: 'leetcode-extension-${nextRelease.gitTag}.zip',
+          },
+        ],
       },
     ],
   ],
