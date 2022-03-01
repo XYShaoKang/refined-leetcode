@@ -1,3 +1,10 @@
+## [0.2.3](https://github.com/XYShaoKang/leetcode-extend/compare/v0.2.2...v0.2.3) (2022-03-01)
+
+
+### Bug Fixes
+
+* 修复排名页组件的加载和卸载逻辑 ([745b48f](https://github.com/XYShaoKang/leetcode-extend/commit/745b48f196bbb72dfb237eef97e1f7575e542002))
+
 ## [0.2.2](https://github.com/XYShaoKang/leetcode-extend/compare/v0.2.1...v0.2.2) (2022-02-28)
 
 
