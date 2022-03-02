@@ -9,13 +9,15 @@ const initUrlChangeEvent = (() => {
     const oldReplaceState = history.replaceState
 
     history.pushState = function pushState(...args) {
-      oldPushState.apply(window, args)
+      const res = oldPushState.apply(this, args)
       window.dispatchEvent(new Event('urlchange'))
+      return res
     }
 
     history.replaceState = function replaceState(...args) {
-      oldReplaceState.apply(window, args)
+      const res = oldReplaceState.apply(this, args)
       window.dispatchEvent(new Event('urlchange'))
+      return res
     }
 
     window.addEventListener('popstate', () => {
