@@ -1,3 +1,10 @@
+## [0.2.6](https://github.com/XYShaoKang/leetcode-extend/compare/v0.2.5...v0.2.6) (2022-03-02)
+
+
+### Bug Fixes
+
+* manifest name ([c54a86d](https://github.com/XYShaoKang/leetcode-extend/commit/c54a86db4c9b572da12102650a71d737623b6be9))
+
 ## [0.2.5](https://github.com/XYShaoKang/leetcode-extend/compare/v0.2.4...v0.2.5) (2022-03-02)
 
 
