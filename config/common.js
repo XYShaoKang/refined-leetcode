@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 
 /**
  * @type {import('webpack').Configuration}
@@ -44,6 +45,9 @@ const common = {
       chunks: ['popup'],
       filename: 'popup.html',
       publicPath: '/',
+    }),
+    new CopyPlugin({
+      patterns: [{ from: 'icons/*.png', context: path.resolve('public') }],
     }),
   ],
 }
