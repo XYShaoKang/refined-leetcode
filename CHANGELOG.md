@@ -1,3 +1,10 @@
+## [0.2.5](https://github.com/XYShaoKang/leetcode-extend/compare/v0.2.4...v0.2.5) (2022-03-02)
+
+
+### Bug Fixes
+
+* 参数错误 ([ffb74b2](https://github.com/XYShaoKang/leetcode-extend/commit/ffb74b2181b3f6ec5a6fca1f71f7f0b7f98ef1ae))
+
 ## [0.2.4](https://github.com/XYShaoKang/leetcode-extend/compare/v0.2.3...v0.2.4) (2022-03-01)
 
 
