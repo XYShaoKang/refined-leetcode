@@ -1,3 +1,10 @@
+## [0.3.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.3.0...v0.3.1) (2022-03-04)
+
+
+### Bug Fixes
+
+* 清理一些目前不需要的权限 ([4f123ff](https://github.com/XYShaoKang/refined-leetcode/commit/4f123ff59df3a726111e6049f48f16d62469ae57))
+
 # [0.3.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.2.6...v0.3.0) (2022-03-04)
 
 
