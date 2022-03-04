@@ -1,3 +1,10 @@
+# [0.3.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.2.6...v0.3.0) (2022-03-04)
+
+
+### Features
+
+* use new name ([cdf4aeb](https://github.com/XYShaoKang/refined-leetcode/commit/cdf4aeb271172c3e39f3fcda5ec41d81f240d2df))
+
 ## [0.2.6](https://github.com/XYShaoKang/leetcode-extend/compare/v0.2.5...v0.2.6) (2022-03-02)
 
 
