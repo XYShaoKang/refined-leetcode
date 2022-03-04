@@ -23,5 +23,5 @@ crx
   .load(path.join(__dirname, './dist/'))
   .then(crx => crx.pack())
   .then(crxBuffer => {
-    fs.writeFileSync(path.join(__dirname, './leetcode-extend.crx'), crxBuffer)
+    fs.writeFileSync(path.join(__dirname, './refined-leetcode.crx'), crxBuffer)
   })

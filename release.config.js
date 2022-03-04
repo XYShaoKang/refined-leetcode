@@ -1,5 +1,5 @@
 module.exports = {
-  branches: ['extension'],
+  branches: ['master'],
   preset: 'angular',
   plugins: [
     '@semantic-release/commit-analyzer',
@@ -8,7 +8,7 @@ module.exports = {
       './semantic-release-build',
       {
         dist: 'dist',
-        name: 'leetcode-extension',
+        name: 'refined-leetcode',
       },
     ],
     [
@@ -29,12 +29,12 @@ module.exports = {
       {
         assets: [
           {
-            path: 'leetcode-extension.crx',
-            name: 'leetcode-extension-${nextRelease.gitTag}.crx',
+            path: 'refined-leetcode.crx',
+            name: 'refined-leetcode-${nextRelease.gitTag}.crx',
           },
           {
-            path: 'leetcode-extension.zip',
-            name: 'leetcode-extension-${nextRelease.gitTag}.zip',
+            path: 'refined-leetcode.zip',
+            name: 'refined-leetcode-${nextRelease.gitTag}.zip',
           },
         ],
       },

@@ -35,7 +35,7 @@ function getElement(
 
 function getExtensionId(): string | undefined {
   const extensionId =
-    document.getElementById('leetcode-extension')?.dataset.extensionid
+    document.getElementById('refined-leetcode')?.dataset.extensionid
   return extensionId
 }
 

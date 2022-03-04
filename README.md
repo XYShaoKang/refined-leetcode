@@ -4,12 +4,12 @@
 
 [semantic-release-image]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
 [semantic-release-url]: https://github.com/semantic-release/semantic-release
-[actions-release-image]: https://github.com/XYShaoKang/leetcode-extend/actions/workflows/release.yml/badge.svg?branch=extension
-[actions-release-url]: https://github.com/XYShaoKang/leetcode-extend/actions?query=workflow%3ARelease
+[actions-release-image]: https://github.com/XYShaoKang/refined-leetcode/actions/workflows/release.yml/badge.svg?branch=extension
+[actions-release-url]: https://github.com/XYShaoKang/refined-leetcode/actions?query=workflow%3ARelease
 
 ## 下载
 
-从 https://github.com/XYShaoKang/leetcode-extend/releases 下载最新版本的 leetcode-extension.zip,解压 leetcode-extension.zip
+从 https://github.com/XYShaoKang/refined-leetcode/releases 下载最新版本的 refined-leetcode.zip,解压 refined-leetcode.zip
 
 ## 安装使用
 
@@ -17,7 +17,7 @@
 2. 转到 chrome://extensions/ 页面
 3. 打开页面右上角的开发者模式
 4. 点击页面左上角的 `加载以解压的扩展程序` 按钮
-5. 选择上面解压的 leetcode-extension 文件夹,再点击确定即可
+5. 选择上面解压的 refined-leetcode 文件夹,再点击确定即可
 
 ## 功能
 
@@ -73,8 +73,8 @@
 ### 下载
 
 ```sh
-git clone https://github.com/XYShaoKang/leetcode-extend.git
-cd leetcode-extend
+git clone https://github.com/XYShaoKang/refined-leetcode.git
+cd refined-leetcode
 ```
 
 ### 安装依赖

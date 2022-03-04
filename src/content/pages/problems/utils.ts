@@ -212,7 +212,7 @@ function submissionOnMarkChange(submissionId: string): void {
   )
 
   if (!root) {
-    console.log(`leetcode-extend: 未找到提交记录容器的 root`)
+    console.log(`refined-leetcode: 未找到提交记录容器的 root`)
     return
   }
 
@@ -232,7 +232,7 @@ function submissionOnMarkChange(submissionId: string): void {
   if (onMarkChange) {
     onMarkChange(submissionId)
   } else {
-    console.log(`leetcode-extend: 未找到 onMarkChange`)
+    console.log(`refined-leetcode: 未找到 onMarkChange`)
   }
 }
 
