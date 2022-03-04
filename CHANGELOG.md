@@ -1,3 +1,10 @@
+## [0.3.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.3.1...v0.3.2) (2022-03-04)
+
+
+### Bug Fixes
+
+* 删除目前不需要的模块 ([1accdaf](https://github.com/XYShaoKang/refined-leetcode/commit/1accdaf257576059e2a4c69af8fc6d3a1cb1c7b0))
+
 ## [0.3.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.3.0...v0.3.1) (2022-03-04)
 
 
