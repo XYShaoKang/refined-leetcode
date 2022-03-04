@@ -1,0 +1,17 @@
+{
+  "eslint.format.enable": true,
+  "eslint.packageManager": "pnpm",
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "json.schemas": [
+    {
+      // @see https://github.com/GoogleChrome/chrome-types/issues/7
+      "fileMatch": ["manifest.json"],
+      "url": "https://json.schemastore.org/chrome-manifest"
+    }
+  ]
+}

@@ -14,6 +14,7 @@ const eslintConfig = {
     'plugin:import/typescript',
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
+    'plugin:react-hooks/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -110,6 +111,12 @@ const eslintConfig = {
       rules: {
         '@typescript-eslint/explicit-module-boundary-types': ['error'],
         '@typescript-eslint/explicit-member-accessibility': ['error'],
+      },
+    },
+    {
+      files: ['*.js'],
+      rules: {
+        '@typescript-eslint/no-var-requires': ['off'],
       },
     },
   ],

@@ -1,9 +1,9 @@
 import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components/macro'
 
-import { LeetCodeApi, SuccessCheckReturnType } from '../../leetcode-api'
-import { sleep } from '../../leetcode-api/utils'
-import { getElement, submissionOnMarkChange } from '../../utils'
+import { LeetCodeApi, SuccessCheckReturnType } from './leetcode-api'
+import { sleep, submissionOnMarkChange } from './utils'
+import { getElement } from '../../utils'
 import { useTimer } from './useTimer'
 
 const Container = styled.div`
