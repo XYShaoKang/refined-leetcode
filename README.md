@@ -1,23 +1,22 @@
 # 力扣扩展
 
+[![chrome-store-image][chrome-store-image]][chrome-store-url]
 [![semantic-release][semantic-release-image]][semantic-release-url] [![GitHub Action][actions-release-image]][actions-release-url]
 
 [semantic-release-image]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
 [semantic-release-url]: https://github.com/semantic-release/semantic-release
 [actions-release-image]: https://github.com/XYShaoKang/refined-leetcode/actions/workflows/release.yml/badge.svg?branch=master
 [actions-release-url]: https://github.com/XYShaoKang/refined-leetcode/actions/workflows/release.yml?query=branch%3Amaster
+[chrome-store-image]: ./docs/assets/trynow.png
+[chrome-store-url]: https://chrome.google.com/webstore/detail/refined-leetcode/kmpinnjkedaidpojenkiooddkeplniel
 
-## 下载
+## 安装
 
-从 https://github.com/XYShaoKang/refined-leetcode/releases 下载最新版本的 refined-leetcode.zip,解压 refined-leetcode.zip
+有两种安装方式,可以选择从 [Chrome Web Store][chrome-store-url] 安装,或者 [离线安装](#离线安装)
 
-## 安装使用
-
-1. 打开 Chrome 浏览器
-2. 转到 chrome://extensions/ 页面
-3. 打开页面右上角的开发者模式
-4. 点击页面左上角的 `加载以解压的扩展程序` 按钮
-5. 选择上面解压的 refined-leetcode 文件夹,再点击确定即可
+> 推荐直接通过 [Chrome Web Store][chrome-store-url] 来安装,比较方便.
+>
+> 不过因为提交到商店需要进行审核,有时需要进行一些时间的等待,这时如果想要尝鲜,或者是因为某些原因无法连接到商店,可以尝试进行 [离线安装](#离线安装)
 
 ## 功能
 
@@ -63,6 +62,20 @@
 ![rating-predictor](./docs/assets/rating-predictor.png)
 
 此功能源码 [src/content/pages/ranking](./src/content/pages/ranking)
+
+## 离线安装
+
+### 下载
+
+从 https://github.com/XYShaoKang/refined-leetcode/releases 下载最新版本的 refined-leetcode.zip,解压 refined-leetcode.zip
+
+### 安装使用
+
+1. 打开 Chrome 浏览器
+2. 转到 `chrome://extensions/` 页面,直接在地址栏输入 `chrome://extensions/` 即可
+3. 切换页面右上角的开发者模式为启用的状态
+4. 点击页面左上角的 `加载以解压的扩展程序` 按钮
+5. 选择上面解压的 refined-leetcode 文件夹,再点击确定即可
 
 ## 开发
 
