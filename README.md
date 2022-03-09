@@ -77,6 +77,8 @@
 
 ![show-file-icon](./docs/assets/show-file-icon.png)
 
+此功能源码 [src/content/pages/ranking/FileIcon.tsx](./src/content/pages/ranking/FileIcon.tsx)
+
 ## 离线安装
 
 ### 下载
