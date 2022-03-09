@@ -1,4 +1,4 @@
-# 力扣扩展
+# Refined LeetCode-cn
 
 [![chrome-store-image][chrome-store-image]][chrome-store-url]
 [![semantic-release][semantic-release-image]][semantic-release-url] [![GitHub Action][actions-release-image]][actions-release-url]
@@ -9,6 +9,8 @@
 [actions-release-url]: https://github.com/XYShaoKang/refined-leetcode/actions/workflows/release.yml?query=branch%3Amaster
 [chrome-store-image]: ./docs/assets/trynow.png
 [chrome-store-url]: https://chrome.google.com/webstore/detail/refined-leetcode/kmpinnjkedaidpojenkiooddkeplniel
+
+> 添加一些有用和有意思的功能,增强 LeetCode-cn 刷题体验
 
 ## 安装
 
@@ -62,6 +64,18 @@
 ![rating-predictor](./docs/assets/rating-predictor.png)
 
 此功能源码 [src/content/pages/ranking](./src/content/pages/ranking)
+
+### 竞赛排名页面显示代码对应的语言图标
+
+> 2022-03-09 添加
+
+在排名页列表中的提交时间前面,将之前代码图标替换为提交所使用的语言对应的图标,这样可以很直观的看到选手提交所使用的语言
+
+这样如果我只想看某种语言的提交,就不必要一个个点过去看,可以节省很多时间
+
+> 由于全球服 API 返回的数据没有对应提交的语言标记,所以目前支持国服的排名页
+
+![show-file-icon](./docs/assets/show-file-icon.png)
 
 ## 离线安装
 
