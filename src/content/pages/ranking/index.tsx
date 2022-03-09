@@ -8,15 +8,23 @@ import Title from './Title'
 
 import store from '../../app/store'
 import { initUrlChangeEvent } from '../utils'
+import FileIcon from './FileIcon'
 
-let nodes: HTMLTableCellElement[] = []
+// TODO: 拆分不同的加载逻辑
 
+// 保存已经被加载的预测组件的 root,用于跳离排名页面时,卸载组件用
+let predictorNodes: HTMLTableCellElement[] = []
+
+// 保存已被加载的组件位置,如果已被加载,在排名页内跳转时,可以不用重复去加载
+let fileIconStates: boolean[][] = Array.from({ length: 26 }, () => [])
+
+// 加载预测列标题
 async function loadTitle() {
   const parent = await getElement('.table-responsive>table>thead>tr')
 
   if (parent.length > 0) {
     const root = document.createElement('th')
-    nodes.push(root)
+    predictorNodes.push(root)
     parent[0].append(root)
     render(
       <StrictMode>
@@ -27,18 +35,19 @@ async function loadTitle() {
   }
 }
 
+// 加载预测列
 async function loadPredictor() {
   loadTitle()
 
   const trs = await getElement('.table-responsive>table>tbody>tr')
-  const start = trs[0].className === 'success' ? 1 : 0
+  const hasMyRank = trs[0].className === 'success' ? true : false
   trs.forEach((tr, i) => {
     const root = document.createElement('td')
-    nodes.push(root)
+    predictorNodes.push(root)
     render(
       <StrictMode>
         <Provider store={store}>
-          <Item index={i - start} />
+          <Item row={i} hasMyRank={hasMyRank} />
         </Provider>
       </StrictMode>,
       root
@@ -48,15 +57,59 @@ async function loadPredictor() {
   })
 }
 
+// 加载文件图标
+async function loadFileIcon() {
+  const trs = await getElement('.table-responsive>table>tbody>tr')
+  const hasMyRank = trs[0].className === 'success' ? true : false
+  trs.forEach((tr, i) => {
+    const codetds = Array.from(tr.children).slice(4, 8)
+    for (let j = 0; j < 4; j++) {
+      const iconEl = codetds[j]?.children?.[0]?.children?.[0]
+
+      if (iconEl) {
+        if (fileIconStates[i][j]) continue
+        const parent = iconEl.parentNode! as HTMLAnchorElement
+        parent.removeChild(iconEl)
+
+        render(
+          <StrictMode>
+            <Provider store={store}>
+              <FileIcon row={i} col={j} hasMyRank={hasMyRank} />
+            </Provider>
+          </StrictMode>,
+          parent
+        )
+
+        fileIconStates[i][j] = true
+      } else {
+        fileIconStates[i][j] = false
+      }
+    }
+  })
+}
+
+async function changeCompleted() {
+  const trs = await getElement('.table-responsive>table>tbody>tr')
+  const tr = trs[0].className === 'success' ? trs[1] : trs[0]
+  return new Promise(function (resolve, _reject) {
+    tr.children[1].addEventListener('DOMCharacterDataModified', resolve, {
+      capture: true,
+      once: true,
+    })
+    setTimeout(resolve, 5000)
+  })
+}
+
 const urlMatchReg = /https:\/\/leetcode-cn\.com\/contest\/([\d\D]+)\/ranking\//
 
 if (urlMatchReg.test(location.href)) {
   loadPredictor()
+  loadFileIcon()
 }
 
 initUrlChangeEvent()
 
-window.addEventListener('urlchange', function () {
+window.addEventListener('urlchange', async function () {
   /**
    * url 变化,可能会有四种情况:
    * 1. 从不匹配的地址跳转到匹配的地址
@@ -72,14 +125,29 @@ window.addEventListener('urlchange', function () {
 
   if (!urlMatchReg.test(location.href)) {
     // 从排名页跳转到比赛主页
-    nodes.forEach(node => ReactDom.unmountComponentAtNode(node))
-    nodes = []
+
+    // 卸载已加载的 node
+    predictorNodes.forEach(node => ReactDom.unmountComponentAtNode(node))
+    // 清空记录的以加载 node
+    predictorNodes = []
+    // 重置文件图标状态
+    fileIconStates = Array.from({ length: 26 }, () => [])
   } else {
     // 从主页跳转到排名页
-    if (nodes.length === 0) {
+    if (predictorNodes.length === 0) {
+      // 加载预测数据,以及对应的文件图标
       loadPredictor()
+      loadFileIcon()
     } else {
+      // 在排名页内跳转
+
+      // 向预测组件发送自定义事件,表明已经跳转完成
       window.dispatchEvent(new Event('afterurlchange'))
+
+      // 等待新的数据渲染完成
+      await changeCompleted()
+      // 新的数据渲染完成之后,在加载对应的文件图标
+      loadFileIcon()
     }
   }
 })

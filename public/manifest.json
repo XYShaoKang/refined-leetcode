@@ -14,7 +14,7 @@
   "permissions": [],
   "web_accessible_resources": [
     {
-      "resources": ["/content.bundle.js", "/*.map"],
+      "resources": ["/content.bundle.js", "/*.map", "/file-icons/*.svg"],
       "matches": ["*://leetcode-cn.com/*"]
     }
   ],

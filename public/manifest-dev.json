@@ -18,7 +18,8 @@
         "/content.bundle.js",
         "/*.hot-update.js",
         "/*.hot-update.json",
-        "/*.map"
+        "/*.map",
+        "/file-icons/*.svg"
       ],
       "matches": ["*://leetcode-cn.com/*"]
     }

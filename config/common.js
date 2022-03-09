@@ -47,7 +47,10 @@ const common = {
       publicPath: '/',
     }),
     new CopyPlugin({
-      patterns: [{ from: 'icons/*.png', context: path.resolve('public') }],
+      patterns: [
+        { from: 'icons/*.png', context: path.resolve('public') },
+        { from: 'file-icons/*.svg', context: path.resolve('public') },
+      ],
     }),
   ],
 }

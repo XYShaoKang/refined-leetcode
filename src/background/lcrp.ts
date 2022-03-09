@@ -1,5 +1,7 @@
 // Leetcode Rating Predictor
 
+import { getContest, fileIconData, getMyRanking, MyRankingType } from './utils'
+
 // @see: https://github.com/SysSn13/leetcode-rating-predictor/blob/4a7f4057bd5bf94727723b0bc02d781be573a3eb/chrome-extension/background.js#L26
 const LCRP_API = [
   'https://leetcode-rating-predictor.herokuapp.com/api/v1/predictions',
@@ -50,19 +52,13 @@ async function api(
   }
 }
 
-type GetPredictionMessage =
-  | {
-      type: 'get-prediction'
-      contestId: string
-      page: number
-      region: 'local' | 'global'
-    }
-  | {
-      type: 'get-prediction'
-      contestId: string
-      usernames: string[]
-      region: 'local' | 'global'
-    }
+type GetPredictionMessage = {
+  type: 'get-prediction'
+  contestId: string
+  page: number
+  username?: string
+  region: 'local' | 'global'
+}
 
 chrome.runtime.onMessage.addListener(
   (message: GetPredictionMessage, sender, sendResponse) => {
@@ -84,20 +80,6 @@ chrome.runtime.onMessageExternal.addListener(function (
   }
 })
 
-async function getContest(
-  contestId: string,
-  page: number,
-  region: 'local' | 'global' = 'local',
-  retry = 1
-): Promise<any> {
-  const url = `https://leetcode-cn.com/contest/api/ranking/${contestId}/?pagination=${page}&region=${region}`
-  const res = await fetch(url)
-  if (res.status === 200) {
-    return res.json()
-  }
-  return getContest(contestId, page, region, retry + 1)
-}
-
 type PredictorType = {
   status: string
   meta: {
@@ -111,20 +93,29 @@ type PredictorType = {
   }[]
 }
 
+let myRankCache: MyRankingType
+
 async function getPrediction(
   message: GetPredictionMessage,
   sender: chrome.runtime.MessageSender,
   sendResponse: (response?: any) => void
 ) {
-  let usernames: string[]
   const { contestId, region } = message
-  if ('page' in message) {
-    const contestData = await getContest(contestId, message.page, region)
-    usernames = (contestData.total_rank as { username: string }[]).map(
-      ({ username }) => username
-    )
-  } else {
-    usernames = message.usernames
+  const { questions, submissions, total_rank } = await getContest(
+    contestId,
+    message.page,
+    region
+  )
+  const usernames = total_rank.map(({ username }) => username)
+  if (message.username) {
+    usernames.unshift(message.username)
+    myRankCache = myRankCache || (await getMyRanking(contestId))
+    submissions.unshift(myRankCache.my_submission)
+  }
+
+  const iconMap = new Map<string, string>()
+  for (const { slug, file } of fileIconData) {
+    iconMap.set(slug, `chrome-extension://${chrome.runtime.id}${file}`)
   }
 
   try {
@@ -134,8 +125,14 @@ async function getPrediction(
       itemMap.set(item._id, item)
     }
     const items = []
-    for (const username of usernames) {
-      items.push({ ...itemMap.get(username) })
+    for (let i = 0; i < usernames.length; i++) {
+      const username = usernames[i]
+      const submission = questions.map(({ question_id }) => {
+        const submission = submissions[i][question_id]
+
+        return { ...submission, iconFile: iconMap.get(submission?.lang ?? '') }
+      })
+      items.push({ ...itemMap.get(username), submission })
     }
 
     sendResponse(items)

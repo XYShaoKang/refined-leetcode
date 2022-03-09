@@ -1,9 +1,11 @@
 import { FC, useEffect, useState } from 'react'
+import styled from 'styled-components/macro'
 
 import { useGetPredictionQuery } from './rankSlice'
 
 type ItmeType = {
   row: number
+  col: number
   hasMyRank: boolean
 }
 
@@ -46,6 +48,25 @@ function useUrlChange() {
   return [param] as const
 }
 
+const DefaultIcon = styled.span`
+  &::before {
+    content: '\f1c9';
+  }
+`
+
+const StyleSvg = styled.svg<{ size?: number }>`
+  height: 1em;
+  width: 1em;
+  transform: translateY(0.125em) translateX(-5px) scale(1.4);
+
+  & > image {
+    height: 1em;
+    width: 1em;
+  }
+
+  ${({ size }) => (size ? `font-size: ${size}px;` : '')}
+`
+
 type ParamType = {
   contestId: string
   page: number
@@ -53,7 +74,8 @@ type ParamType = {
   username?: string
 }
 
-const Item: FC<ItmeType> = ({ row, hasMyRank }) => {
+// TODO: 切换页数后,如果原先位置没有代码,会出现不加在图标的情况
+const FileIcon: FC<ItmeType> = ({ row, col, hasMyRank }) => {
   const [param] = useUrlChange()
   const params: ParamType = { ...param }
   if (hasMyRank) {
@@ -63,23 +85,17 @@ const Item: FC<ItmeType> = ({ row, hasMyRank }) => {
 
   const { data: items } = useGetPredictionQuery(params)
 
-  if (!items) {
-    return <span> ...loading</span>
+  const iconFile = items?.[row]?.submission?.[col]?.iconFile
+
+  if (!items || !iconFile) {
+    return <DefaultIcon className="fa fa-file-code-o" />
   }
-
-  let predictor: number | undefined = items?.[row]?.delta
-
-  if (!predictor) {
-    return <span>{''}</span>
-  }
-
-  predictor = Math.round(predictor * 100) / 100
 
   return (
-    <div style={{ color: predictor > 0 ? 'green' : 'gray' }}>
-      {predictor > 0 ? `+${predictor}` : predictor}
-    </div>
+    <StyleSvg>
+      <image href={iconFile} />
+    </StyleSvg>
   )
 }
 
-export default Item
+export default FileIcon
