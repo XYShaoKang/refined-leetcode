@@ -102,7 +102,6 @@ const Clock: FC = () => {
               time.map(t => t.toString().padStart(2, '0')).join(' : ')
             )
 
-            await sleep(1000)
             submissionOnMarkChange(submissionId)
           })
 

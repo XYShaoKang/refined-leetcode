@@ -1,3 +1,5 @@
+import { findElement } from '../../utils'
+
 /**
  * 延时函数
  *
@@ -206,10 +208,10 @@ function getFiber(el: Element): FiberRoot | null {
   return null
 }
 
-function submissionOnMarkChange(submissionId: string): void {
-  const root = getFiber(
-    document.querySelectorAll(`[data-row-key="${submissionId}"]`)?.[0]
-  )
+async function submissionOnMarkChange(submissionId: string): Promise<void> {
+  const submissionRowEl = await findElement(`[data-row-key="${submissionId}"]`)
+
+  const root = getFiber(submissionRowEl)
 
   if (!root) {
     console.log(`refined-leetcode: 未找到提交记录容器的 root`)
