@@ -1,3 +1,10 @@
+## [0.4.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.4.0...v0.4.1) (2022-03-10)
+
+
+### Bug Fixes
+
+* 偶尔会出现无法显示备注的情况 ([b8c5614](https://github.com/XYShaoKang/refined-leetcode/commit/b8c561408ec3918bb49b0b83b872a9bebcfae71c))
+
 # [0.4.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.3.2...v0.4.0) (2022-03-09)
 
 
