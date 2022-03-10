@@ -11,26 +11,64 @@ function download(str: string, filename = 'contest.md'): void {
   document.body.removeChild(a)
 }
 
-function getElement(
-  query: string,
-  fn: (e: NodeListOf<Element>) => boolean = e => e.length > 0,
-  timeout = 10000
-): Promise<NodeListOf<Element>> {
-  const delay = 100
+function findBase<T>(
+  find: () => any,
+  fn: (el: T) => boolean,
+  time = 10000,
+  delay = 100
+): Promise<T> {
   return new Promise(function (resolve, reject) {
     const timer = setInterval(() => {
-      const element = document.querySelectorAll(query)
+      const element = find()
       if (fn(element)) {
         clearInterval(timer)
         resolve(element)
       }
-      if (timeout <= 0) {
+      if (time <= 0) {
         clearInterval(timer)
         reject('超时')
       }
-      timeout -= delay
+      time -= delay
     }, delay)
   })
+}
+
+/**
+ * 查找匹配选择器的所有元素.返回一个 Promise,当找到任何与选择器匹配的元素时,则 resolve 一个包含所有与选择器匹配元素的数组;如果在超时时间内未找到与选择器匹配的元素时,则 Promise 会被拒绝.
+ * @param selectors 需要匹配的选择器
+ * @param timeout 超时设置,默认为 10000
+ * @param fn 判断是否找到元素的函数
+ * @returns 返回找到的所有元素
+ */
+async function findAllElement(
+  selectors: string,
+  timeout = 10000,
+  fn = (e: Element[]) => e.length > 0
+): Promise<Element[]> {
+  const elements = await findBase<Element[]>(
+    () => Array.from(document.querySelectorAll(selectors)),
+    fn,
+    timeout
+  )
+  return elements
+}
+
+/**
+ * 查找匹配选择器的第一个元素.返回一个 Promise,当找到第一个与选择器匹配的元素时,则 resolve 找到的这个元素;如果在超时时间内未找到与选择器匹配的元素时,则 Promise 会被拒绝.
+ * @param selectors 需要匹配的选择器
+ * @param timeout 超时设置,默认为 10000
+ * @returns 返回找到的元素
+ */
+async function findElement(
+  selectors: string,
+  timeout = 10000
+): Promise<Element> {
+  const element = await findBase<Element>(
+    () => document.querySelector(selectors),
+    el => !!el,
+    timeout
+  )
+  return element
 }
 
 function getExtensionId(): string | undefined {
@@ -39,4 +77,4 @@ function getExtensionId(): string | undefined {
   return extensionId
 }
 
-export { download, getElement, getExtensionId }
+export { download, findElement, findAllElement, getExtensionId }

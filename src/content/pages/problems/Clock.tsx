@@ -3,7 +3,7 @@ import styled from 'styled-components/macro'
 
 import { LeetCodeApi, SuccessCheckReturnType } from './leetcode-api'
 import { sleep, submissionOnMarkChange } from './utils'
-import { getElement } from '../../utils'
+import { findElement } from '../../utils'
 import { useTimer } from './useTimer'
 
 const Container = styled.div`
@@ -87,7 +87,7 @@ const Clock: FC = () => {
     let cancel: (() => void) | null = null
 
     void (async function () {
-      const submitBtn = (await getElement('.submit__-6u9'))[0]
+      const submitBtn = await findElement('.submit__-6u9')
       const handleClick: EventListenerOrEventListenerObject = async () => {
         const submissionId = await getSubmissionId()
         const state = await check(submissionId)

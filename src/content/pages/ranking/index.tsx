@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import ReactDom, { render } from 'react-dom'
 import { Provider } from 'react-redux'
 
-import { getElement } from '../../utils'
+import { findAllElement } from '../../utils'
 import Item from './Item'
 import Title from './Title'
 
@@ -20,7 +20,7 @@ let fileIconStates: boolean[][] = Array.from({ length: 26 }, () => [])
 
 // 加载预测列标题
 async function loadTitle() {
-  const parent = await getElement('.table-responsive>table>thead>tr')
+  const parent = await findAllElement('.table-responsive>table>thead>tr')
 
   if (parent.length > 0) {
     const root = document.createElement('th')
@@ -39,7 +39,7 @@ async function loadTitle() {
 async function loadPredictor() {
   loadTitle()
 
-  const trs = await getElement('.table-responsive>table>tbody>tr')
+  const trs = await findAllElement('.table-responsive>table>tbody>tr')
   const hasMyRank = trs[0].className === 'success' ? true : false
   trs.forEach((tr, i) => {
     const root = document.createElement('td')
@@ -59,7 +59,7 @@ async function loadPredictor() {
 
 // 加载文件图标
 async function loadFileIcon() {
-  const trs = await getElement('.table-responsive>table>tbody>tr')
+  const trs = await findAllElement('.table-responsive>table>tbody>tr')
   const hasMyRank = trs[0].className === 'success' ? true : false
   trs.forEach((tr, i) => {
     const codetds = Array.from(tr.children).slice(4, 8)
@@ -89,7 +89,7 @@ async function loadFileIcon() {
 }
 
 async function changeCompleted() {
-  const trs = await getElement('.table-responsive>table>tbody>tr')
+  const trs = await findAllElement('.table-responsive>table>tbody>tr')
   const tr = trs[0].className === 'success' ? trs[1] : trs[0]
   return new Promise(function (resolve, _reject) {
     tr.children[1].addEventListener('DOMCharacterDataModified', resolve, {

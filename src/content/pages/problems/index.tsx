@@ -2,10 +2,10 @@ import { StrictMode } from 'react'
 import { render } from 'react-dom'
 
 import Clock from './Clock'
-import { getElement } from '../../utils'
+import { findElement } from '../../utils'
 
 async function load() {
-  const parent = (await getElement('.container__Kjnx>.action__KaAP'))[0]
+  const parent = await findElement('.container__Kjnx>.action__KaAP')
   if (parent && parent instanceof HTMLElement) {
     const root = document.createElement('div')
     parent.prepend(root)
