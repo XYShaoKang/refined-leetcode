@@ -1,3 +1,10 @@
+## [0.4.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.4.1...v0.4.2) (2022-03-11)
+
+
+### Bug Fixes
+
+* 偶尔自动添加备注的功能失效 ([2f7c534](https://github.com/XYShaoKang/refined-leetcode/commit/2f7c534854a6a4034cbd06765f12c329587d234e))
+
 ## [0.4.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.4.0...v0.4.1) (2022-03-10)
 
 
