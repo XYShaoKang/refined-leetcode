@@ -34,9 +34,6 @@ const Button = styled.button<{ primary?: boolean }>`
 `
 
 const Clock: FC = () => {
-  const pathnames = location.pathname.split('/').filter(Boolean)
-
-  const slug = pathnames[1]
   const [leetCodeApi] = useState(new LeetCodeApi(location.origin))
   const [hidden, setHidden] = useState(false)
 
@@ -46,25 +43,22 @@ const Clock: FC = () => {
     setHidden(hidden => !hidden)
   }
 
-  async function getSubmissionId(
-    retry = 1,
-    time = new Date()
-  ): Promise<string> {
-    if (retry > 10) throw new Error('获取 SubmissionId 失败')
-
-    await sleep(500)
-    const { submissions } = await leetCodeApi.getSubmissions(slug)
-    const pendingSubmission = submissions.find(
-      ({ timestamp, isPending }) =>
-        isPending === 'Pending' ||
-        new Date((Number(timestamp) + 2) * 1000) >= time
-    )
-
-    if (!pendingSubmission) {
-      return getSubmissionId(retry + 1, time)
-    } else {
-      return pendingSubmission.id
-    }
+  async function getSubmissionId(): Promise<string> {
+    return new Promise(function (resolve, reject) {
+      const originalSend = XMLHttpRequest.prototype.send
+      XMLHttpRequest.prototype.send = function (...args) {
+        XMLHttpRequest.prototype.send = originalSend
+        originalSend.apply(this, args)
+        this.addEventListener('load', function () {
+          try {
+            const data = JSON.parse(this.responseText)
+            resolve(data.submission_id + '')
+          } catch (error) {
+            reject(error)
+          }
+        })
+      }
+    })
   }
 
   async function check(
