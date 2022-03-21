@@ -34,6 +34,9 @@ const Button = styled.button<{ primary?: boolean }>`
 `
 
 const Clock: FC = () => {
+  const pathnames = location.pathname.split('/').filter(Boolean)
+  const slug = pathnames[1]
+
   const [leetCodeApi] = useState(new LeetCodeApi(location.origin))
   const [hidden, setHidden] = useState(false)
 
@@ -45,18 +48,43 @@ const Clock: FC = () => {
 
   async function getSubmissionId(): Promise<string> {
     return new Promise(function (resolve, reject) {
-      const originalSend = XMLHttpRequest.prototype.send
-      XMLHttpRequest.prototype.send = function (...args) {
-        XMLHttpRequest.prototype.send = originalSend
-        originalSend.apply(this, args)
-        this.addEventListener('load', function () {
-          try {
-            const data = JSON.parse(this.responseText)
-            resolve(data.submission_id + '')
-          } catch (error) {
-            reject(error)
-          }
-        })
+      const originalOpen = XMLHttpRequest.prototype.open
+      XMLHttpRequest.prototype.open = function newOpen(
+        this: XMLHttpRequest,
+        method: string,
+        url: string,
+        async?: boolean,
+        user?: string,
+        password?: string
+      ) {
+        if (
+          method.toLocaleLowerCase() === 'post' &&
+          url === `/problems/${slug}/submit/`
+        ) {
+          this.addEventListener('readystatechange', function () {
+            const DONE = XMLHttpRequest.DONE ?? 4
+            if (this.readyState === DONE) {
+              const status = this.status
+              if (status === 0 || (status >= 200 && status < 400)) {
+                const data = JSON.parse(this.responseText)
+                if (XMLHttpRequest.prototype.open === newOpen) {
+                  XMLHttpRequest.prototype.open = originalOpen
+                }
+
+                resolve(data.submission_id + '')
+              } else {
+                if (status !== 429) {
+                  if (XMLHttpRequest.prototype.open === newOpen) {
+                    XMLHttpRequest.prototype.open = originalOpen
+                  }
+
+                  reject(`提交错误,状态 ${status}`)
+                }
+              }
+            }
+          })
+        }
+        originalOpen.apply(this, [method, url, async!, user, password])
       }
     })
   }
