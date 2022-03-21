@@ -2,13 +2,14 @@ import { StrictMode } from 'react'
 import ReactDom, { render } from 'react-dom'
 import { Provider } from 'react-redux'
 
-import { findAllElement } from '../../utils'
+import { findAllElement, findElement } from '../../utils'
 import Item from './Item'
 import Title from './Title'
 
 import store from '../../app/store'
 import { initUrlChangeEvent } from '../utils'
 import FileIcon from './FileIcon'
+import { sleep } from '../problems/utils'
 
 // TODO: 拆分不同的加载逻辑
 
@@ -20,18 +21,20 @@ let fileIconStates: boolean[][] = Array.from({ length: 26 }, () => [])
 
 // 加载预测列标题
 async function loadTitle() {
-  const parent = await findAllElement('.table-responsive>table>thead>tr')
-
-  if (parent.length > 0) {
+  const parent = await findElement('.table-responsive>table>thead>tr')
+  if (parent.children.length > 4) {
     const root = document.createElement('th')
     predictorNodes.push(root)
-    parent[0].append(root)
+    parent.append(root)
     render(
       <StrictMode>
         <Title />
       </StrictMode>,
       root
     )
+  } else {
+    await sleep(100)
+    loadTitle()
   }
 }
 
