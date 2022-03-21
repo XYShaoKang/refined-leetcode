@@ -67,11 +67,11 @@ async function loadFileIcon() {
   trs.forEach((tr, i) => {
     const codetds = Array.from(tr.children).slice(4, 8)
     for (let j = 0; j < 4; j++) {
-      const iconEl = codetds[j]?.children?.[0]?.children?.[0]
+      const parent = codetds[j]?.querySelector('a')
+      const iconEl = parent?.querySelector('span')
 
-      if (iconEl) {
+      if (parent && iconEl) {
         if (fileIconStates[i][j]) continue
-        const parent = iconEl.parentNode! as HTMLAnchorElement
         parent.removeChild(iconEl)
 
         render(
