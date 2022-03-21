@@ -1,3 +1,12 @@
+## [0.4.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.4.2...v0.4.3) (2022-03-21)
+
+
+### Bug Fixes
+
+* 偶尔自动添加备注功能失效 ([20dffdd](https://github.com/XYShaoKang/refined-leetcode/commit/20dffdd66972f22d6b90bf1f4201de90e4422769))
+* 延迟加载预测页 ([cc2b651](https://github.com/XYShaoKang/refined-leetcode/commit/cc2b651bf011e0b7eda65afb3e6e6bc4ff523023))
+* 找到正确的图标元素 ([1304e03](https://github.com/XYShaoKang/refined-leetcode/commit/1304e03cac42aa67156e6ec107c557876dbf3d2b))
+
 ## [0.4.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.4.1...v0.4.2) (2022-03-11)
 
 
