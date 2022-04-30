@@ -1,3 +1,10 @@
+# [0.5.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.4.3...v0.5.0) (2022-04-30)
+
+
+### Features
+
+* 添加对 leetcode.cn 域名的支持 ([ff20e2e](https://github.com/XYShaoKang/refined-leetcode/commit/ff20e2e05a638a7931d7c0bdf22d7dffd996abb5))
+
 ## [0.4.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.4.2...v0.4.3) (2022-03-21)
 
 
