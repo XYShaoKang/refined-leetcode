@@ -22,6 +22,6 @@ async function load() {
   }
 }
 
-if (/https:\/\/leetcode-cn\.com\/problems\//.test(location.href)) {
+if (/\/problems\//.test(location.pathname)) {
   load()
 }

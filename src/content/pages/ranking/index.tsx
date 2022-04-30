@@ -103,9 +103,9 @@ async function changeCompleted() {
   })
 }
 
-const urlMatchReg = /https:\/\/leetcode-cn\.com\/contest\/([\d\D]+)\/ranking\//
+const urlMatchReg = /\/contest\/([\d\D]+)\/ranking\//
 
-if (urlMatchReg.test(location.href)) {
+if (urlMatchReg.test(location.pathname)) {
   loadPredictor()
   loadFileIcon()
 }
@@ -126,7 +126,7 @@ window.addEventListener('urlchange', async function () {
    * 而第三第四种清理可以不用处理
    */
 
-  if (!urlMatchReg.test(location.href)) {
+  if (!urlMatchReg.test(location.pathname)) {
     // 从排名页跳转到比赛主页
 
     // 卸载已加载的 node

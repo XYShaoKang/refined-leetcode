@@ -364,7 +364,7 @@ class LeetCodeApi {
     runtimeDistribution?: { lang: string; distribution: [string, number][] }
     memoryDistribution?: { lang: string; distribution: [string, number][] }
   }> {
-    if (/leetcode-cn\.com/.test(this.REGION_URL)) {
+    if (/(leetcode-cn\.com)|(leetcode\.cn)/.test(this.REGION_URL)) {
       const data = await this.getSubmissionDetailByLocal(submissionId)
       const { runtimeDistribution, memoryDistribution } =
         await this.getDistributionLocal(submissionId)

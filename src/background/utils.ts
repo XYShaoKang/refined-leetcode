@@ -58,7 +58,7 @@ export async function getContest(
   region: 'local' | 'global' = 'local',
   retry = 1
 ): Promise<RankingDataType> {
-  const url = `https://leetcode-cn.com/contest/api/ranking/${contestId}/?pagination=${page}&region=${region}`
+  const url = `https://leetcode.com/contest/api/ranking/${contestId}/?pagination=${page}&region=${region}`
   const res = await fetch(url)
   if (res.status === 200) {
     return res.json()
@@ -71,7 +71,7 @@ export async function getMyRanking(
   contestId: string,
   retry = 1
 ): Promise<MyRankingType> {
-  const url = `https://leetcode-cn.com/contest/api/myranking/${contestId}/`
+  const url = `https://leetcode.com/contest/api/myranking/${contestId}/`
   const res = await fetch(url)
 
   if (res.status === 200) return res.json()
