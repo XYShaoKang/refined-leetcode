@@ -15,6 +15,10 @@ type UseTimeReturn = {
   restart: () => void
 }
 
+/**
+ * 计时器钩子
+ * @returns 返回当前累计的时间 `time`;是否已结束 `isDone`;结束当前计时函数 `done`;重新开始函数 `restart`
+ */
 const useTimer = (): UseTimeReturn => {
   const [start, setStart] = useState(new Date())
   const [isDone, setIsDone] = useState(false)
