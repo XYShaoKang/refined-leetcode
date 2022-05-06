@@ -5,6 +5,9 @@ import { LeetCodeApi, SuccessCheckReturnType } from './leetcode-api'
 import { sleep, submissionOnMarkChange } from './utils'
 import { findElement } from '../../utils'
 import { useTimer } from './useTimer'
+import { logger } from '../../../utils'
+
+const log = logger.child({ prefix: 'Clock' })
 
 const Container = styled.div`
   display: flex;
@@ -57,27 +60,35 @@ const Clock: FC = () => {
         user?: string,
         password?: string
       ) {
+        log.debug('open: %s %s', method, url)
         if (
           method.toLocaleLowerCase() === 'post' &&
           url === `/problems/${slug}/submit/`
         ) {
-          this.addEventListener('readystatechange', function () {
+          log.debug('拦截发送请求 %s %s', method, url)
+          this.addEventListener('readystatechange', function (event) {
+            log.debug('readystatechange %o %d', event, this.readyState)
             const DONE = XMLHttpRequest.DONE ?? 4
             if (this.readyState === DONE) {
+              log.debug('readystatechange done')
               const status = this.status
               if (status === 0 || (status >= 200 && status < 400)) {
+                log.debug('readystatechange state %s', this.responseText)
                 const data = JSON.parse(this.responseText)
+                log.debug('还原 open')
                 if (XMLHttpRequest.prototype.open === newOpen) {
                   XMLHttpRequest.prototype.open = originalOpen
                 }
 
                 resolve(data.submission_id + '')
               } else {
-                if (status !== 429) {
+                if (status === 429) {
+                  log.debug(`状态 429,等待重试`)
+                } else {
                   if (XMLHttpRequest.prototype.open === newOpen) {
                     XMLHttpRequest.prototype.open = originalOpen
                   }
-
+                  log.error(`获取 SubmissionId 失败`)
                   reject(`提交错误,状态 ${status}`)
                 }
               }
@@ -106,13 +117,18 @@ const Clock: FC = () => {
   }
 
   useEffect(() => {
+    log.info('加载 Clock 组件')
     let cancel: (() => void) | null = null
 
     void (async function () {
       const submitBtn = await findElement('.submit__-6u9')
+
       const handleClick: EventListenerOrEventListenerObject = async () => {
+        log.debug('提交开始')
         const submissionId = await getSubmissionId()
+        log.debug('获取 submissionId %s', submissionId)
         const state = await check(submissionId)
+        log.debug('获取提交状态 %s', state.status_msg)
 
         if (state.status_msg === 'Accepted') {
           // 提交成功
@@ -124,7 +140,10 @@ const Clock: FC = () => {
               time.map(t => t.toString().padStart(2, '0')).join(' : ')
             )
 
+            log.debug('已添加备注')
+
             submissionOnMarkChange(submissionId)
+            log.debug('刷新备注')
           })
 
           setHidden(false)
@@ -136,7 +155,9 @@ const Clock: FC = () => {
         submitBtn.removeEventListener('click', handleClick)
       }
     })()
+
     return () => {
+      logger.info('卸载 Clock 组件')
       if (cancel) cancel()
     }
   }, [])
