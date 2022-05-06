@@ -1,3 +1,12 @@
+## [0.5.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.5.1...v0.5.2) (2022-05-06)
+
+
+### Bug Fixes
+
+* **ranking:** 提升提示组件的层级防止被图标组件挡住 ([441fe6b](https://github.com/XYShaoKang/refined-leetcode/commit/441fe6b2406da9cc361be37d174f6c418c0b2e97))
+* 修复 findElement 返回类型 ([6a2fdfd](https://github.com/XYShaoKang/refined-leetcode/commit/6a2fdfd99ce71f520330657af3675a20137d11c6))
+* 修复域名错误 ([6fb3e7f](https://github.com/XYShaoKang/refined-leetcode/commit/6fb3e7facb6d560ba947fe6ec98b3626bf1589ed))
+
 ## [0.5.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.5.0...v0.5.1) (2022-05-06)
 
 
