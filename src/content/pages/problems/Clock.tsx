@@ -118,11 +118,13 @@ const Clock: FC = () => {
 
   useEffect(() => {
     log.info('加载 Clock 组件')
-    let cancel: (() => void) | null = null
+    const cancel: { current: (() => void) | null | 'unmount' } = {
+      current: null,
+    }
 
     void (async function () {
       const submitBtn = await findElement('.submit__-6u9')
-
+      console.log('submitBtn: ', submitBtn)
       const handleClick: EventListenerOrEventListenerObject = async () => {
         log.debug('提交开始')
         const submissionId = await getSubmissionId()
@@ -149,16 +151,19 @@ const Clock: FC = () => {
           setHidden(false)
         }
       }
+      if (cancel.current === 'unmount') return // 当前组件已经被卸载,就不需要挂载事件
 
       submitBtn.addEventListener('click', handleClick)
-      cancel = () => {
-        submitBtn.removeEventListener('click', handleClick)
-      }
+      cancel.current = () => submitBtn.removeEventListener('click', handleClick)
     })()
 
     return () => {
       logger.info('卸载 Clock 组件')
-      if (cancel) cancel()
+      if (typeof cancel.current === 'function') {
+        cancel.current()
+      } else {
+        cancel.current = 'unmount'
+      }
     }
   }, [])
 
