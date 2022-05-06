@@ -124,8 +124,9 @@ const Clock: FC = () => {
 
     void (async function () {
       const submitBtn = await findElement('.submit__-6u9')
-      console.log('submitBtn: ', submitBtn)
-      const handleClick: EventListenerOrEventListenerObject = async () => {
+      const editEl = await findElement('.euyvu2f0')
+
+      const handleClick = async () => {
         log.debug('提交开始')
         const submissionId = await getSubmissionId()
         log.debug('获取 submissionId %s', submissionId)
@@ -151,10 +152,57 @@ const Clock: FC = () => {
           setHidden(false)
         }
       }
+
+      const isMac = () => {
+        return (
+          navigator.platform.indexOf('Mac') === 0 ||
+          navigator.platform === 'iPhone'
+        )
+      }
+      const isSubmit = (e: KeyboardEvent) => {
+        // 检查全局提交快捷键是否开启
+        const globalDisabledSubmitCode = localStorage.getItem(
+          'global_disabled_submit_code'
+        )
+
+        if (globalDisabledSubmitCode === 'false') return false
+
+        let mate = false
+
+        // 检查是否按下对应的快捷键,如果是 Mac 电脑为 mate 键,Window 或 Linux 为 Ctrl 键
+        if (isMac()) {
+          if (e.metaKey === true && e.ctrlKey === false) mate = true
+        } else {
+          if (e.ctrlKey === true) mate = true
+        }
+
+        if (
+          mate &&
+          e.code === 'Enter' &&
+          e.altKey === false &&
+          e.shiftKey === false
+        ) {
+          return true
+        }
+
+        return false
+      }
+      const keydownHandle = (e: KeyboardEvent) => {
+        if (isSubmit(e)) {
+          log.debug('使用快捷键提交')
+          handleClick()
+        }
+      }
+
       if (cancel.current === 'unmount') return // 当前组件已经被卸载,就不需要挂载事件
 
       submitBtn.addEventListener('click', handleClick)
-      cancel.current = () => submitBtn.removeEventListener('click', handleClick)
+      editEl.addEventListener('keydown', keydownHandle, { capture: true })
+
+      cancel.current = () => {
+        submitBtn.removeEventListener('click', handleClick)
+        editEl.removeEventListener('keydown', keydownHandle, { capture: true })
+      }
     })()
 
     return () => {
