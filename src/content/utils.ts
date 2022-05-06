@@ -62,8 +62,8 @@ async function findAllElement(
 async function findElement(
   selectors: string,
   timeout = 10000
-): Promise<Element> {
-  const element = await findBase<Element>(
+): Promise<HTMLElement> {
+  const element = await findBase<HTMLElement>(
     () => document.querySelector(selectors),
     el => !!el,
     timeout
