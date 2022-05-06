@@ -21,6 +21,7 @@ const StyleSpan = styled.span`
 const ToolTip = styled.div`
   position: absolute;
   right: -20px;
+  z-index: 10;
 
   &::before {
     box-sizing: content-box;
