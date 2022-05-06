@@ -1,3 +1,15 @@
+## [0.5.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.5.0...v0.5.1) (2022-05-06)
+
+
+### Bug Fixes
+
+* 完善组件卸载时取消事件注册的逻辑 ([427aca0](https://github.com/XYShaoKang/refined-leetcode/commit/427aca0ad3a2680e99351262e763b60b73b6f30c))
+
+
+### Performance Improvements
+
+* 添加对快捷键提交代码的支持 ([ea9a7d8](https://github.com/XYShaoKang/refined-leetcode/commit/ea9a7d8cd4f8161db8e1cad6367e996ead65f139))
+
 # [0.5.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.4.3...v0.5.0) (2022-04-30)
 
 
