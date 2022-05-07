@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
+import { logger } from '../../../utils'
 
-function formatTime(time: number) {
+const log = logger.child({ prefix: 'useTimer' })
+
+type Time = [house: number, minute: number, second: number]
+
+function formatTime(time: number): Time {
   time = time / 1000
   const house = Math.floor(time / 3600)
   const minute = Math.floor((time / 60) % 60)
@@ -9,7 +14,7 @@ function formatTime(time: number) {
 }
 
 type UseTimeReturn = {
-  time: number[]
+  time: Time
   isDone: boolean
   done: (fn?: (time: number[]) => void) => void
   restart: () => void
@@ -41,17 +46,17 @@ const useTimer = (): UseTimeReturn => {
   }, [isDone])
 
   const restart = () => {
+    log.debug('重新开始计时')
     setIsDone(false)
     setStart(new Date())
     setTime(formatTime(0))
   }
 
-  const done = (fn?: (time: number[]) => void) => {
+  const done = (fn?: (time: Time) => void) => {
+    log.debug('结束计时')
     setIsDone(true)
 
-    if (fn) {
-      fn(cacheTime.current)
-    }
+    if (fn) fn(cacheTime.current)
   }
 
   return { time, isDone, done, restart }
