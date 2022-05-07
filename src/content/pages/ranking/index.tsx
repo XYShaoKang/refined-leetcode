@@ -1,5 +1,5 @@
 import { StrictMode } from 'react'
-import ReactDom, { render } from 'react-dom'
+import ReactDOM, { render } from 'react-dom'
 import { Provider } from 'react-redux'
 
 import { findAllElement, findElement } from '../../utils'
@@ -117,7 +117,7 @@ window.addEventListener('urlchange', async function () {
    * url 变化,可能会有四种情况:
    * 1. 从不匹配的地址跳转到匹配的地址
    * 2. 从匹配的地址跳转到不匹配的地址
-   * 3. 从匹配的地址跳转到不匹配的地址
+   * 3. 从匹配的地址跳转到匹配的地址
    * 4. 从不匹配的地址跳转到不匹配的地址
    *
    * 其中需要做处理的是
@@ -130,7 +130,7 @@ window.addEventListener('urlchange', async function () {
     // 从排名页跳转到比赛主页
 
     // 卸载已加载的 node
-    predictorNodes.forEach(node => ReactDom.unmountComponentAtNode(node))
+    predictorNodes.forEach(node => ReactDOM.unmountComponentAtNode(node))
     // 清空记录的以加载 node
     predictorNodes = []
     // 重置文件图标状态
