@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { logger } from '../../../utils'
 
 const log = logger.child({ prefix: 'useTimer' })
@@ -16,7 +16,7 @@ function formatTime(time: number): Time {
 type UseTimeReturn = {
   time: Time
   isDone: boolean
-  done: (fn?: (time: number[]) => void) => void
+  done: (time: Time) => void
   restart: () => void
 }
 
@@ -28,8 +28,7 @@ const useTimer = (): UseTimeReturn => {
   const [start, setStart] = useState(new Date())
   const [isDone, setIsDone] = useState(false)
   const [time, setTime] = useState(formatTime(0))
-  const cacheTime = useRef(time)
-  cacheTime.current = time
+
   useEffect(() => {
     let timer: ReturnType<typeof setInterval>
     if (!isDone) {
@@ -52,11 +51,10 @@ const useTimer = (): UseTimeReturn => {
     setTime(formatTime(0))
   }
 
-  const done = (fn?: (time: Time) => void) => {
+  const done = (time: Time) => {
     log.debug('结束计时')
     setIsDone(true)
-
-    if (fn) fn(cacheTime.current)
+    setTime(time)
   }
 
   return { time, isDone, done, restart }

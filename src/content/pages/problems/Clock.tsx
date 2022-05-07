@@ -6,6 +6,7 @@ import { sleep, submissionOnMarkChange } from './utils'
 import { findElement } from '../../utils'
 import { useTimer } from './useTimer'
 import { logger } from '../../../utils'
+import { useEvent } from '../hooks'
 
 const log = logger.child({ prefix: 'Clock' })
 
@@ -36,6 +37,40 @@ const Button = styled.button<{ primary?: boolean }>`
   cursor: pointer;
 `
 
+const isMac = () => {
+  return (
+    navigator.platform.indexOf('Mac') === 0 || navigator.platform === 'iPhone'
+  )
+}
+const isSubmit = (e: KeyboardEvent) => {
+  // 检查全局提交快捷键是否开启
+  const globalDisabledSubmitCode = localStorage.getItem(
+    'global_disabled_submit_code'
+  )
+
+  if (globalDisabledSubmitCode === 'false') return false
+
+  let mate = false
+
+  // 检查是否按下对应的快捷键,如果是 Mac 电脑为 mate 键,Window 或 Linux 为 Ctrl 键
+  if (isMac()) {
+    if (e.metaKey === true && e.ctrlKey === false) mate = true
+  } else {
+    if (e.ctrlKey === true) mate = true
+  }
+
+  if (
+    mate &&
+    e.code === 'Enter' &&
+    e.altKey === false &&
+    e.shiftKey === false
+  ) {
+    return true
+  }
+
+  return false
+}
+
 const Clock: FC = () => {
   const pathnames = location.pathname.split('/').filter(Boolean)
   const slug = pathnames[1]
@@ -49,6 +84,11 @@ const Clock: FC = () => {
     setHidden(hidden => !hidden)
   }
 
+  /**
+   * 获取 SubmissionId
+   * 从提交请求的返回值中获取 SubmissionId
+   * @returns 返回 SubmissionId
+   */
   async function getSubmissionId(): Promise<string> {
     return new Promise(function (resolve, reject) {
       const originalOpen = XMLHttpRequest.prototype.open
@@ -100,19 +140,74 @@ const Clock: FC = () => {
     })
   }
 
+  /**
+   * 检查提交是否通过
+   * @param submissionId 提交的 Id
+   * @param maxRetry 最多重试次数
+   * @param count 当前已经重试的次数
+   * @returns
+   */
   async function check(
     submissionId: string,
-    retry = 1
+    maxRetry = 10,
+    count = 1
   ): Promise<SuccessCheckReturnType> {
-    if (retry > 10) throw new Error('获取提交状态结果超时')
+    if (count > maxRetry) throw new Error('获取提交状态结果超时')
 
-    await sleep(1000 + retry * 500)
+    await sleep(1000 + count * 500)
     const state = await leetCodeApi.check(submissionId)
 
     if (state.state === 'SUCCESS') {
       return state
     } else {
-      return await check(submissionId, retry + 1)
+      return await check(submissionId, count + 1)
+    }
+  }
+
+  /**
+   * 提交成功时的处理函数
+   */
+  const submitSuccess = useEvent(async submissionId => {
+    log.debug('提交成功')
+    // 提交成功
+    done(time)
+
+    setHidden(false)
+
+    await leetCodeApi.submissionCreateOrUpdateSubmissionComment(
+      submissionId,
+      'RED',
+      time.map(t => t.toString().padStart(2, '0')).join(' : ')
+    )
+
+    log.debug('已添加备注')
+    // 对当前提交添加备注
+    await submissionOnMarkChange(submissionId)
+    log.debug('刷新备注')
+  })
+
+  /**
+   * 提交事件
+   */
+  const handleClick = useEvent(async () => {
+    log.debug('提交开始')
+    const submissionId = await getSubmissionId()
+    log.debug('获取 submissionId %s', submissionId)
+    const state = await check(submissionId)
+    log.debug('获取提交状态 %s', state.status_msg)
+
+    if (state.status_msg === 'Accepted') {
+      submitSuccess(submissionId)
+    }
+  })
+
+  /**
+   * 使用快捷键提交的事件
+   */
+  const handleKeydown = (e: KeyboardEvent) => {
+    if (isSubmit(e)) {
+      log.debug('使用快捷键提交')
+      handleClick()
     }
   }
 
@@ -126,82 +221,15 @@ const Clock: FC = () => {
       const submitBtn = await findElement('.submit__-6u9')
       const editEl = await findElement('.euyvu2f0')
 
-      const handleClick = async () => {
-        log.debug('提交开始')
-        const submissionId = await getSubmissionId()
-        log.debug('获取 submissionId %s', submissionId)
-        const state = await check(submissionId)
-        log.debug('获取提交状态 %s', state.status_msg)
-
-        if (state.status_msg === 'Accepted') {
-          // 提交成功
-          done(async time => {
-            // 对当前提交添加备注
-            await leetCodeApi.submissionCreateOrUpdateSubmissionComment(
-              submissionId,
-              'RED',
-              time.map(t => t.toString().padStart(2, '0')).join(' : ')
-            )
-
-            log.debug('已添加备注')
-
-            submissionOnMarkChange(submissionId)
-            log.debug('刷新备注')
-          })
-
-          setHidden(false)
-        }
-      }
-
-      const isMac = () => {
-        return (
-          navigator.platform.indexOf('Mac') === 0 ||
-          navigator.platform === 'iPhone'
-        )
-      }
-      const isSubmit = (e: KeyboardEvent) => {
-        // 检查全局提交快捷键是否开启
-        const globalDisabledSubmitCode = localStorage.getItem(
-          'global_disabled_submit_code'
-        )
-
-        if (globalDisabledSubmitCode === 'false') return false
-
-        let mate = false
-
-        // 检查是否按下对应的快捷键,如果是 Mac 电脑为 mate 键,Window 或 Linux 为 Ctrl 键
-        if (isMac()) {
-          if (e.metaKey === true && e.ctrlKey === false) mate = true
-        } else {
-          if (e.ctrlKey === true) mate = true
-        }
-
-        if (
-          mate &&
-          e.code === 'Enter' &&
-          e.altKey === false &&
-          e.shiftKey === false
-        ) {
-          return true
-        }
-
-        return false
-      }
-      const keydownHandle = (e: KeyboardEvent) => {
-        if (isSubmit(e)) {
-          log.debug('使用快捷键提交')
-          handleClick()
-        }
-      }
-
-      if (cancel.current === 'unmount') return // 当前组件已经被卸载,就不需要挂载事件
+      // 当前组件已经被卸载,就不需要挂载事件
+      if (cancel.current === 'unmount') return
 
       submitBtn.addEventListener('click', handleClick)
-      editEl.addEventListener('keydown', keydownHandle, { capture: true })
+      editEl.addEventListener('keydown', handleKeydown, { capture: true })
 
       cancel.current = () => {
         submitBtn.removeEventListener('click', handleClick)
-        editEl.removeEventListener('keydown', keydownHandle, { capture: true })
+        editEl.removeEventListener('keydown', handleKeydown, { capture: true })
       }
     })()
 
