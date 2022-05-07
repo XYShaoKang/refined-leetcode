@@ -9,7 +9,7 @@ const ChromeExtensionsDevHMRPlugin = require('./ChromeExtensionsDevHMRPlugin')
 /**
  * @type {import('webpack').Configuration}
  */
-const development = {
+const development = env => ({
   output: {
     publicPath: 'http://localhost:9100/',
   },
@@ -56,9 +56,14 @@ const development = {
     new CopyPlugin({
       patterns: [{ from: 'public/manifest-dev.json', to: 'manifest.json' }],
     }),
+    new webpack.DefinePlugin({
+      REFINED_LEETCODE_LOG_LEVEL: env.LOG_LEVEL
+        ? JSON.stringify(env.LOG_LEVEL)
+        : JSON.stringify('debug'),
+    }),
   ],
   devtool: false,
   mode: 'development',
-}
+})
 
 module.exports = { development }

@@ -6,3 +6,5 @@ interface HTMLElement {
     _internalRoot?: FiberRoot
   }
 }
+
+declare let REFINED_LEETCODE_LOG_LEVEL: string

@@ -23,6 +23,24 @@ const colored: { [key: number | string]: string } = {
   background: '#202124',
 }
 
+const levelMap = new Map([
+  ['trace', 10],
+  ['debug', 20],
+  ['info', 30],
+  ['warn', 40],
+  ['error', 50],
+  ['silent', Infinity],
+])
+
+// REFINED_LEETCODE_LOG_LEVEL 的值由 webpack.DefinePlugin 提供
+const logLevel =
+  levelMap.get(
+    (typeof REFINED_LEETCODE_LOG_LEVEL === undefined
+      ? 'silent'
+      : REFINED_LEETCODE_LOG_LEVEL
+    ).toLocaleLowerCase()
+  ) ?? Infinity
+
 const logger = pino({
   level: 'debug',
   browser: {
@@ -32,6 +50,8 @@ const logger = pino({
       msg: string
       prefix: string | undefined
     }) => {
+      if (o.level < logLevel) return
+
       const type = MSG_TYPE[o.level] ?? 'unknown'
 
       const time = `[${format(
