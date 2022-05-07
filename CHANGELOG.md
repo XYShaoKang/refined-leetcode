@@ -1,3 +1,10 @@
+## [0.5.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.5.2...v0.5.3) (2022-05-07)
+
+
+### Bug Fixes
+
+* **problems:** 修复页面内跳转 ([e232a9b](https://github.com/XYShaoKang/refined-leetcode/commit/e232a9beb807a2df26d4ef3ef60c08574710c183))
+
 ## [0.5.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.5.1...v0.5.2) (2022-05-06)
 
 
