@@ -4,12 +4,12 @@ const { common } = require('./config/common.js')
 const { development } = require('./config/development.js')
 const { production } = require('./config/production.js')
 
-module.exports = (_env, _args) => {
+module.exports = (env, _args) => {
   switch (process.env.NODE_ENV) {
     case 'development':
-      return merge(common, development)
+      return merge(common, development(env))
     case 'production':
-      return merge(common, production)
+      return merge(common, production(env))
     default:
       throw new Error('No matching configuration was found!')
   }
