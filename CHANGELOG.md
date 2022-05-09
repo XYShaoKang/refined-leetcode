@@ -1,3 +1,10 @@
+## [0.5.4](https://github.com/XYShaoKang/refined-leetcode/compare/v0.5.3...v0.5.4) (2022-05-09)
+
+
+### Bug Fixes
+
+* 修复按钮卸载逻辑 ([4e84f11](https://github.com/XYShaoKang/refined-leetcode/commit/4e84f1160862164c33794b2eb1f6846a6e448072))
+
 ## [0.5.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.5.2...v0.5.3) (2022-05-07)
 
 
