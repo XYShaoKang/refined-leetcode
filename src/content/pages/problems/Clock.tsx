@@ -218,18 +218,61 @@ const Clock: FC = () => {
     }
 
     void (async function () {
-      const submitBtn = await findElement('.submit__-6u9')
+      // 当前组件已经被卸载,就不需要挂载事件
+      let submitBtn = await findElement('.submit__-6u9')
       const editEl = await findElement('.euyvu2f0')
 
-      // 当前组件已经被卸载,就不需要挂载事件
+      const mount = async () => {
+        submitBtn = await findElement('.submit__-6u9')
+        if (cancel.current === 'unmount') return
+        log.debug('挂载按钮')
+
+        submitBtn.addEventListener('click', handleClick)
+      }
+
+      const unmount = async () => {
+        log.debug('卸载按钮')
+        submitBtn.removeEventListener('click', handleClick)
+      }
+
+      const observer = new MutationObserver(function (
+        mutationsList,
+        _observer
+      ) {
+        let isRemove = false,
+          isAdd = false
+        const check = (nodes: NodeList) =>
+          Array.from(nodes).some(node =>
+            (node as HTMLElement).classList.contains('submit__-6u9')
+          )
+
+        for (const mutation of mutationsList) {
+          if (mutation.type === 'childList') {
+            if (check(mutation.removedNodes)) isRemove = true
+            if (check(mutation.addedNodes)) isAdd = true
+          }
+        }
+        if (isRemove) {
+          // 删除提交按钮
+          console.log('删除提交按钮')
+          unmount()
+        } else if (isAdd) {
+          // 添加提交按钮
+          console.log('添加提交按钮')
+          mount()
+        }
+      })
+
       if (cancel.current === 'unmount') return
 
-      submitBtn.addEventListener('click', handleClick)
+      mount()
       editEl.addEventListener('keydown', handleKeydown, { capture: true })
+      observer.observe(submitBtn.parentElement!, { childList: true })
 
       cancel.current = () => {
-        submitBtn.removeEventListener('click', handleClick)
+        unmount()
         editEl.removeEventListener('keydown', handleKeydown, { capture: true })
+        observer.disconnect()
       }
     })()
 
