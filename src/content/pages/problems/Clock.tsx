@@ -2,7 +2,12 @@ import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components/macro'
 
 import { LeetCodeApi, SuccessCheckReturnType } from './leetcode-api'
-import { sleep, submissionOnMarkChange } from './utils'
+import {
+  sleep,
+  submissionOnMarkChange,
+  checkIfSubmitKey,
+  checkIfGlobalSubmitIsDisabled,
+} from './utils'
 import { findElement } from '../../utils'
 import { useTimer } from './useTimer'
 import { logger } from '../../../utils'
@@ -36,40 +41,6 @@ const Button = styled.button<{ primary?: boolean }>`
   text-align: center;
   cursor: pointer;
 `
-
-const isMac = () => {
-  return (
-    navigator.platform.indexOf('Mac') === 0 || navigator.platform === 'iPhone'
-  )
-}
-const isSubmit = (e: KeyboardEvent) => {
-  // 检查全局提交快捷键是否开启
-  const globalDisabledSubmitCode = localStorage.getItem(
-    'global_disabled_submit_code'
-  )
-
-  if (globalDisabledSubmitCode === 'false') return false
-
-  let mate = false
-
-  // 检查是否按下对应的快捷键,如果是 Mac 电脑为 mate 键,Window 或 Linux 为 Ctrl 键
-  if (isMac()) {
-    if (e.metaKey === true && e.ctrlKey === false) mate = true
-  } else {
-    if (e.ctrlKey === true) mate = true
-  }
-
-  if (
-    mate &&
-    e.code === 'Enter' &&
-    e.altKey === false &&
-    e.shiftKey === false
-  ) {
-    return true
-  }
-
-  return false
-}
 
 const Clock: FC = () => {
   const pathnames = location.pathname.split('/').filter(Boolean)
@@ -205,7 +176,7 @@ const Clock: FC = () => {
    * 使用快捷键提交的事件
    */
   const handleKeydown = (e: KeyboardEvent) => {
-    if (isSubmit(e)) {
+    if (checkIfSubmitKey(e) && !checkIfGlobalSubmitIsDisabled()) {
       log.debug('使用快捷键提交')
       handleClick()
     }

@@ -1,4 +1,7 @@
 import { findElement } from '../../utils'
+import { logger } from '../../../utils'
+
+const log = logger.child({ prefix: 'Clock' })
 
 /**
  * 延时函数
@@ -36,7 +39,7 @@ function graphqlApi(
     }
 
     if (res.status === 429) {
-      console.log(`超出接口限制,休息一下,等待第${retry}次重试...`)
+      log.debug(`超出接口限制,休息一下,等待第${retry}次重试...`)
       if (retry > RETRY_COUNT) {
         throw new Error(
           `已重试 ${RETRY_COUNT} 次,仍然无法获取,可能力扣君生气了,晚点在试试吧...`
@@ -91,7 +94,7 @@ function baseApi(
     }
 
     if (res.status === 429) {
-      console.log(`超出接口限制,休息一下,等待第${retry}次重试...`)
+      log.debug(`超出接口限制,休息一下,等待第${retry}次重试...`)
       if (retry > RETRY_COUNT) {
         throw new Error(
           `已重试 ${RETRY_COUNT} 次,仍然无法获取,可能力扣君生气了,晚点在试试吧...`
@@ -214,7 +217,7 @@ async function submissionOnMarkChange(submissionId: string): Promise<void> {
   const root = getFiber(submissionRowEl)
 
   if (!root) {
-    console.log(`refined-leetcode: 未找到提交记录容器的 root`)
+    log.error(`refined-leetcode: 未找到提交记录容器的 root`)
     return
   }
 
@@ -234,9 +237,43 @@ async function submissionOnMarkChange(submissionId: string): Promise<void> {
   if (onMarkChange) {
     onMarkChange(submissionId)
   } else {
-    console.log(`refined-leetcode: 未找到 onMarkChange`)
+    log.error(`refined-leetcode: 未找到 onMarkChange`)
   }
 }
+
+const IS_MAC =
+  navigator.platform.indexOf('Mac') === 0 || navigator.platform === 'iPhone'
+
+/**
+ * 检查是否按了提交快捷键
+ */
+const checkIfSubmitKey = (e: KeyboardEvent): boolean => {
+  let mate = false
+
+  // 检查是否按下对应的快捷键,如果是 Mac 电脑为 Command 键,Window 或 Linux 为 Ctrl 键
+  if (IS_MAC) {
+    if (e.metaKey === true && e.ctrlKey === false) mate = true
+  } else {
+    if (e.ctrlKey === true && e.metaKey === false) mate = true
+  }
+
+  if (
+    mate &&
+    e.code === 'Enter' &&
+    e.altKey === false &&
+    e.shiftKey === false
+  ) {
+    return true
+  }
+
+  return false
+}
+
+/**
+ * 检查全局提交快捷键是否被禁用
+ */
+const checkIfGlobalSubmitIsDisabled = (): boolean =>
+  localStorage.getItem('global_disabled_submit_code') === 'false'
 
 export {
   sleep,
@@ -244,4 +281,6 @@ export {
   baseApi,
   globalGetStatusText,
   submissionOnMarkChange,
+  checkIfSubmitKey,
+  checkIfGlobalSubmitIsDisabled,
 }
