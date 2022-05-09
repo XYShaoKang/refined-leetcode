@@ -12,7 +12,7 @@ const production = env => ({
     new webpack.DefinePlugin({
       REFINED_LEETCODE_LOG_LEVEL: env.LOG_LEVEL
         ? JSON.stringify(env.LOG_LEVEL)
-        : JSON.stringify('silent'),
+        : JSON.stringify('error'),
     }),
   ],
   devtool: 'source-map',
