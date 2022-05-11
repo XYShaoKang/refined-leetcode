@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import styled from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 
 import { LeetCodeApi, SuccessCheckReturnType } from './leetcode-api'
 import {
@@ -11,7 +11,7 @@ import {
 import { findElement } from '../../utils'
 import { useTimer } from './useTimer'
 import { logger } from '../../../utils'
-import { useEvent } from '../hooks'
+import { useEvent, useHover } from '../hooks'
 
 const log = logger.child({ prefix: 'Clock' })
 
@@ -30,16 +30,33 @@ const Content = styled.div`
   padding: 6px 15px;
 `
 
-const Button = styled.button<{ primary?: boolean }>`
+const Button = styled.button<{
+  primary?: boolean
+  width: number
+  center: boolean
+}>`
   background: transparent;
-  border-radius: 0 3px 3px 0;
-  border: 1px solid palevioletred;
+
   color: palevioletred;
-  margin-right: 15px;
-  padding: 6px 15px;
-  width: 100px;
   text-align: center;
   cursor: pointer;
+  width: ${props => props.width}px;
+  ${({ center }) =>
+    center
+      ? css`
+          border: 1px solid palevioletred;
+          border-right: 0;
+          border-radius: 0;
+          margin-right: 0;
+          padding: 0;
+          line-height: 16px;
+        `
+      : css`
+          border: 1px solid palevioletred;
+          border-radius: 0 3px 3px 0;
+          margin-right: 15px;
+          padding: 6px 15px;
+        `}
 `
 
 const Clock: FC = () => {
@@ -50,6 +67,8 @@ const Clock: FC = () => {
   const [hidden, setHidden] = useState(false)
 
   const { time, isDone, done, restart } = useTimer()
+
+  const [hoverRef, hover] = useHover<HTMLDivElement>()
 
   const handleHidden = () => {
     setHidden(hidden => !hidden)
@@ -267,16 +286,29 @@ const Clock: FC = () => {
         </Content>
       )}
       {!isDone ? (
-        <Button
-          onClick={handleHidden}
-          style={
-            hidden ? { borderTopLeftRadius: 3, borderBottomLeftRadius: 3 } : {}
-          }
-        >
-          {hidden ? '显示计时' : '隐藏'}
-        </Button>
+        <div ref={hoverRef}>
+          {hover && (
+            <Button onClick={restart} center={true} width={20}>
+              重置
+            </Button>
+          )}
+          <Button
+            onClick={handleHidden}
+            center={false}
+            width={hover ? 80 : 100}
+            style={
+              hidden
+                ? { borderTopLeftRadius: 3, borderBottomLeftRadius: 3 }
+                : {}
+            }
+          >
+            {hidden ? '显示计时' : '隐藏'}
+          </Button>
+        </div>
       ) : (
-        <Button onClick={restart}>重新开始</Button>
+        <Button onClick={restart} center={false} width={100}>
+          重新开始
+        </Button>
       )}
     </Container>
   )

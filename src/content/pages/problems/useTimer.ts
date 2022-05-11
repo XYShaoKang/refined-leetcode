@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { logger } from '../../../utils'
 
 const log = logger.child({ prefix: 'useTimer' })
@@ -25,7 +25,7 @@ type UseTimeReturn = {
  * @returns 返回当前累计的时间 `time`;是否已结束 `isDone`;结束当前计时函数 `done`;重新开始函数 `restart`
  */
 const useTimer = (): UseTimeReturn => {
-  const [start, setStart] = useState(new Date())
+  const start = useRef(new Date())
   const [isDone, setIsDone] = useState(false)
   const [time, setTime] = useState(formatTime(0))
 
@@ -33,7 +33,7 @@ const useTimer = (): UseTimeReturn => {
     let timer: ReturnType<typeof setInterval>
     if (!isDone) {
       timer = setInterval(async () => {
-        setTime(formatTime(new Date().valueOf() - start.valueOf()))
+        setTime(formatTime(new Date().valueOf() - start.current.valueOf()))
       }, 1000)
     }
 
@@ -47,7 +47,7 @@ const useTimer = (): UseTimeReturn => {
   const restart = () => {
     log.debug('重新开始计时')
     setIsDone(false)
-    setStart(new Date())
+    start.current = new Date()
     setTime(formatTime(0))
   }
 
