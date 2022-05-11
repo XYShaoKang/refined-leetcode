@@ -1,3 +1,10 @@
+# [0.6.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.5.4...v0.6.0) (2022-05-11)
+
+
+### Features
+
+* 在计时过程添加重置功能 ([fb73682](https://github.com/XYShaoKang/refined-leetcode/commit/fb736820e4729397c399cd4d4e3f98e0872e3e2e))
+
 ## [0.5.4](https://github.com/XYShaoKang/refined-leetcode/compare/v0.5.3...v0.5.4) (2022-05-09)
 
 
