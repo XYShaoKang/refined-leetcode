@@ -1,5 +1,7 @@
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC } from 'react'
 import styled from 'styled-components/macro'
+
+import { useHover } from '../hooks'
 
 const StyleSpan = styled.span`
   position: relative;
@@ -45,38 +47,8 @@ const Content = styled.div`
   border-radius: 4px;
 `
 
-const useHover = <T extends HTMLElement>() => {
-  const ref = useRef<T>(null)
-  const [hover, setHover] = useState(false)
-
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>
-    const handleMouseOver = (_e: MouseEvent) => {
-      setHover(true)
-
-      if (timer !== undefined) {
-        clearTimeout(timer)
-      }
-    }
-    const handleMouseOut = (_e: MouseEvent) => {
-      timer = setTimeout(() => setHover(false), 300)
-    }
-    if (ref.current) {
-      ref.current.addEventListener('mouseover', handleMouseOver)
-      ref.current.addEventListener('mouseout', handleMouseOut)
-    }
-    return () => {
-      if (ref.current) {
-        ref.current.removeEventListener('mouseover', handleMouseOver)
-        ref.current.removeEventListener('mouseout', handleMouseOut)
-      }
-    }
-  }, [])
-  return [ref, hover] as const
-}
-
 const Title: FC = () => {
-  const [ref, hover] = useHover<HTMLDivElement>()
+  const [ref, hover] = useHover<HTMLDivElement>(300)
 
   return (
     <>
