@@ -1,3 +1,10 @@
+## [0.6.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.6.0...v0.6.1) (2022-05-12)
+
+
+### Bug Fixes
+
+* 重置按钮显示错位 ([5456549](https://github.com/XYShaoKang/refined-leetcode/commit/54565491fc6c896fc2c8c452c99366db3f8da057))
+
 # [0.6.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.5.4...v0.6.0) (2022-05-11)
 
 
