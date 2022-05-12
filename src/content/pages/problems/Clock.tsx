@@ -40,19 +40,18 @@ const Button = styled.button<{
   color: palevioletred;
   text-align: center;
   cursor: pointer;
+  border: 1px solid palevioletred;
+  border-radius: 0;
   width: ${props => props.width}px;
   ${({ center }) =>
     center
       ? css`
-          border: 1px solid palevioletred;
           border-right: 0;
-          border-radius: 0;
           margin-right: 0;
           padding: 0;
           line-height: 16px;
         `
       : css`
-          border: 1px solid palevioletred;
           border-radius: 0 3px 3px 0;
           margin-right: 15px;
           padding: 6px 15px;
@@ -286,7 +285,7 @@ const Clock: FC = () => {
         </Content>
       )}
       {!isDone ? (
-        <div ref={hoverRef}>
+        <div ref={hoverRef} style={{ display: 'flex' }}>
           {hover && (
             <Button onClick={restart} center={true} width={20}>
               重置
