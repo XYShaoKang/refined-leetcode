@@ -1,3 +1,10 @@
+## [0.6.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.6.1...v0.6.2) (2022-05-13)
+
+
+### Bug Fixes
+
+* **useHook:** 处理当 ref 发生变化的逻辑 ([7114d13](https://github.com/XYShaoKang/refined-leetcode/commit/7114d13e3fb401ac4f1bc1380975224cbcbfd515))
+
 ## [0.6.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.6.0...v0.6.1) (2022-05-12)
 
 
