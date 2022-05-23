@@ -1,3 +1,10 @@
+## [0.6.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.6.2...v0.6.3) (2022-05-23)
+
+
+### Bug Fixes
+
+* **background:** 跳转预测 API 顺序 ([ddb6774](https://github.com/XYShaoKang/refined-leetcode/commit/ddb677411e6915547891a8c545e9d7397bac8f16))
+
 ## [0.6.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.6.1...v0.6.2) (2022-05-13)
 
 
