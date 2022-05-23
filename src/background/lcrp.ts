@@ -4,8 +4,8 @@ import { getContest, fileIconData, getMyRanking, MyRankingType } from './utils'
 
 // @see: https://github.com/SysSn13/leetcode-rating-predictor/blob/4a7f4057bd5bf94727723b0bc02d781be573a3eb/chrome-extension/background.js#L26
 const LCRP_API = [
-  'https://leetcode-rating-predictor.herokuapp.com/api/v1/predictions',
   'https://leetcode-predictor.herokuapp.com/api/v1/predictions',
+  'https://leetcode-rating-predictor.herokuapp.com/api/v1/predictions',
 ]
 let API_INDEX = 0
 const RETRY_COUNT = 5
