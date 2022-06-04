@@ -1,3 +1,10 @@
+## [0.6.4](https://github.com/XYShaoKang/refined-leetcode/compare/v0.6.3...v0.6.4) (2022-06-04)
+
+
+### Bug Fixes
+
+* 将获取图标数据和预测数据的逻辑解耦 ([#5](https://github.com/XYShaoKang/refined-leetcode/issues/5)) ([051462a](https://github.com/XYShaoKang/refined-leetcode/commit/051462a1369afb956e72e82e2f9dcc0e6abce9c5))
+
 ## [0.6.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.6.2...v0.6.3) (2022-05-23)
 
 
