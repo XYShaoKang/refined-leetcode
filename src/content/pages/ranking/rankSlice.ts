@@ -1,17 +1,26 @@
 import { createApi, BaseQueryFn } from '@reduxjs/toolkit/query/react'
 import { getExtensionId } from '../../utils'
 
+export type ParamType = {
+  contestId: string
+  page: number
+  username?: string
+  region: 'local' | 'global'
+}
+
 type GetPredictionMessage =
   | {
       type: 'get-prediction'
       contestId: string
       page: number
+      username?: string
       region: 'local' | 'global'
     }
   | {
-      type: 'get-prediction'
+      type: 'get-contest'
       contestId: string
-      usernames: string[]
+      page: number
+      username?: string
       region: 'local' | 'global'
     }
 
@@ -32,7 +41,7 @@ export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: customBaseQuery(),
   endpoints: builder => ({
-    getPrediction: builder.query({
+    getPrediction: builder.query<any, ParamType>({
       query: params => ({
         message: {
           type: 'get-prediction',
@@ -40,7 +49,15 @@ export const apiSlice = createApi({
         },
       }),
     }),
+    getContest: builder.query<any, ParamType>({
+      query: params => ({
+        message: {
+          type: 'get-contest',
+          ...params,
+        },
+      }),
+    }),
   }),
 })
 
-export const { useGetPredictionQuery } = apiSlice
+export const { useGetPredictionQuery, useGetContestQuery } = apiSlice

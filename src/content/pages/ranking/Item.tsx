@@ -1,13 +1,13 @@
 import { FC, useEffect, useState } from 'react'
 
-import { useGetPredictionQuery } from './rankSlice'
+import { ParamType, useGetPredictionQuery } from './rankSlice'
 
 type ItmeType = {
   row: number
   hasMyRank: boolean
 }
 
-function getParam() {
+function getParam(): ParamType {
   const [, contestId, , pageStr = '1'] = location.pathname
     .split('/')
     .filter(Boolean)
@@ -44,13 +44,6 @@ function useUrlChange() {
     }
   })
   return [param] as const
-}
-
-type ParamType = {
-  contestId: string
-  page: number
-  region: string
-  username?: string
 }
 
 const Item: FC<ItmeType> = ({ row, hasMyRank }) => {

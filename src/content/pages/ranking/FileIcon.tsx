@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components/macro'
 
-import { useGetPredictionQuery } from './rankSlice'
+import { ParamType, useGetContestQuery } from './rankSlice'
 
 type ItmeType = {
   row: number
@@ -9,7 +9,7 @@ type ItmeType = {
   hasMyRank: boolean
 }
 
-function getParam() {
+function getParam(): ParamType {
   const [, contestId, , pageStr = '1'] = location.pathname
     .split('/')
     .filter(Boolean)
@@ -67,13 +67,6 @@ const StyleSvg = styled.svg<{ size?: number }>`
   ${({ size }) => (size ? `font-size: ${size}px;` : '')}
 `
 
-type ParamType = {
-  contestId: string
-  page: number
-  region: string
-  username?: string
-}
-
 // TODO: 切换页数后,如果原先位置没有代码,会出现不加在图标的情况
 const FileIcon: FC<ItmeType> = ({ row, col, hasMyRank }) => {
   const [param] = useUrlChange()
@@ -83,9 +76,9 @@ const FileIcon: FC<ItmeType> = ({ row, col, hasMyRank }) => {
     params.username = username
   }
 
-  const { data: items } = useGetPredictionQuery(params)
-
-  const iconFile = items?.[row]?.submission?.[col]?.iconFile
+  const { data: items } = useGetContestQuery(params)
+  // console.log(items)
+  const iconFile = items?.[row]?.[col]?.iconFile
 
   if (!items || !iconFile) {
     return <DefaultIcon className="fa fa-file-code-o" />
