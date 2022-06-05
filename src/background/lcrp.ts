@@ -74,23 +74,19 @@ async function getPredictionHandle(
   sender: chrome.runtime.MessageSender,
   sendResponse: (response?: any) => void
 ) {
-  const { contestId, region } = message
-  const { submissions, total_rank } = await getContest(
-    contestId,
-    message.page,
-    region
-  )
+  const { contestId, region, page, username } = message
+
+  const { total_rank } = await getContest(contestId, page, region)
   const usernames = total_rank.map(({ username }) => username)
-  if (message.username) {
-    usernames.unshift(message.username)
-    const myRankCache = await getMyRanking(contestId)
-    submissions.unshift(myRankCache.my_submission)
+
+  if (username) {
+    usernames.unshift(username)
   }
 
   try {
     const data = await predictorApi({
       contestId,
-      handles: usernames,
+      handles: [...new Set(usernames)],
     })
 
     const itemMap = new Map(data.items.map(item => [item._id, item]))
