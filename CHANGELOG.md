@@ -1,3 +1,15 @@
+## [0.6.5](https://github.com/XYShaoKang/refined-leetcode/compare/v0.6.4...v0.6.5) (2022-06-05)
+
+
+### Bug Fixes
+
+* 修复预测数据顺序 ([f73b208](https://github.com/XYShaoKang/refined-leetcode/commit/f73b208b9d2abf654c3056d76f3b2531ddf92a34))
+
+
+### Performance Improvements
+
+* 添加超时设置 ([6799dd1](https://github.com/XYShaoKang/refined-leetcode/commit/6799dd109cbff0d54a2c00e0c4a63c29a69ac13c))
+
 ## [0.6.4](https://github.com/XYShaoKang/refined-leetcode/compare/v0.6.3...v0.6.4) (2022-06-04)
 
 
