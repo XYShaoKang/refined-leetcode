@@ -12,6 +12,7 @@ import { findElement } from '../../utils'
 import { useTimer } from './useTimer'
 import { logger } from '../../../utils'
 import { useEvent, useHover } from '../hooks'
+import { ToolTip } from '../components/ToolTip'
 
 const log = logger.child({ prefix: 'Clock' })
 
@@ -286,23 +287,27 @@ const Clock: FC = () => {
       )}
       {!isDone ? (
         <div ref={hoverRef} style={{ display: 'flex' }}>
-          {hover && (
-            <Button onClick={restart} center={true} width={20}>
-              重置
-            </Button>
+          {!hidden && hover && (
+            <ToolTip title="点击重置按钮,可重置计时">
+              <Button onClick={restart} center={true} width={20}>
+                重置
+              </Button>
+            </ToolTip>
           )}
-          <Button
-            onClick={handleHidden}
-            center={false}
-            width={hover ? 80 : 100}
-            style={
-              hidden
-                ? { borderTopLeftRadius: 3, borderBottomLeftRadius: 3 }
-                : {}
-            }
-          >
-            {hidden ? '显示计时' : '隐藏'}
-          </Button>
+          <ToolTip title={!hidden ? '点击隐藏实时计时' : '点击显示实时计时'}>
+            <Button
+              onClick={handleHidden}
+              center={false}
+              width={!hidden && hover ? 80 : 100}
+              style={
+                hidden
+                  ? { borderTopLeftRadius: 3, borderBottomLeftRadius: 3 }
+                  : {}
+              }
+            >
+              {hidden ? '显示计时' : '隐藏'}
+            </Button>
+          </ToolTip>
         </div>
       ) : (
         <Button onClick={restart} center={false} width={100}>
