@@ -26,7 +26,7 @@ async function load() {
   }
 }
 
-if (/\/problems\//.test(location.pathname)) {
+if (/^\/problems\//.test(location.pathname)) {
   load()
 }
 
