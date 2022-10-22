@@ -7,6 +7,7 @@ import {
   submissionOnMarkChange,
   checkIfSubmitKey,
   checkIfGlobalSubmitIsDisabled,
+  getRoot,
 } from './utils'
 import { findElement } from '../../utils'
 import { useTimer } from './useTimer'
@@ -27,7 +28,7 @@ const Content = styled.div`
   border-radius: 3px 0 0 3px;
   border: 1px solid palevioletred;
   border-right-width: 0;
-  margin-left: 15px;
+  /* margin-left: 15px; */
   padding: 6px 15px;
 `
 
@@ -54,12 +55,12 @@ const Button = styled.button<{
         `
       : css`
           border-radius: 0 3px 3px 0;
-          margin-right: 15px;
+          /* margin-right: 15px; */
           padding: 6px 15px;
         `}
 `
 
-const Clock: FC = () => {
+const Clock: FC<{ beta?: boolean }> = ({ beta }) => {
   const pathnames = location.pathname.split('/').filter(Boolean)
   const slug = pathnames[1]
 
@@ -74,12 +75,12 @@ const Clock: FC = () => {
     setHidden(hidden => !hidden)
   }
 
-  /**
-   * 获取 SubmissionId
+  /** 获取 SubmissionId
+   *
    * 从提交请求的返回值中获取 SubmissionId
    * @returns 返回 SubmissionId
    */
-  async function getSubmissionId(): Promise<string> {
+  async function getSubmissionIdByXML(): Promise<string> {
     return new Promise(function (resolve, reject) {
       const originalOpen = XMLHttpRequest.prototype.open
       XMLHttpRequest.prototype.open = function newOpen(
@@ -129,9 +130,52 @@ const Clock: FC = () => {
       }
     })
   }
+  /** 获取 SubmissionId
+   *
+   * 从提交请求的返回值中获取 SubmissionId
+   * @returns 返回 SubmissionId
+   */
+  async function getSubmissionIdByFetch(): Promise<{
+    submissionId: string
+    statusMsg: string
+  }> {
+    const originalFetch = window.fetch
+    const res: { submissionId: string; statusMsg: string } = {
+      submissionId: '',
+      statusMsg: '',
+    }
+    return new Promise(function (resolve) {
+      window.fetch = async function fetch(...args) {
+        const [url, request] = args
+        if (url === `/problems/${slug}/submit/` && request?.method === 'POST') {
+          // 获取 submissionId
+          const response = await originalFetch(...args)
+          const tmp = response.clone()
+          const { submission_id } = await tmp.json()
+          res.submissionId = submission_id
+          return response
+        } else if (
+          res.submissionId &&
+          url === `/submissions/detail/${res.submissionId}/check/`
+        ) {
+          // 获取当前提交的结果
+          const response = await originalFetch(...args)
+          const tmp = response.clone()
+          const { state, status_msg } = await tmp.json()
+          if (state === 'SUCCESS') {
+            res.statusMsg = status_msg
+            window.fetch = originalFetch
+            resolve(res)
+          }
+          return response
+        }
+        return originalFetch(...args)
+      }
+    })
+  }
 
-  /**
-   * 检查提交是否通过
+  /** 检查提交是否通过
+   *
    * @param submissionId 提交的 Id
    * @param maxRetry 最多重试次数
    * @param count 当前已经重试的次数
@@ -154,8 +198,7 @@ const Clock: FC = () => {
     }
   }
 
-  /**
-   * 提交成功时的处理函数
+  /** 提交成功时的处理函数
    */
   const submitSuccess = useEvent(async submissionId => {
     log.debug('提交成功')
@@ -171,34 +214,69 @@ const Clock: FC = () => {
     )
 
     log.debug('已添加备注')
-    // 对当前提交添加备注
-    await submissionOnMarkChange(submissionId)
-    log.debug('刷新备注')
-  })
-
-  /**
-   * 提交事件
-   */
-  const handleClick = useEvent(async () => {
-    log.debug('提交开始')
-    const submissionId = await getSubmissionId()
-    log.debug('获取 submissionId %s', submissionId)
-    const state = await check(submissionId)
-    log.debug('获取提交状态 %s', state.status_msg)
-
-    if (state.status_msg === 'Accepted') {
-      submitSuccess(submissionId)
+    if (!beta) {
+      // 新版 UI 会自动刷新备注,所以不需要再手动刷新了
+      // 对当前提交添加备注
+      await sleep(500)
+      await submissionOnMarkChange(submissionId)
+      log.debug('刷新备注')
     }
   })
 
-  /**
-   * 使用快捷键提交的事件
+  /** 提交事件
+   */
+  const handleClick = useEvent(async () => {
+    log.debug('提交开始')
+    if (beta) {
+      const { submissionId, statusMsg } = await getSubmissionIdByFetch()
+      if (statusMsg === 'Accepted') {
+        submitSuccess(submissionId)
+      }
+    } else {
+      const submissionId = await getSubmissionIdByXML()
+      log.debug('获取 submissionId %s', submissionId)
+      const state = await check(submissionId)
+      log.debug('获取提交状态 %s', state.status_msg)
+
+      if (state.status_msg === 'Accepted') {
+        submitSuccess(submissionId)
+      }
+    }
+  })
+
+  /** 使用快捷键提交的事件
    */
   const handleKeydown = (e: KeyboardEvent) => {
     if (checkIfSubmitKey(e) && !checkIfGlobalSubmitIsDisabled()) {
       log.debug('使用快捷键提交')
       handleClick()
     }
+  }
+
+  const getSubMitBtn = async () => {
+    let submitBtn: HTMLElement
+    if (beta) {
+      const parent = await getRoot()
+      if (parent) {
+        submitBtn = [...parent.children].slice(-1)[0] as HTMLElement
+      } else {
+        throw new Error('未找到提交按钮')
+      }
+    } else {
+      submitBtn = await findElement('.submit__-6u9')
+    }
+    return submitBtn
+  }
+
+  const getEditEl = async () => {
+    let editEl: HTMLElement
+
+    if (beta) {
+      editEl = await findElement('.monaco-editor')
+    } else {
+      editEl = await findElement('.euyvu2f0')
+    }
+    return editEl
   }
 
   useEffect(() => {
@@ -209,11 +287,11 @@ const Clock: FC = () => {
 
     void (async function () {
       // 当前组件已经被卸载,就不需要挂载事件
-      let submitBtn = await findElement('.submit__-6u9')
-      const editEl = await findElement('.euyvu2f0')
+      let submitBtn: HTMLElement = await getSubMitBtn()
+      const editEl: HTMLElement = await getEditEl()
 
       const mount = async () => {
-        submitBtn = await findElement('.submit__-6u9')
+        submitBtn = await getSubMitBtn()
         if (cancel.current === 'unmount') return
         log.debug('挂载按钮')
 
@@ -232,8 +310,8 @@ const Clock: FC = () => {
         let isRemove = false,
           isAdd = false
         const check = (nodes: NodeList) =>
-          Array.from(nodes).some(node =>
-            (node as HTMLElement).classList.contains('submit__-6u9')
+          Array.from(nodes).some(
+            node => (node as HTMLElement).innerText === '提交'
           )
 
         for (const mutation of mutationsList) {
@@ -244,11 +322,11 @@ const Clock: FC = () => {
         }
         if (isRemove) {
           // 删除提交按钮
-          console.log('删除提交按钮')
+          log.debug('提交按钮被删除,卸载监听提交事件')
           unmount()
         } else if (isAdd) {
           // 添加提交按钮
-          console.log('添加提交按钮')
+          log.debug('提交按钮被添加,挂载监听提交事件')
           mount()
         }
       })

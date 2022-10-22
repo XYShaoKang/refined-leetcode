@@ -2,27 +2,48 @@ import { StrictMode } from 'react'
 import ReactDOM, { render } from 'react-dom'
 
 import Clock from './Clock'
-import { findElement } from '../../utils'
+import { getRoot, isBetaUI } from './utils'
 
 let root: HTMLDivElement | null = null
 let titleSlug = ''
 
 async function load() {
   titleSlug = location.pathname.split('/').filter(Boolean)[1]
-  const parent = await findElement('.container__Kjnx>.action__KaAP')
-  if (parent && parent instanceof HTMLElement) {
-    root = document.createElement('div')
-    parent.prepend(root)
-    root.style.display = 'flex'
-    root.style.alignItems = 'center'
-    root.style.flexShrink = '0'
+  const beta = await isBetaUI()
+  const parent = await getRoot()
+  if (beta) {
+    // 使用新版 UI
+    if (parent && parent instanceof HTMLElement) {
+      // parent.style.justifyContent = 'space-between'
+      root = document.createElement('div')
+      parent.prepend(root)
+      root.style.display = 'flex'
+      root.style.alignItems = 'center'
+      root.style.flexShrink = '0'
 
-    render(
-      <StrictMode>
-        <Clock />
-      </StrictMode>,
-      root
-    )
+      render(
+        <StrictMode>
+          <Clock beta={beta} />
+        </StrictMode>,
+        root
+      )
+    }
+  } else {
+    if (parent && parent instanceof HTMLElement) {
+      root = document.createElement('div')
+      parent.prepend(root)
+      root.style.display = 'flex'
+      root.style.alignItems = 'center'
+      root.style.flexShrink = '0'
+      root.style.marginRight = '15px'
+
+      render(
+        <StrictMode>
+          <Clock />
+        </StrictMode>,
+        root
+      )
+    }
   }
 }
 

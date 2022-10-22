@@ -274,6 +274,33 @@ const checkIfSubmitKey = (e: KeyboardEvent): boolean => {
  */
 const checkIfGlobalSubmitIsDisabled = (): boolean =>
   localStorage.getItem('global_disabled_submit_code') === 'false'
+const isBetaUI: () => Promise<boolean> = (() => {
+  let beta: boolean | null = null
+  return async function isBetaUI() {
+    if (beta !== null) return beta
+
+    const root = await Promise.race([
+      findElement('#__next'),
+      findElement('#app'),
+    ])
+    beta = root.id === '__next'
+    return beta
+  }
+})()
+
+async function getRoot(): Promise<HTMLElement> {
+  const useBetaUI = await isBetaUI()
+  if (useBetaUI) {
+    let parent = await findElement('.ssg__qd-splitter-secondary-h>div>div')
+    parent = [...parent.children].slice(-1)[0].children[0]
+      .children[0] as HTMLElement
+    parent = [...parent.children].slice(-1)[0] as HTMLElement
+    return parent
+  } else {
+    const parent = await findElement('.container__Kjnx>.action__KaAP')
+    return parent
+  }
+}
 
 export {
   sleep,
@@ -283,4 +310,6 @@ export {
   submissionOnMarkChange,
   checkIfSubmitKey,
   checkIfGlobalSubmitIsDisabled,
+  isBetaUI as isBetaUI,
+  getRoot,
 }
