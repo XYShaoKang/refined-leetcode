@@ -47,16 +47,19 @@ async function load() {
   }
 }
 
-const problemUrlRegex = /^\/problems\//
+const isProblemPage = () => {
+  const strs = location.pathname.split('/').filter(Boolean)
+  return strs[0] === 'problems'
+}
 
 void (async function main() {
-  const beta = await isBetaUI()
-  if (beta) {
-    const params = location.pathname.split('/').filter(Boolean)
-    // 新版 UI 中，如果一开始打开的就是题解页面，则当前并不存在提交栏，也就无法也不需要去挂载即使组件
-    if (params[2] === 'solutions' && params[3]) return
-  }
-  if (problemUrlRegex.test(location.pathname)) {
+  if (isProblemPage()) {
+    const beta = await isBetaUI()
+    if (beta) {
+      const params = location.pathname.split('/').filter(Boolean)
+      // 新版 UI 中，如果一开始打开的就是题解页面，则当前并不存在提交栏，也就无法也不需要去挂载即使组件
+      if (params[2] === 'solutions' && params[3]) return
+    }
     load()
   }
 })()
@@ -69,10 +72,7 @@ function unmount() {
   }
 }
 
-if (
-  problemUrlRegex.test(location.pathname) ||
-  location.pathname === '/problemset/all/'
-) {
+if (isProblemPage() || location.pathname === '/problemset/all/') {
   window.addEventListener('urlchange', async function () {
     /**
      * url 变化,可能会有四种情况:
@@ -87,7 +87,7 @@ if (
      * 而第三第四种清理可以不用处理
      */
 
-    if (!problemUrlRegex.test(location.pathname)) {
+    if (!isProblemPage()) {
       // 从答题页跳转到非答题页时,卸载计时组件
       unmount()
     } else {
