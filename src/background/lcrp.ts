@@ -44,11 +44,11 @@ async function getContestHandle(
 ) {
   const { contestId, region, page, username } = message
 
-  const { questions, submissions } = await getContest(contestId, page, region)
+  let { questions, submissions } = await getContest(contestId, page, region)
 
   if (username) {
     const myRankCache = await getMyRanking(contestId)
-    submissions.unshift(myRankCache.my_submission)
+    submissions = [myRankCache.my_submission, ...submissions]
   }
 
   const iconMap = new Map<string, string>()
@@ -66,6 +66,7 @@ async function getContestHandle(
       }
     })
   })
+
   sendResponse(res)
 }
 
@@ -77,10 +78,10 @@ async function getPredictionHandle(
   const { contestId, region, page, username } = message
 
   const { total_rank } = await getContest(contestId, page, region)
-  const usernames = total_rank.map(({ username }) => username)
+  let usernames = total_rank.map(({ username }) => username)
 
   if (username) {
-    usernames.unshift(username)
+    usernames = [username, ...usernames]
   }
 
   try {
