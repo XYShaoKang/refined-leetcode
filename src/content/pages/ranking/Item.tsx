@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from 'react'
+import { debounce } from '../../utils'
 
 import { ParamType, useGetPredictionQuery } from './rankSlice'
 
@@ -23,9 +24,9 @@ function getParam(): ParamType {
 function useUrlChange() {
   const [param, setParam] = useState(getParam())
   useEffect(() => {
-    const handle = () => {
+    const handle = debounce(() => {
       setParam(getParam())
-    }
+    }, 100)
     window.addEventListener('afterurlchange', handle)
     return () => {
       window.removeEventListener('afterurlchange', handle)
@@ -35,9 +36,9 @@ function useUrlChange() {
     const checkbox = document.querySelector(
       '.checkbox>label>input'
     ) as HTMLInputElement
-    const handle = (_e: Event) => {
+    const handle = debounce((_e: Event) => {
       setParam(getParam())
-    }
+    }, 100)
     checkbox.addEventListener('change', handle)
     return () => {
       checkbox.removeEventListener('change', handle)

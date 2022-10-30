@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components/macro'
+import { debounce } from '../../utils'
 
 import { ParamType, useGetContestQuery } from './rankSlice'
 
@@ -25,9 +26,9 @@ function getParam(): ParamType {
 function useUrlChange() {
   const [param, setParam] = useState(getParam())
   useEffect(() => {
-    const handle = () => {
+    const handle = debounce(() => {
       setParam(getParam())
-    }
+    }, 100)
     window.addEventListener('afterurlchange', handle)
     return () => {
       window.removeEventListener('afterurlchange', handle)
@@ -37,9 +38,9 @@ function useUrlChange() {
     const checkbox = document.querySelector(
       '.checkbox>label>input'
     ) as HTMLInputElement
-    const handle = (_e: Event) => {
+    const handle = debounce((_e: Event) => {
       setParam(getParam())
-    }
+    }, 100)
     checkbox.addEventListener('change', handle)
     return () => {
       checkbox.removeEventListener('change', handle)
@@ -70,6 +71,7 @@ const StyleSvg = styled.svg<{ size?: number }>`
 // TODO: 切换页数后,如果原先位置没有代码,会出现不加在图标的情况
 const FileIcon: FC<ItmeType> = ({ row, col, hasMyRank }) => {
   const [param] = useUrlChange()
+
   const params: ParamType = { ...param }
   if (hasMyRank) {
     const username = (window as any).LeetCodeData.userStatus.username
