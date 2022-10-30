@@ -25,6 +25,7 @@
 - [答题页计时](#答题页计时)
 - [竞赛排名页面显示预测](#竞赛排名页面显示预测)
 - [竞赛排名页面显示代码对应的语言图标](#竞赛排名页面显示代码对应的语言图标)
+- [首页帖子黑名单功能](#首页帖子黑名单功能)
 
 ### 答题页计时
 
@@ -58,6 +59,8 @@
 
 此功能源码 [src/content/pages/problems](./src/content/pages/problems/)
 
+> 2022-10-22 适配力扣新版 UI
+
 ### 竞赛排名页面显示预测
 
 > 2022-02-24 添加
@@ -82,6 +85,20 @@
 
 此功能源码 [src/content/pages/ranking/FileIcon.tsx](./src/content/pages/ranking/FileIcon.tsx)
 
+### 首页帖子黑名单功能
+
+通过添加黑名单用户，可以阻止该用户的帖子在首页显示。黑名单数据只存储在本地，如果有多个地方使用的话，则需要在对应的浏览器上添加黑名单。目前只支持首页的帖子中过滤掉黑名单用户发的帖子。
+
+安装扩展之后，会在首页右边栏最上方出现一栏黑名单管理的组件，点击可以对当前黑名单列表进行添加和删除等管理。
+
+![演示添加黑名单](docs/assets/block.gif)
+
+如果要将某个用户添加到黑名单中，需要输入其 slug，可以从其个人主页获取，一般会出现在昵称的下面，或者是个人主页 url 的最后一段。
+
+![slug 位置](docs/assets/slug.png)
+
+此功能源码 [src/content/pages/home](./src/content/pages/home)
+
 ## 离线安装
 
 ### 下载
@@ -98,7 +115,7 @@
 
 ## 开发
 
-首先需要安装运行环境 [Node.js](https://nodejs.org/en/download/)(>=v14),以及依赖管理工具 [PNpm](https://pnpm.io/)
+首先需要安装运行环境 [Node.js](https://nodejs.org/en/download/)(>=v14),以及依赖管理工具 [pnpm](https://pnpm.io/)
 
 > 依赖管理工具可以使用 yarn 或者 npm 替代,下面使用 pnpm 演示
 
