@@ -69,7 +69,10 @@ function unmount() {
   }
 }
 
-if (problemUrlRegex.test(location.pathname)) {
+if (
+  problemUrlRegex.test(location.pathname) ||
+  location.pathname === '/problemset/all/'
+) {
   window.addEventListener('urlchange', async function () {
     /**
      * url 变化,可能会有四种情况:
