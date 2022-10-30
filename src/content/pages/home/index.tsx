@@ -271,7 +271,7 @@ void (function main() {
     // 加载前端组件
     load()
   }
-
+  let preUrl = location.pathname
   // 学习 <-> 首页 <-> 帖子 <-> 讨论 <-> 求职 使用前端路由
   window.addEventListener('urlchange', async function () {
     /**
@@ -288,12 +288,16 @@ void (function main() {
      */
 
     if (location.pathname === '/') {
-      // 从其他页面跳转到首页
-      // 首页加载时屏蔽
-      hideBlacklist()
-      // 加载组件
-      load()
+      if (preUrl !== location.pathname) {
+        preUrl = location.pathname
+        // 从其他页面跳转到首页
+        // 首次加载时，执行屏蔽
+        hideBlacklist()
+        // 加载组件
+        load()
+      }
     } else {
+      preUrl = location.pathname
       // 跳转到其他页面
 
       // 卸载已加载的 node
