@@ -68,7 +68,6 @@ const StyleSvg = styled.svg<{ size?: number }>`
   ${({ size }) => (size ? `font-size: ${size}px;` : '')}
 `
 
-// TODO: 切换页数后,如果原先位置没有代码,会出现不加在图标的情况
 const FileIcon: FC<ItmeType> = ({ row, col, hasMyRank }) => {
   const [param] = useUrlChange()
 
@@ -79,7 +78,6 @@ const FileIcon: FC<ItmeType> = ({ row, col, hasMyRank }) => {
   }
 
   const { data: items } = useGetContestQuery(params)
-  // console.log(items)
   const iconFile = items?.[row]?.[col]?.iconFile
 
   if (!items || !iconFile) {

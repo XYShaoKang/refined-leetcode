@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import ReactDOM, { render } from 'react-dom'
 import { Provider } from 'react-redux'
 
-import { findAllElement, findElement } from '../../utils'
+import { debounce, findAllElement, findElement } from '../../utils'
 import Item from './Item'
 import Title from './Title'
 
@@ -11,13 +11,14 @@ import { initUrlChangeEvent } from '../utils'
 import FileIcon from './FileIcon'
 import { sleep } from '../problems/utils'
 
-// TODO: 拆分不同的加载逻辑
-
 // 保存已经被加载的预测组件的 root,用于跳离排名页面时,卸载组件用
 let predictorNodes: HTMLTableCellElement[] = []
 
 // 保存已被加载的组件位置,如果已被加载,在排名页内跳转时,可以不用重复去加载
-let fileIconStates: boolean[][] = Array.from({ length: 26 }, () => [])
+let fileIconStates: (HTMLSpanElement | null)[][] = Array.from(
+  { length: 26 },
+  () => []
+)
 
 // 加载预测列标题
 async function loadTitle() {
@@ -83,23 +84,31 @@ async function loadFileIcon() {
           parent
         )
 
-        fileIconStates[i][j] = true
+        fileIconStates[i][j] = iconEl
       } else {
-        fileIconStates[i][j] = false
+        if (fileIconStates[i][j]) {
+          ReactDOM.unmountComponentAtNode(fileIconStates[i][j]!)
+        }
+        fileIconStates[i][j] = null
       }
     }
   })
 }
 
 async function changeCompleted() {
-  const trs = await findAllElement('.table-responsive>table>tbody>tr')
-  const tr = trs[0].className === 'success' ? trs[1] : trs[0]
-  return new Promise(function (resolve, _reject) {
-    tr.children[1].addEventListener('DOMCharacterDataModified', resolve, {
-      capture: true,
-      once: true,
+  return new Promise<void>(function (resolve) {
+    const timer = setTimeout(resolve, 1000)
+    const handle = debounce(() => {
+      clearTimeout(timer)
+      _observer.disconnect()
+      resolve()
+    }, 100)
+    const _observer = new MutationObserver(handle)
+
+    _observer.observe(document.body, {
+      childList: true,
+      subtree: true,
     })
-    setTimeout(resolve, 5000)
   })
 }
 
@@ -134,6 +143,13 @@ window.addEventListener('urlchange', async function () {
     // 清空记录的以加载 node
     predictorNodes = []
     // 重置文件图标状态
+    fileIconStates.forEach(arr =>
+      arr.forEach(el => {
+        if (el) {
+          ReactDOM.unmountComponentAtNode(el)
+        }
+      })
+    )
     fileIconStates = Array.from({ length: 26 }, () => [])
   } else {
     // 从主页跳转到排名页
