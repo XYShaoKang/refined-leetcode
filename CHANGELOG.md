@@ -1,3 +1,29 @@
+# [0.7.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.6.5...v0.7.0) (2022-10-30)
+
+
+### Bug Fixes
+
+* **home:** 修复首页 urlchange 事件 ([d642525](https://github.com/XYShaoKang/refined-leetcode/commit/d64252556e919e5009d12ff849c1365c0c3ffdf3))
+* **problems:** 修复从题库的随机一题跳转到答题页 ([6a159f1](https://github.com/XYShaoKang/refined-leetcode/commit/6a159f1307283cc28d978ed277c7e2f47a0c698c))
+* **problems:** 修复新版UI从答题页到题解的跳转逻辑 ([0c7f808](https://github.com/XYShaoKang/refined-leetcode/commit/0c7f80803b90008a5fddf18eba53cffa23734fcf))
+* **problems:** 修复答题页的判定 ([56ce958](https://github.com/XYShaoKang/refined-leetcode/commit/56ce958188f5da0bbb0acbfefec2acd9265ccc4f))
+* **problems:** 计时组件只需要在普通答题页显示 ([f017bcb](https://github.com/XYShaoKang/refined-leetcode/commit/f017bcba202c91d7950b40fffc472518809e1311))
+* **problems:** 适配新版 UI ([e3c02ac](https://github.com/XYShaoKang/refined-leetcode/commit/e3c02ac2dbb874d80a3233906c12b695417770a8))
+* **ranking:** 完善图标的加载逻辑 ([0adc964](https://github.com/XYShaoKang/refined-leetcode/commit/0adc964398ae59fd497477bcac84c6d4fdb6af0d))
+* **ranking:** 正确捕获因网络原因导致的 fetch 请求错误 ([249126d](https://github.com/XYShaoKang/refined-leetcode/commit/249126d1019f3b8f9b3e8a27accf0701475bbdd7))
+* **ranking:** 添加请求防抖，防止在快速切换页面时，请求过多无用的数据 ([8916344](https://github.com/XYShaoKang/refined-leetcode/commit/891634420ec47956ec3ae4ebcf07186498026f42))
+* **ranking:** 错误的修改了缓存数据，导致下次获取到错误的数据 ([b8d4fd0](https://github.com/XYShaoKang/refined-leetcode/commit/b8d4fd071abffa56d3c6e3695352d144f51a8327))
+
+
+### Features
+
+* 添加首页黑名单功能 ([ba89d78](https://github.com/XYShaoKang/refined-leetcode/commit/ba89d78d1bdbfb89a9363a8012e1a0f1de3e95c1))
+
+
+### Performance Improvements
+
+* **problems:** 添加按钮功能提示 ([811b8dd](https://github.com/XYShaoKang/refined-leetcode/commit/811b8dda54832673fa4ed8a6b7136cfcf29d6017))
+
 ## [0.6.5](https://github.com/XYShaoKang/refined-leetcode/compare/v0.6.4...v0.6.5) (2022-06-05)
 
 
