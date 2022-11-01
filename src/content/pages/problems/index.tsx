@@ -3,13 +3,27 @@ import ReactDOM, { render } from 'react-dom'
 
 import Clock from './Clock'
 import Random from './Random'
-import { getRoot, isBetaUI } from './utils'
+import { getRoot, isBetaUI, IS_MAC } from './utils'
 import { findElement } from '../../utils'
 
 let root: HTMLDivElement | null = null,
   randomRoot: HTMLDivElement | null = null,
   titleSlug = ''
 
+/** 阻止按 CMD(Win 中为 Ctrl) + s 键时，弹出浏览器自带的保存页面
+ */
+const handlePreventSave = (e: KeyboardEvent) => {
+  if (e.altKey || e.shiftKey) return
+  if (IS_MAC) {
+    if (!e.ctrlKey && e.metaKey && e.code === 'KeyS') {
+      e.preventDefault()
+    }
+  } else {
+    if (!e.metaKey && e.ctrlKey && e.code === 'KeyS') {
+      e.preventDefault()
+    }
+  }
+}
 async function load() {
   titleSlug = location.pathname.split('/').filter(Boolean)[1]
   const beta = await isBetaUI()
@@ -29,6 +43,11 @@ async function load() {
         </StrictMode>,
         root
       )
+    }
+
+    const monacoEditor = await findElement('.monaco-editor')
+    if (monacoEditor) {
+      monacoEditor.addEventListener('keydown', handlePreventSave)
     }
   } else {
     if (parent && parent instanceof HTMLElement) {
@@ -80,9 +99,20 @@ async function loadRandom() {
   }
 }
 
+/** 判断是否为常规答题页
+ *
+ */
 const isProblemPage = () => {
   const strs = location.pathname.split('/').filter(Boolean)
   return strs[0] === 'problems'
+}
+
+/** 判断是否比赛答题页
+ *
+ */
+const isContestProblemPage = () => {
+  const strs = location.pathname.split('/').filter(Boolean)
+  return strs[0] === 'contest' && strs[2] === 'problems'
 }
 
 void (async function main() {
@@ -95,6 +125,12 @@ void (async function main() {
       if (params[2] === 'solutions' && params[3]) return
     }
     load()
+  }
+  if (isContestProblemPage()) {
+    const monacoEditor = await findElement('.CodeMirror')
+    if (monacoEditor) {
+      monacoEditor.addEventListener('keydown', handlePreventSave)
+    }
   }
 })()
 

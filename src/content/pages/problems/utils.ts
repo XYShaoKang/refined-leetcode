@@ -312,4 +312,5 @@ export {
   checkIfGlobalSubmitIsDisabled,
   isBetaUI as isBetaUI,
   getRoot,
+  IS_MAC,
 }
