@@ -2,10 +2,13 @@ import { StrictMode } from 'react'
 import ReactDOM, { render } from 'react-dom'
 
 import Clock from './Clock'
+import Random from './Random'
 import { getRoot, isBetaUI } from './utils'
+import { findElement } from '../../utils'
 
-let root: HTMLDivElement | null = null
-let titleSlug = ''
+let root: HTMLDivElement | null = null,
+  randomRoot: HTMLDivElement | null = null,
+  titleSlug = ''
 
 async function load() {
   titleSlug = location.pathname.split('/').filter(Boolean)[1]
@@ -14,7 +17,6 @@ async function load() {
   if (beta) {
     // 使用新版 UI
     if (parent && parent instanceof HTMLElement) {
-      // parent.style.justifyContent = 'space-between'
       root = document.createElement('div')
       parent.prepend(root)
       root.style.display = 'flex'
@@ -47,6 +49,37 @@ async function load() {
   }
 }
 
+/** 加载`随机一题`按钮
+ *
+ * 旧版答题页已经有`随机一题`的按钮，所以只需要在新版答题页中添加即可，
+ * 新版答题页中的`上一题`和`下一题`按钮是放在上方导航栏处，
+ * 所以`随机一题`按钮也跟它们一起放在导航栏处。
+ *
+ * 因为导航栏在进行题目切换的时候，并不会变化，
+ * 所以不用像计时组件那样，每次在切换题目的时候都需要卸载后重新加载，
+ * 只需要考虑跟其他非答题页之间进行切换的逻辑即可。
+ */
+async function loadRandom() {
+  const beta = await isBetaUI()
+  if (beta) {
+    if (!randomRoot) {
+      const nav = await findElement(
+        '#__next > div > div > div > nav > div > div > div:nth-child(2)'
+      )
+      randomRoot = document.createElement('div')
+      randomRoot.style.lineHeight = '0'
+      nav.append(randomRoot)
+
+      render(
+        <StrictMode>
+          <Random />
+        </StrictMode>,
+        randomRoot
+      )
+    }
+  }
+}
+
 const isProblemPage = () => {
   const strs = location.pathname.split('/').filter(Boolean)
   return strs[0] === 'problems'
@@ -56,6 +89,7 @@ void (async function main() {
   if (isProblemPage()) {
     const beta = await isBetaUI()
     if (beta) {
+      loadRandom()
       const params = location.pathname.split('/').filter(Boolean)
       // 新版 UI 中，如果一开始打开的就是题解页面，则当前并不存在提交栏，也就无法也不需要去挂载即使组件
       if (params[2] === 'solutions' && params[3]) return
@@ -64,10 +98,11 @@ void (async function main() {
   }
 })()
 
-function unmount() {
-  if (root) {
-    ReactDOM.unmountComponentAtNode(root)
-    root = null
+function unmount(el: HTMLElement | null) {
+  if (el) {
+    ReactDOM.unmountComponentAtNode(el)
+    el.remove()
+    el = null
     titleSlug = ''
   }
 }
@@ -89,21 +124,23 @@ if (isProblemPage() || location.pathname === '/problemset/all/') {
 
     if (!isProblemPage()) {
       // 从答题页跳转到非答题页时,卸载计时组件
-      unmount()
+      unmount(root)
+      unmount(randomRoot)
     } else {
       const beta = await isBetaUI()
       if (beta) {
+        loadRandom()
         const params = location.pathname.split('/').filter(Boolean)
         // 新版 UI 中，跳转到题解页面之后，如果跳转回去，会导致提交栏发生变化，需要先卸载掉。
         if (params[2] === 'solutions' && params[3]) {
-          unmount()
+          unmount(root)
           return
         }
       }
       // 在答题页之间相互跳转,如果还是在同一题,则不做任何操作,如果是跳转另外一题则重新开始计时
       const curSlug = location.pathname.split('/').filter(Boolean)[1]
       if (curSlug !== titleSlug) {
-        unmount()
+        unmount(root)
         load()
       }
     }
