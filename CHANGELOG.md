@@ -1,3 +1,11 @@
+## [0.7.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.7.1...v0.7.2) (2022-11-02)
+
+
+### Bug Fixes
+
+* **home:** 调整加载逻辑 ([122aae3](https://github.com/XYShaoKang/refined-leetcode/commit/122aae316d210c7ab16b4da17fdcfad8c9ab9627))
+* **problems:** 修复加载逻辑，防止多次加载组件 ([cc92f45](https://github.com/XYShaoKang/refined-leetcode/commit/cc92f45e6e64268fe966acb30b412a34cc5b9462))
+
 ## [0.7.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.7.0...v0.7.1) (2022-11-02)
 
 
