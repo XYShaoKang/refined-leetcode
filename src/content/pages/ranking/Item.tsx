@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import { debounce } from '../../utils'
+import { debounce } from '../../../utils'
 
 import { ParamType, useGetPredictionQuery } from './rankSlice'
 

@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components/macro'
-import { debounce } from '../../utils'
+import { debounce } from '../../../utils'
 
 import { ParamType, useGetContestQuery } from './rankSlice'
 

@@ -1,15 +1,18 @@
 import React, { FC, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components/macro'
 
-import { LeetCodeApi, SuccessCheckReturnType } from './leetcode-api'
 import {
   sleep,
+  LeetCodeApi,
+  SuccessCheckReturnType,
+  findElement,
+} from '../../utils'
+import {
   submissionOnMarkChange,
   checkIfSubmitKey,
   checkIfGlobalSubmitIsDisabled,
   getRoot,
 } from './utils'
-import { findElement } from '../../utils'
 import { useTimer } from './useTimer'
 import { logger } from '../../../utils'
 import { useEvent, useHover } from '../hooks'

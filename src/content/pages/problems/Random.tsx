@@ -1,8 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import styled, { ThemeProvider } from 'styled-components/macro'
 
-import { LeetCodeApi } from './leetcode-api'
-import { getTheme } from '../utils'
+import { getTheme, LeetCodeApi } from '../../utils'
 import { darkTheme, lightTheme } from '../../theme'
 
 const StyledBtn = styled.button`

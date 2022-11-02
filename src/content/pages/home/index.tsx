@@ -1,17 +1,20 @@
 import ReactDOM, { render } from 'react-dom'
 
-import { debounce, findElement, throttle } from '../../utils'
+import { debounce, throttle } from '../../../utils'
 import App from './App'
-import { initUrlChangeEvent } from '../utils'
+import { initUrlChangeEvent, findElement, LeetCodeApi } from '../../utils'
 
 initUrlChangeEvent()
 
-/**
- * 存储前端组件的容器,当离开首页时,用来卸载组件
+const api = new LeetCodeApi(location.origin)
+
+/** 存储前端组件的容器,当离开首页时,用来卸载组件
+ *
  */
 let _root: HTMLDivElement | null = null
-/**
- * 加载组件
+
+/** 加载黑名单前端管理组件
+ *
  */
 async function load() {
   const parent = await findElement('.css-kktm6n-RightContainer')
@@ -27,128 +30,23 @@ async function load() {
   }
 }
 
-type NotyItem = {
-  data: {
-    myFeed: {
-      nextToken: string
-      rows: {
-        feedContent: { author: { userSlug: string } }
-        meta: { link: string }
-      }[]
-    }
-  }
-}
-/**
- * 获取帖子列表
- * @param nextToken 下一组帖子的 token,如果为空,则获取最新的一组帖子
- */
-function getNoty(nextToken?: string): Promise<NotyItem> {
-  return fetch('https://leetcode.cn/graphql/noty', {
-    headers: {
-      accept: '*/*',
-      'accept-language': 'zh-CN',
-      'content-type': 'application/json',
-    },
-    referrer: 'https://leetcode.cn/',
-    referrerPolicy: 'strict-origin-when-cross-origin',
-    body: JSON.stringify({
-      operationName: 'myFeed',
-      variables: { version: 1, nextToken, limit: 30 },
-      query: /* GraphQL */ `
-        query myFeed($nextToken: String, $limit: Int!, $version: Int) {
-          myFeed(nextToken: $nextToken, limit: $limit, version: $version) {
-            nextToken
-            rows {
-              tags {
-                name
-                slug
-                tagType
-                __typename
-              }
-              feedContent {
-                ... on Article {
-                  summary
-                  uuid
-                  slug
-                  title
-                  articleType
-                  createdAt
-                  updatedAt
-                  thumbnail
-                  author {
-                    userSlug
-                  }
-                  __typename
-                }
-                ... on LeetBook {
-                  summary
-                  slug
-                  image
-                  modifiedAt
-                  title
-                  __typename
-                }
-                ... on BookPage {
-                  leetbook {
-                    slug
-                    image
-                    summary
-                    __typename
-                  }
-                  title
-                  summary
-                  __typename
-                }
-                __typename
-              }
-              actor {
-                userSlug
-                avatar
-                realName
-                __typename
-              }
-              verb
-              subscribed
-              timestamp
-              recommended
-              questionInfo {
-                title
-                Slug
-                __typename
-              }
-              meta {
-                link
-                __typename
-              }
-              __typename
-            }
-            __typename
-          }
-        }
-      `,
-    }),
-    method: 'POST',
-    mode: 'cors',
-    credentials: 'include',
-  }).then(res => res.json())
-}
-
 type UserInfo = {
   slug: string
   name: string
 }
 
-/**
- * 存储下一组帖子的 token
+/** 存储下一组帖子的 token
+ *
  */
 let _nextToken = ''
-/**
- * 存储由黑名单用户发布的帖子链接
+
+/** 存储由黑名单用户发布的帖子链接
+ *
  */
 const blocklistLinkSet = new Set<string>()
 
-/**
- * 获取黑名单列表
+/** 获取黑名单列表
+ *
  * 获取所有帖子列表,筛选出其中由黑名单用户发布的帖子
  */
 async function getBlocklist() {
@@ -158,13 +56,10 @@ async function getBlocklist() {
     try {
       // 获取黑名单用户
       const blockUserList: UserInfo[] = JSON.parse(data)
-
+      console.log(blockUserList)
       // 获取首页帖子列表
-      const {
-        data: {
-          myFeed: { nextToken, rows },
-        },
-      } = await getNoty(_nextToken)
+      const { nextToken, rows } = await api.getNoty(_nextToken)
+      console.log(nextToken, rows)
       _nextToken = nextToken
 
       // 选出由黑名单用户发布的帖子
@@ -180,8 +75,8 @@ async function getBlocklist() {
   }
 }
 
-/**
- * 执行隐藏黑名单用户发布的帖子
+/** 执行隐藏黑名单用户发布的帖子
+ *
  */
 async function block() {
   // 找到帖子对应的元素,通过 CSS 隐藏
@@ -211,12 +106,12 @@ async function block() {
   }
 }
 
-/**
- * 保存监听元素更改的 observer,用于离开首页时,停止监听
+/** 保存监听元素更改的 observer,用于离开首页时,停止监听
+ *
  */
 let _observer: MutationObserver | null = null
-/**
- * 监听`加载更多`的事件,对后续新增黑名单帖子执行隐藏
+/** 监听`加载更多`的事件,对后续新增黑名单帖子执行隐藏
+ *
  */
 async function listeningLoadMore() {
   // 当点击加载更多按钮时,同样需要过滤掉新添加的符合黑名单规则的帖子
@@ -252,8 +147,7 @@ async function listeningLoadMore() {
 
   _observer.observe(contentRoot, { childList: true })
 }
-/**
- * 从首页的帖子列表中,隐藏黑名单用户发布的帖子
+/** 从首页的帖子列表中,隐藏黑名单用户发布的帖子
  *
  * 1. 通过 API 获取当前首页的帖子列表
  * 2. 从其中筛选出由黑名单用户发布的帖子

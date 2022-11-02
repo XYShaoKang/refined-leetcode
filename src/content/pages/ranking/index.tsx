@@ -2,14 +2,18 @@ import { StrictMode } from 'react'
 import ReactDOM, { render } from 'react-dom'
 import { Provider } from 'react-redux'
 
-import { debounce, findAllElement, findElement } from '../../utils'
+import store from '../../app/store'
+
+import { debounce } from '../../../utils'
+import {
+  initUrlChangeEvent,
+  sleep,
+  findAllElement,
+  findElement,
+} from '../../utils'
 import Item from './Item'
 import Title from './Title'
-
-import store from '../../app/store'
-import { initUrlChangeEvent } from '../utils'
 import FileIcon from './FileIcon'
-import { sleep } from '../problems/utils'
 
 // 保存已经被加载的预测组件的 root,用于跳离排名页面时,卸载组件用
 let predictorNodes: HTMLTableCellElement[] = []
@@ -86,9 +90,8 @@ async function loadFileIcon() {
 
         fileIconStates[i][j] = iconEl
       } else {
-        if (fileIconStates[i][j]) {
-          ReactDOM.unmountComponentAtNode(fileIconStates[i][j]!)
-        }
+        const el = fileIconStates[i][j]
+        if (el !== null) ReactDOM.unmountComponentAtNode(el)
         fileIconStates[i][j] = null
       }
     }

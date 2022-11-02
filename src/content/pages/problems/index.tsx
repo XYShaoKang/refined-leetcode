@@ -3,8 +3,8 @@ import ReactDOM, { render } from 'react-dom'
 
 import Clock from './Clock'
 import Random from './Random'
-import { getRoot, isBetaUI, IS_MAC } from './utils'
-import { findElement } from '../../utils'
+import { getRoot, isBetaUI } from './utils'
+import { IS_MAC, findElement } from '../../utils'
 
 let root: HTMLDivElement | null = null,
   randomRoot: HTMLDivElement | null = null,
