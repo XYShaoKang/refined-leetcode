@@ -197,14 +197,17 @@ async function block() {
       ].find(el => el.tagName === 'A') as HTMLAnchorElement
 
       if (a && blocklistLinkSet.has(new URL(a.href).pathname)) {
+        // 帖子元素
         blockEls.push(el as HTMLElement)
-        blockEls.push(els[i + 1] as HTMLElement)
+        // 分隔元素
+        // 如果是列表中的最后一项帖子，则没有分隔元素
+        if (els[i + 1]) blockEls.push(els[i + 1] as HTMLElement)
       }
     }
   }
 
   for (const el of blockEls) {
-    el.style.display = 'none'
+    if (el && el.style) el.style.display = 'none'
   }
 }
 
