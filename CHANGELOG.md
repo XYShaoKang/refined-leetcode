@@ -1,3 +1,12 @@
+## [0.7.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.7.0...v0.7.1) (2022-11-02)
+
+
+### Bug Fixes
+
+* **home:** 隐藏失败 ([fc9b6f3](https://github.com/XYShaoKang/refined-leetcode/commit/fc9b6f317dec8e152413fa09a853dcdabfd6473d))
+* **problems:** 屏蔽答题页中保存页面的快捷键 ([92adcb8](https://github.com/XYShaoKang/refined-leetcode/commit/92adcb8f9958adf78d4ecfeb81b943f059b4beeb))
+* **problems:** 添加随机一题按钮 ([6b41799](https://github.com/XYShaoKang/refined-leetcode/commit/6b4179972539ced37fb0ea02387fa48498208d59))
+
 # [0.7.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.6.5...v0.7.0) (2022-10-30)
 
 
