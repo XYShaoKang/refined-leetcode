@@ -19,14 +19,15 @@ let _root: HTMLDivElement | null = null
 async function load() {
   const parent = await findElement('.css-kktm6n-RightContainer')
   if (parent && parent instanceof HTMLElement) {
-    _root = document.createElement('div')
+    if (!_root) {
+      _root = document.createElement('div')
+      _root.style.display = 'flex'
+      _root.style.alignItems = 'center'
+      _root.style.flexShrink = '0'
+      _root.style.marginBottom = '10px'
+      render(<App />, _root)
+    }
     parent.prepend(_root)
-    _root.style.display = 'flex'
-    _root.style.alignItems = 'center'
-    _root.style.flexShrink = '0'
-    _root.style.marginBottom = '10px'
-
-    render(<App />, _root)
   }
 }
 
