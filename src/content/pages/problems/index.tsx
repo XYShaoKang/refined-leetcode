@@ -31,18 +31,21 @@ async function load() {
   if (beta) {
     // 使用新版 UI
     if (parent && parent instanceof HTMLElement) {
-      root = document.createElement('div')
-      parent.prepend(root)
-      root.style.display = 'flex'
-      root.style.alignItems = 'center'
-      root.style.flexShrink = '0'
+      if (!root) {
+        root = document.createElement('div')
+        root.style.display = 'flex'
+        root.style.alignItems = 'center'
+        root.style.flexShrink = '0'
 
-      render(
-        <StrictMode>
-          <Clock beta={beta} />
-        </StrictMode>,
-        root
-      )
+        render(
+          <StrictMode>
+            <Clock beta={beta} />
+          </StrictMode>,
+          root
+        )
+      }
+
+      parent.prepend(root)
     }
 
     const monacoEditor = await findElement('.monaco-editor')
@@ -51,19 +54,22 @@ async function load() {
     }
   } else {
     if (parent && parent instanceof HTMLElement) {
-      root = document.createElement('div')
-      parent.prepend(root)
-      root.style.display = 'flex'
-      root.style.alignItems = 'center'
-      root.style.flexShrink = '0'
-      root.style.marginRight = '15px'
+      if (!root) {
+        root = document.createElement('div')
+        root.style.display = 'flex'
+        root.style.alignItems = 'center'
+        root.style.flexShrink = '0'
+        root.style.marginRight = '15px'
 
-      render(
-        <StrictMode>
-          <Clock />
-        </StrictMode>,
-        root
-      )
+        render(
+          <StrictMode>
+            <Clock />
+          </StrictMode>,
+          root
+        )
+      }
+
+      parent.prepend(root)
     }
   }
 }
@@ -81,13 +87,12 @@ async function load() {
 async function loadRandom() {
   const beta = await isBetaUI()
   if (beta) {
+    const nav = await findElement(
+      '#__next > div > div > div > nav > div > div > div:nth-child(2)'
+    )
     if (!randomRoot) {
-      const nav = await findElement(
-        '#__next > div > div > div > nav > div > div > div:nth-child(2)'
-      )
       randomRoot = document.createElement('div')
       randomRoot.style.lineHeight = '0'
-      nav.append(randomRoot)
 
       render(
         <StrictMode>
@@ -96,6 +101,7 @@ async function loadRandom() {
         randomRoot
       )
     }
+    nav.append(randomRoot)
   }
 }
 
