@@ -47,11 +47,6 @@ async function load() {
 
       parent.prepend(root)
     }
-
-    const monacoEditor = await findElement('.monaco-editor')
-    if (monacoEditor) {
-      monacoEditor.addEventListener('keydown', handlePreventSave)
-    }
   } else {
     if (parent && parent instanceof HTMLElement) {
       if (!root) {
