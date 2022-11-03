@@ -91,7 +91,7 @@ async function loadFileIcon() {
         fileIconStates[i][j] = iconEl
       } else {
         const el = fileIconStates[i][j]
-        if (el !== null) ReactDOM.unmountComponentAtNode(el)
+        if (el) ReactDOM.unmountComponentAtNode(el)
         fileIconStates[i][j] = null
       }
     }
@@ -142,7 +142,9 @@ window.addEventListener('urlchange', async function () {
     // 从排名页跳转到比赛主页
 
     // 卸载已加载的 node
-    predictorNodes.forEach(node => ReactDOM.unmountComponentAtNode(node))
+    predictorNodes.forEach(
+      node => node && ReactDOM.unmountComponentAtNode(node)
+    )
     // 清空记录的以加载 node
     predictorNodes = []
     // 重置文件图标状态
