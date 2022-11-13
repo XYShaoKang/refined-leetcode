@@ -1,15 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { useEvent } from './useEvent'
 
-let timer: ReturnType<typeof setTimeout> | undefined
-
-function clearTimer() {
-  if (timer !== undefined) {
-    clearTimeout(timer)
-    timer = undefined
-  }
-}
-
 /**
  * 处理 hover 逻辑的钩子
  * @param delay hover 效果消失的延迟时间
@@ -19,14 +10,22 @@ export const useHover = <T extends HTMLElement>(
 ): [ref: (el: T | null) => void, hover: boolean] => {
   const ref = useRef<T | null>()
   const [hover, setHover] = useState(false)
+  const timer = useRef<ReturnType<typeof setTimeout>>()
 
-  const handleMouseOver = useEvent((_e: MouseEvent) => {
+  const clearTimer = () => {
+    if (timer.current !== undefined) {
+      clearTimeout(timer.current)
+      timer.current = undefined
+    }
+  }
+
+  const handleMouseEnter = useEvent((_e: MouseEvent) => {
     setHover(true)
     clearTimer()
   })
 
-  const handleMouseOut = useEvent((_e: MouseEvent) => {
-    timer = setTimeout(() => setHover(false), delay)
+  const handleMouseLeave = useEvent((_e: MouseEvent) => {
+    timer.current = setTimeout(() => setHover(false), delay)
   })
 
   const refcb = useCallback((el: T | null) => {
@@ -37,14 +36,14 @@ export const useHover = <T extends HTMLElement>(
       clearTimer()
       setHover(false)
 
-      ref.current.removeEventListener('mouseover', handleMouseOver)
-      ref.current.removeEventListener('mouseout', handleMouseOut)
+      ref.current.removeEventListener('mouseenter', handleMouseEnter)
+      ref.current.removeEventListener('mouseleave', handleMouseLeave)
     }
 
     ref.current = el
     if (ref.current) {
-      ref.current.addEventListener('mouseover', handleMouseOver)
-      ref.current.addEventListener('mouseout', handleMouseOut)
+      ref.current.addEventListener('mouseenter', handleMouseEnter)
+      ref.current.addEventListener('mouseleave', handleMouseLeave)
     }
   }, [])
 
