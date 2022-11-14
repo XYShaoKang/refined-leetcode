@@ -139,9 +139,17 @@ function unmount(el: HTMLElement | null) {
   if (el) {
     ReactDOM.unmountComponentAtNode(el)
     el.remove()
-    el = null
-    titleSlug = ''
   }
+}
+function unmountRoot() {
+  unmount(root)
+  root = null
+  titleSlug = ''
+}
+
+function unmountRandomRoot() {
+  unmount(randomRoot)
+  randomRoot = null
 }
 
 if (isProblemPage() || location.pathname === '/problemset/all/') {
@@ -161,8 +169,8 @@ if (isProblemPage() || location.pathname === '/problemset/all/') {
 
     if (!isProblemPage()) {
       // 从答题页跳转到非答题页时,卸载计时组件
-      unmount(root)
-      unmount(randomRoot)
+      unmountRoot()
+      unmountRandomRoot()
     } else {
       const beta = await isBetaUI()
       if (beta) {
@@ -170,14 +178,14 @@ if (isProblemPage() || location.pathname === '/problemset/all/') {
         const params = location.pathname.split('/').filter(Boolean)
         // 新版 UI 中，跳转到题解页面之后，如果跳转回去，会导致提交栏发生变化，需要先卸载掉。
         if (params[2] === 'solutions' && params[3]) {
-          unmount(root)
+          unmountRoot()
           return
         }
       }
       // 在答题页之间相互跳转,如果还是在同一题,则不做任何操作,如果是跳转另外一题则重新开始计时
       const curSlug = location.pathname.split('/').filter(Boolean)[1]
       if (curSlug !== titleSlug) {
-        unmount(root)
+        unmountRoot()
         load()
       }
     }
