@@ -33,11 +33,13 @@
 
 ### 答题页
 
-- 2022-01-02 初始版本
+- 2022-01-02 完成初始版本
 - 2022-01-03 自动添加标记的功能
 - 2022-10-22 适配力扣新版 UI
 - 2022-11-1 添加随机一题按钮
 - 2022-11-1 阻止保存页面的弹窗
+
+此功能源码 [src/content/pages/problems](./src/content/pages/problems/)
 
 > 此功能的最初创意由 https://leetcode-cn.com/u/s192516/ 提出
 
@@ -65,8 +67,6 @@
 
 ![](docs/assets/mark.png)
 
-此功能源码 [src/content/pages/problems](./src/content/pages/problems/)
-
 #### 随机一题按钮
 
 `随机一题`按钮位于上方导航栏处，跟`上一题`、`下一题`等按钮放在一块，在随机刷题的计划中，不用每次都返回题库页去点击`随机一题`。
@@ -80,17 +80,19 @@
 
 ### 竞赛排名页面显示预测
 
-- 2022-02-24 初始斑斑
+- 2022-02-24 完成初始版本
+
+此功能源码 [src/content/pages/ranking](./src/content/pages/ranking)
 
 效果如下,预测数据来自 https://lcpredictor.herokuapp.com/
 
 ![rating-predictor](./docs/assets/rating-predictor.png)
 
-此功能源码 [src/content/pages/ranking](./src/content/pages/ranking)
-
 ### 竞赛排名页面显示代码对应的语言图标
 
 - 2022-03-09 完成初始版本
+
+此功能源码 [src/content/pages/ranking/FileIcon.tsx](./src/content/pages/ranking/FileIcon.tsx)
 
 在排名页列表中的提交时间前面,将之前代码图标替换为提交所使用的语言对应的图标,这样可以很直观的看到选手提交所使用的语言
 
@@ -100,12 +102,12 @@
 
 ![show-file-icon](./docs/assets/show-file-icon.png)
 
-此功能源码 [src/content/pages/ranking/FileIcon.tsx](./src/content/pages/ranking/FileIcon.tsx)
-
 ### 首页帖子黑名单功能
 
 - 2022-10-21 完成初始版本
 - 2022-11-14 更新添加黑名单的快捷方式
+
+此功能源码 [src/content/pages/home](./src/content/pages/home)
 
 通过添加黑名单用户，可以阻止该用户的帖子在首页显示。黑名单数据只存储在本地，如果有多个地方使用的话，则需要在对应的浏览器上添加黑名单。目前只支持首页的帖子中过滤掉黑名单用户发的帖子。
 
@@ -122,8 +124,6 @@
 如果要将某个用户添加到黑名单中，需要输入其 slug，可以从其个人主页获取，一般会出现在昵称的下面，或者是个人主页 url 的最后一段。
 
 ![slug 位置](docs/assets/slug.png)
-
-此功能源码 [src/content/pages/home](./src/content/pages/home)
 
 #### 通过添加拖拽手柄添加
 
