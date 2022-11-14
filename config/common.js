@@ -20,6 +20,7 @@ const common = {
     clean: true,
   },
   resolve: {
+    alias: { 'react/jsx-runtime': 'react/jsx-runtime.js' },
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
   module: {

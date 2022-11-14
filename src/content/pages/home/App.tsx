@@ -1,8 +1,15 @@
 import { FC, StrictMode, useEffect, useState } from 'react'
 import { ThemeProvider } from 'styled-components/macro'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
+import { Provider } from 'react-redux'
+import { PersistGate } from 'redux-persist/integration/react'
 
-import BlockUser from './BlockUser'
+import store, { persistor } from '../../app/store'
 import { darkTheme, lightTheme } from '../../theme'
+import GlobalStyle from './GlobalStyle'
+import BlockUser from './BlockUser'
+import DistortSvg from '../components/DistortSvg'
 
 /**
  * 获取当前力扣的主题
@@ -31,12 +38,21 @@ const App: FC = () => {
 
     observer.observe(document.body, { attributes: true })
   }, [])
+
   return (
-    <StrictMode>
-      <ThemeProvider theme={theme}>
-        <BlockUser />
-      </ThemeProvider>
-    </StrictMode>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <DndProvider backend={HTML5Backend}>
+          <ThemeProvider theme={theme}>
+            <StrictMode>
+              <GlobalStyle />
+              <BlockUser />
+              <DistortSvg />
+            </StrictMode>
+          </ThemeProvider>
+        </DndProvider>
+      </PersistGate>
+    </Provider>
   )
 }
 

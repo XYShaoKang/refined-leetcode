@@ -1,5 +1,6 @@
 // import original module declarations
 import 'styled-components/macro'
+import type {} from 'styled-components/cssprop'
 
 // and extend them!
 declare module 'styled-components' {
@@ -29,6 +30,7 @@ declare module 'styled-components' {
         dark: string
         hover: string
         text: string
+        disable: string
       }
     }
     shadows: {

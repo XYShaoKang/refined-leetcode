@@ -26,6 +26,7 @@ export const darkTheme: DefaultTheme = {
       light: `rgba(11, 113, 229, 1)`,
       hover: `rgba(7, 72, 146, 1)`,
       text: `rgba(255, 255, 255, 1)`,
+      disable: `rgb(110 110 110)`,
     },
   },
   shadows: {
@@ -59,6 +60,7 @@ export const lightTheme: DefaultTheme = {
       light: `rgba(0, 122, 255, 1)`,
       hover: `rgba(0, 90, 216)`,
       text: `rgba(255, 255, 255, 1)`,
+      disable: `rgb(110 110 110)`,
     },
   },
   shadows: {

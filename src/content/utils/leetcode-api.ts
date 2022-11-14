@@ -200,14 +200,185 @@ type CheckReturnType =
   | { state: 'PENDING' }
   | SuccessCheckReturnType
 
-type NotyItem = {
+export type NotyArticleType = {
+  summary: string
+  uuid: string
+  slug: string
+  title: string
+  articleType: 'QAQUESTION' | 'CIRCLE_ARTICLE' | 'SOLUTION' // "CIRCLE_ARTICLE": 文章；"SOLUTION"： 题解
+  createdAt: string
+  updatedAt: string
+  thumbnail: string
+  author: {
+    userSlug: string
+  }
+  __typename: 'Article'
+}
+export type NotyLeetBookType = {
+  summary: string
+  slug: string
+  image: string
+  modifiedAt: string
+  title: string
+  __typename: 'LeetBook'
+}
+export type NotyBookPageType = {
+  leetbook: {
+    slug: string
+    image: string
+    summary: string
+    __typename: string
+  }
+  title: string
+  summary: string
+  __typename: 'BookPage'
+}
+export type NotyItem = {
   nextToken: string
   rows: {
-    feedContent: { author: { userSlug: string } }
+    feedContent: NotyArticleType | NotyLeetBookType | NotyBookPageType
     meta: { link: string }
   }[]
 }
 
+export type UserProfilePublicProfile = {
+  profile: {
+    userSlug: string
+    realName: string
+  }
+} | null
+
+export type QAQuestion = {
+  ipRegion: string
+  uuid: string
+  slug: string
+  title: string
+  thumbnail: string
+  summary: string
+  content: string
+  sunk: boolean
+  pinned: boolean
+  pinnedGlobally: boolean
+  byLeetcode: boolean
+  isRecommended: boolean
+  isRecommendedGlobally: boolean
+  subscribed: boolean
+  hitCount: number
+  numAnswers: number
+  numPeopleInvolved: number
+  numSubscribed: number
+  createdAt: string
+  updatedAt: null
+  status: string
+  identifier: string
+  resourceType: string
+  articleType: string
+  alwaysShow: false
+  alwaysExpand: false
+  score: null
+  favoriteCount: number
+  isMyFavorite: false
+  isAnonymous: false
+  canEdit: false
+  reactionType: null
+  atQuestionTitleSlug: string
+  reactionsV2: {
+    count: number
+    reactionType: string
+    __typename: string
+  }[]
+  tags: {
+    name: string
+    nameTranslated: string
+    slug: string
+    imgUrl: null
+    tagType: string
+    __typename: string
+  }[]
+  subject: {
+    slug: string
+    title: string
+    __typename: string
+  }
+  contentAuthor: {
+    username: string
+    userSlug: string
+    realName: string
+    avatar: string
+    __typename: string
+  }
+  realAuthor: null
+  __typename: string
+} | null
+
+export type SolutionArticle = {
+  ipRegion: string
+  rewardEnabled: null
+  canEditReward: boolean
+  uuid: string
+  title: string
+  slug: string
+  sunk: boolean
+  chargeType: string
+  status: string
+  identifier: string
+  canEdit: boolean
+  canSee: boolean
+  reactionType: null
+  hasVideo: boolean
+  favoriteCount: number
+  upvoteCount: number
+  reactionsV2: {
+    count: number
+    reactionType: string
+  }[]
+  tags: {
+    name: string
+    nameTranslated: string
+    slug: string
+    tagType: string
+  }[]
+  createdAt: string
+  thumbnail: string
+  author: {
+    username: string
+    profile: {
+      userAvatar: string
+      userSlug: string
+      realName: string
+      reputation: number
+    }
+  }
+  summary: string
+  topic: {
+    id: number
+    commentCount: number
+    viewCount: number
+    pinned: boolean
+  }
+  byLeetcode: false
+  isMyFavorite: false
+  isMostPopular: false
+  isEditorsPick: false
+  hitCount: number
+  videosInfo: []
+} | null
+
+export type CommunityArticle = {
+  slug: string
+  uuid: string
+  title: string
+  author: {
+    username: string
+    profile: {
+      realName: string
+      userSlug: string
+      userAvatar: string
+      __typename: string
+    }
+    __typename: string
+  }
+}
 class LeetCodeApi {
   public graphqlApi: (
     { method, body }: { endpoint?: string; method?: string; body?: unknown },
@@ -595,14 +766,14 @@ class LeetCodeApi {
     )
   }
 
-  /** 获取帖子列表
+  /** 获取首页帖子列表
    *
    * @param nextToken 下一组帖子的 token,如果为空,则获取最新的一组帖子
    */
-  public getNoty(nextToken?: string): Promise<NotyItem> {
+  public getNoty(nextToken = '', limit = 30): Promise<NotyItem> {
     const body = {
       operationName: 'myFeed',
-      variables: { version: 1, nextToken, limit: 30 },
+      variables: { version: 1, nextToken, limit },
       query: /* GraphQL */ `
         query myFeed($nextToken: String, $limit: Int!, $version: Int) {
           myFeed(nextToken: $nextToken, limit: $limit, version: $version) {
@@ -679,6 +850,412 @@ class LeetCodeApi {
     return this.graphqlApi({ endpoint: 'graphql/noty', body }).then(
       ({ data }) => data.myFeed
     )
+  }
+
+  /** 获取用户信息
+   *
+   * @param slug 用户 slug
+   */
+  public getUserInfoBySlug(slug: string): Promise<UserProfilePublicProfile> {
+    const body = {
+      query: /* GraphQL */ `
+        query userProfilePublicProfile($userSlug: String!) {
+          userProfilePublicProfile(userSlug: $userSlug) {
+            haveFollowed
+            siteRanking
+            profile {
+              userSlug
+              realName
+              aboutMe
+              asciiCode
+              userAvatar
+              gender
+              websites
+              skillTags
+              globalLocation {
+                country
+                province
+                city
+              }
+              socialAccounts {
+                provider
+                profileUrl
+              }
+              skillSet {
+                langLevels {
+                  langName
+                  langVerboseName
+                  level
+                }
+                topics {
+                  slug
+                  name
+                  translatedName
+                }
+                topicAreaScores {
+                  score
+                  topicArea {
+                    name
+                    slug
+                  }
+                }
+              }
+            }
+            educationRecordList {
+              unverifiedOrganizationName
+            }
+            occupationRecordList {
+              unverifiedOrganizationName
+              jobTitle
+            }
+          }
+        }
+      `,
+      variables: { userSlug: slug },
+    }
+
+    return this.graphqlApi({ body }).then(
+      ({ data }) => data.userProfilePublicProfile
+    )
+  }
+
+  /** 获取讨论帖信息
+   *
+   */
+  public queryQAQuestionByUUID(uuid: string): Promise<QAQuestion> {
+    const body = {
+      operationName: 'qaQuestion',
+      variables: {
+        uuid,
+      },
+      query: /* GraphQL */ `
+        query qaQuestion($uuid: ID!) {
+          qaQuestion(uuid: $uuid) {
+            ...qaQuestion
+            __typename
+          }
+        }
+
+        fragment qaQuestion on QAQuestionNode {
+          ipRegion
+          uuid
+          slug
+          title
+          thumbnail
+          summary
+          content
+          sunk
+          pinned
+          pinnedGlobally
+          byLeetcode
+          isRecommended
+          isRecommendedGlobally
+          subscribed
+          hitCount
+          numAnswers
+          numPeopleInvolved
+          numSubscribed
+          createdAt
+          updatedAt
+          status
+          identifier
+          resourceType
+          articleType
+          alwaysShow
+          alwaysExpand
+          score
+          favoriteCount
+          isMyFavorite
+          isAnonymous
+          canEdit
+          reactionType
+          atQuestionTitleSlug
+          reactionsV2 {
+            count
+            reactionType
+            __typename
+          }
+          tags {
+            name
+            nameTranslated
+            slug
+            imgUrl
+            tagType
+            __typename
+          }
+          subject {
+            slug
+            title
+            __typename
+          }
+          contentAuthor {
+            ...contentAuthor
+            __typename
+          }
+          realAuthor {
+            ...realAuthor
+            __typename
+          }
+          __typename
+        }
+
+        fragment contentAuthor on ArticleAuthor {
+          username
+          userSlug
+          realName
+          avatar
+          __typename
+        }
+
+        fragment realAuthor on UserNode {
+          username
+          profile {
+            userSlug
+            realName
+            userAvatar
+            __typename
+          }
+          __typename
+        }
+      `,
+    }
+
+    return this.graphqlApi({ body }).then(({ data }) => data.qaQuestion)
+  }
+
+  /** 获取题解信息
+   *
+   */
+  public querySolutionArticleBySlug(slug: string): Promise<SolutionArticle> {
+    const body = {
+      query: /* GraphQL */ `
+        query solutionArticle($slug: String!) {
+          solutionArticle(slug: $slug) {
+            ipRegion
+            rewardEnabled
+            canEditReward
+            uuid
+            title
+            slug
+            sunk
+            chargeType
+            status
+            identifier
+            canEdit
+            canSee
+            reactionType
+            hasVideo
+            favoriteCount
+            upvoteCount
+            reactionsV2 {
+              count
+              reactionType
+            }
+            tags {
+              name
+              nameTranslated
+              slug
+              tagType
+            }
+            createdAt
+            thumbnail
+            author {
+              username
+              profile {
+                userAvatar
+                userSlug
+                realName
+                reputation
+              }
+            }
+            summary
+            topic {
+              id
+              commentCount
+              viewCount
+              pinned
+            }
+            byLeetcode
+            isMyFavorite
+            isMostPopular
+            isEditorsPick
+            hitCount
+            videosInfo {
+              videoId
+              coverUrl
+              duration
+            }
+          }
+        }
+      `,
+      variables: {
+        slug,
+      },
+    }
+    return this.graphqlApi({ body }).then(({ data }) => data.solutionArticle)
+  }
+  /** 获取共享文章信息
+   *
+   */
+  public queryCommunityArticleBySlug(slug: string): Promise<CommunityArticle> {
+    const body = {
+      operationName: 'columnsArticle',
+      variables: {
+        slug,
+      },
+      query: /* GraphQL */ `
+        query columnsArticle($slug: String!) {
+          columnsArticle(slug: $slug) {
+            ...communityArticle
+            __typename
+          }
+        }
+
+        fragment communityArticle on ColumnArticleNode {
+          slug
+          uuid
+          title
+          hitCount
+          pinnedGlobally
+          pinned
+          sunk
+          createdAt
+          updatedAt
+          thumbnail
+          identifier
+          resourceType
+          articleType
+          score
+          subject {
+            title
+            slug
+            __typename
+          }
+          tags {
+            name
+            slug
+            nameTranslated
+            __typename
+          }
+          author {
+            username
+            profile {
+              userSlug
+              realName
+              userAvatar
+              __typename
+            }
+            __typename
+          }
+          reactionType
+          reactionsV2 {
+            count
+            reactionType
+            __typename
+          }
+          isMyFavorite
+          topic {
+            id
+            commentCount
+            __typename
+          }
+          summary
+          isEditorsPick
+          byLeetcode
+          status
+          favoriteCount
+          __typename
+        }
+      `,
+    }
+    return this.graphqlApi({ body }).then(({ data }) => data.columnsArticle)
+  }
+  /** 获取共享文章信息
+   *
+   */
+  public queryCommunityArticleById(id: string): Promise<CommunityArticle> {
+    const body = {
+      operationName: 'communityArticleDetail',
+      variables: { id },
+      query: /* GraphQL */ `
+        query communityArticleDetail($id: ID!) {
+          columnsArticleById(uuid: $id) {
+            ...communityArticleDetail
+            __typename
+          }
+        }
+
+        fragment communityArticleDetail on ColumnArticleNode {
+          ipRegion
+          slug
+          uuid
+          title
+          thumbnail
+          content
+          reactionType
+          reactionsV2 {
+            count
+            reactionType
+            __typename
+          }
+          hitCount
+          createdAt
+          updatedAt
+          subscribed
+          isMyFavorite
+          identifier
+          resourceType
+          pinnedGlobally
+          pinned
+          sunk
+          isEditorsPick
+          byLeetcode
+          articleType
+          status
+          summary
+          author {
+            username
+            profile {
+              realName
+              userSlug
+              userAvatar
+              __typename
+            }
+            __typename
+          }
+          tags {
+            name
+            slug
+            nameTranslated
+            tagType
+            __typename
+          }
+          subject {
+            title
+            slug
+            __typename
+          }
+          topic {
+            id
+            lastComment {
+              post {
+                creationDate
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+          nextArticle {
+            title
+            uuid
+            __typename
+          }
+          __typename
+        }
+      `,
+    }
+    return this.graphqlApi({ body }).then(({ data }) => data.columnsArticleById)
   }
 }
 

@@ -14,14 +14,27 @@ export interface TooltipProps
   extends Omit<ComponentProps<typeof Popper>, 'anchorEl' | 'placement'> {
   title: string
   placement?: Placement
+  open?: boolean
+  arrow?: boolean
+  icon?: ReactElement
+  delay?: number
   children: ReactElement
 }
 
 export const ToolTip = forwardRef(function ToolTip(
-  { title, placement = 'top', children, ...props }: TooltipProps,
+  {
+    title,
+    placement = 'top',
+    open: openProp,
+    arrow: arrowProp,
+    icon,
+    delay,
+    children,
+    ...props
+  }: TooltipProps,
   ref: React.ForwardedRef<HTMLSpanElement>
 ) {
-  const [setHoverRef, hover] = useHover<HTMLElement>(100)
+  const [setHoverRef, hover] = useHover<HTMLElement>(delay ?? 100)
 
   const childrenRef = useRef<HTMLElement>()
 
@@ -30,20 +43,30 @@ export const ToolTip = forwardRef(function ToolTip(
     setHoverRef(el)
   }, [])
 
+  let open = openProp
+  if (openProp === undefined) {
+    open = !!(title && hover)
+  }
+  let arrow = arrowProp
+  if (arrowProp === undefined) {
+    arrow = true
+  }
+
   return (
     <>
       {cloneElement(children, { ...children.props, ref: mulRef })}
-      {title && hover && (
+      {open ? (
         <Popper
           placement={placement}
           anchorEl={childrenRef.current}
           {...props}
           ref={ref}
-          arrow={true}
+          arrow={arrow}
         >
+          {icon}
           {title}
         </Popper>
-      )}
+      ) : null}
     </>
   )
 })

@@ -3,12 +3,20 @@ import React, {
   useState,
   ChangeEventHandler,
   KeyboardEventHandler,
-  useEffect,
   useContext,
+  useRef,
 } from 'react'
-import styled, { ThemeContext } from 'styled-components/macro'
+import styled, { keyframes, ThemeContext } from 'styled-components/macro'
 
 import { Placement, Popper } from '../components/Popper'
+import { ToolTip } from '../components/ToolTip'
+import {
+  setBlockUserBySlug,
+  selectAllBlockUsers,
+  unSetBlockUser,
+  toggleBlockUser,
+} from './blockUsersSlice'
+import { useAppDispatch, useAppSelector } from '../hooks'
 
 interface BlockUserListProps {
   placement?: Placement
@@ -64,7 +72,9 @@ const Input = styled.input`
   }
 `
 
-const Add = styled.button`
+const Add = styled.button<{ _disable: boolean }>`
+  flex-shrink: 0;
+  width: 70px;
   color-scheme: dark;
   font-feature-settings: 'tnum';
   box-sizing: border-box;
@@ -86,9 +96,56 @@ const Add = styled.button`
   padding: 6px 12px;
   border-radius: 8px;
   color: ${props => props.theme.palette.button.text};
-  background-color: ${props => props.theme.palette.button.main};
+  background-color: ${props =>
+    props._disable
+      ? props.theme.palette.button.disable
+      : props.theme.palette.button.main};
   &:hover {
-    background-color: ${props => props.theme.palette.button.hover};
+    background-color: ${props =>
+      props._disable ? '' : `${props.theme.palette.button.hover};`};
+  }
+`
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`
+
+const Loading = styled.div`
+  border-radius: 50%;
+  background: linear-gradient(to right, #fff 10%, rgba(128, 0, 255, 0) 42%);
+  position: relative;
+  transform: translateZ(0);
+  height: 16px;
+  width: 16px;
+  animation: ${rotate} 0.2s infinite linear;
+  &::before {
+    width: 50%;
+    height: 50%;
+    background: #fff;
+    border-radius: 100% 0 0 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
+  }
+  &::after {
+    background-color: ${props => props.theme.palette.button.disable};
+    width: 75%;
+    height: 75%;
+    border-radius: 50%;
+    content: '';
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
   }
 `
 
@@ -109,151 +166,28 @@ const Clear = styled.div`
   }
 `
 
-type UserInfo = {
-  slug: string
-  name: string
-}
-
-/**
- * 获取 LocalStorage 中对应 key 的数据
- * @param key 需要获取数据的 key
- * @param init 如果当前数据不存在,或者无效,用于初始化的值或者函数
- * @param json 是否自动进行 JSON 解析
- */
-function useLocalStorage<T extends {} | [] | string = string>(
-  ...[key, init, json]: T extends string
-    ? [key: string, init: T | (() => T), json?: false]
-    : [key: string, init: T | (() => T), json: true]
-) {
-  const [data, setData] = useState<T>(() => {
-    const data = localStorage.getItem(key)
-    if (data) {
-      try {
-        const res = json ? JSON.parse(data) : data
-        if (res) return res
-      } catch (error) {
-        //
-      }
-    }
-
-    // 当前不存在有效数据,或者解析失败,则使用初始化的数据
-    if (typeof init === 'function') {
-      return init()
-    }
-    return init
-  })
-  useEffect(() => {
-    // 当 LocalStorage 中的数据发生变化时,同步当前数据
-    // storage 事件对于同一个标签无效,只能作用与其他标签
-    // @see https://developer.mozilla.org/en-US/docs/Web/API/StorageEvent
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === key) {
-        const data = e.newValue
-        if (data) {
-          try {
-            const res = json ? JSON.parse(data) : data
-            setData(res)
-          } catch (error) {
-            //
-          }
-        }
-      }
-    }
-
-    window.addEventListener('storage', handleStorage)
-    return () => {
-      window.removeEventListener('storage', handleStorage)
-    }
-  }, [])
-
-  const setValue = (fn: T | ((data: T) => T)) => {
-    let res: T
-    if (typeof fn === 'function') {
-      res = fn(data)
-    } else {
-      res = fn
-    }
-    setData(res)
-    localStorage.setItem(key, json ? JSON.stringify(res) : (res as string))
-  }
-  return [data, setValue] as const
-}
-
-/**
- * 获取用户信息
- * @param slug 用户 slug
- */
-function getUserInfo(slug: string) {
-  return fetch('https://leetcode.cn/graphql/', {
-    headers: {
-      'content-type': 'application/json',
-    },
-    referrerPolicy: 'strict-origin-when-cross-origin',
-    body: JSON.stringify({
-      query: /* GraphQL */ `
-        query userProfilePublicProfile($userSlug: String!) {
-          userProfilePublicProfile(userSlug: $userSlug) {
-            haveFollowed
-            siteRanking
-            profile {
-              userSlug
-              realName
-              aboutMe
-              asciiCode
-              userAvatar
-              gender
-              websites
-              skillTags
-              globalLocation {
-                country
-                province
-                city
-              }
-              socialAccounts {
-                provider
-                profileUrl
-              }
-              skillSet {
-                langLevels {
-                  langName
-                  langVerboseName
-                  level
-                }
-                topics {
-                  slug
-                  name
-                  translatedName
-                }
-                topicAreaScores {
-                  score
-                  topicArea {
-                    name
-                    slug
-                  }
-                }
-              }
-            }
-            educationRecordList {
-              unverifiedOrganizationName
-            }
-            occupationRecordList {
-              unverifiedOrganizationName
-              jobTitle
-            }
-          }
-        }
-      `,
-      variables: { userSlug: slug },
-    }),
-    method: 'POST',
-    mode: 'cors',
-    credentials: 'include',
-  }).then(res => res.json())
-}
-
 const BlockUserList: FC<BlockUserListProps> = props => {
   const [slug, setData] = useState<string>('')
-  const [list, setList] = useLocalStorage<UserInfo[]>('BlockUserList', [], true)
+  const users = useAppSelector(selectAllBlockUsers)
+  const [status, setStatus] = useState('idle')
+  const [showToolTip, setShowToolTip] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const timer = useRef<ReturnType<typeof setTimeout>>()
+  const dispatch = useAppDispatch()
+
+  const showMessage = (error: string) => {
+    hideMessage()
+    setErrorMessage(error)
+    setShowToolTip(true)
+    timer.current = setTimeout(hideMessage, 1000)
+  }
+  const hideMessage = () => {
+    if (timer.current !== undefined) {
+      clearTimeout(timer.current)
+    }
+    setShowToolTip(false)
+    setErrorMessage('')
+  }
 
   let width = 0
   if (props.anchorEl) {
@@ -262,28 +196,34 @@ const BlockUserList: FC<BlockUserListProps> = props => {
   const handleChange: ChangeEventHandler<HTMLInputElement> = e => {
     setData(e.target.value)
   }
-  /**
-   * 添加用户
+  /** 添加黑名单用户
+   *
    * 1. 查找是否已存在对应的用户,如果已存在则不用重复添加
    * 2. 检查 slug 是否有效
    * 3. 将 {slug,name} 存到 LocalStorage 中
    */
   const handleAdd = async () => {
-    if (list.find(item => item.slug === slug)) {
-      console.error('已存在相同用户')
-      return
+    if (status !== 'idle' || !slug) return
+    try {
+      setStatus('loading')
+      if (users.find(user => user.slug === slug)) {
+        showMessage('已存在用户，无需重复添加！')
+      } else {
+        const res = await dispatch(setBlockUserBySlug(slug)).unwrap()
+        if (res) {
+          hideMessage()
+          setData('')
+        } else {
+          showMessage('无效的 slug！')
+        }
+      }
+    } catch (error) {
+      showMessage(
+        (error as { message: string; name: string; stack: string }).message
+      )
+    } finally {
+      setStatus('idle')
     }
-    const res = await getUserInfo(slug)
-    if (!res?.data?.userProfilePublicProfile) {
-      console.error('无效的 slug')
-      return
-    }
-
-    setList(list => [
-      ...(list ?? []),
-      { slug: slug, name: res.data.userProfilePublicProfile.profile.realName },
-    ])
-    setData('')
   }
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = e => {
@@ -292,7 +232,7 @@ const BlockUserList: FC<BlockUserListProps> = props => {
     }
   }
   const handleDelete = (slug: string) => {
-    setList(list => (list ?? []).filter(item => item.slug !== slug))
+    dispatch(unSetBlockUser(slug))
   }
   const themeContext = useContext(ThemeContext)
 
@@ -307,25 +247,93 @@ const BlockUserList: FC<BlockUserListProps> = props => {
       as="div"
     >
       <div style={{ display: 'flex' }}>
-        <Input
-          type="text"
-          value={slug}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-        />
-        <Add style={{ flexShrink: 0 }} onClick={handleAdd}>
-          添加
-        </Add>
+        <ToolTip
+          open={showToolTip}
+          title={errorMessage}
+          arrow={false}
+          style={{
+            background: 'rgb(22, 11, 11)',
+            color: 'rgb(244, 199, 199)',
+            display: 'flex',
+            whiteSpace: 'nowrap',
+          }}
+          icon={
+            <svg
+              viewBox="0 0 24 24"
+              style={{
+                width: 20,
+                height: 20,
+                color: 'rgb(244, 67, 54)',
+                marginRight: 5,
+              }}
+            >
+              <path
+                d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+                fill="currentColor"
+              />
+            </svg>
+          }
+        >
+          <Input
+            type="text"
+            value={slug}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+          />
+        </ToolTip>
+        <ToolTip
+          title={!slug ? '请输入 slug' : ''}
+          style={{ whiteSpace: 'nowrap' }}
+        >
+          <Add onClick={handleAdd} _disable={!slug || status === 'loading'}>
+            {status === 'loading' ? <Loading /> : '添加'}
+          </Add>
+        </ToolTip>
       </div>
-      <List style={{ marginTop: list.length ? 10 : 0 }}>
-        {list.map(({ slug, name }) => (
+      <List style={{ marginTop: users.length ? 10 : 0 }}>
+        {users.map(({ slug, name, block }) => (
           <Item key={slug}>
-            <div>{name}</div>
-            <Clear onClick={() => handleDelete(slug)}>
-              <svg viewBox="0 0 24 24">
-                <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+            <div
+              style={{
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+              }}
+            >
+              {name}
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                style={{ width: 30, height: 30 }}
+                onClick={() => {
+                  dispatch(toggleBlockUser(slug))
+                }}
+              >
+                {block ? (
+                  <path
+                    d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"
+                    fill="currentColor"
+                    color="rgb(144, 202, 249)"
+                  />
+                ) : (
+                  <path
+                    d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zM7 15c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"
+                    fill="currentColor"
+                  />
+                )}
               </svg>
-            </Clear>
+              <Clear onClick={() => handleDelete(slug)}>
+                <svg viewBox="0 0 24 24">
+                  <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+              </Clear>
+            </div>
           </Item>
         ))}
       </List>
