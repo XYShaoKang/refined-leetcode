@@ -1,3 +1,10 @@
+## [0.8.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.8.0...v0.8.1) (2022-11-14)
+
+
+### Bug Fixes
+
+* **problems:** 修复跳转到另外一题后计时组件不加载 ([6a94be5](https://github.com/XYShaoKang/refined-leetcode/commit/6a94be527038e8d3f2cc689c248810f10f9a58f1))
+
 # [0.8.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.7.2...v0.8.0) (2022-11-14)
 
 
