@@ -1,3 +1,17 @@
+# [0.8.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.7.2...v0.8.0) (2022-11-14)
+
+
+### Bug Fixes
+
+* **problems:** 官方已经阻止了新版答题页中保存页面的弹窗 ([35b04d1](https://github.com/XYShaoKang/refined-leetcode/commit/35b04d1780d2ad71e4d01968961f46e64f5ede7f))
+* **ranking:** 卸载 bug ([78df940](https://github.com/XYShaoKang/refined-leetcode/commit/78df940248d248239d37b7066b5bc4f5e2b0bf3e))
+* **useHover:** 有些情况下无法有效的清除状态 ([2e55907](https://github.com/XYShaoKang/refined-leetcode/commit/2e55907418ddd0955b250b08080e4f0b843be7cf))
+
+
+### Features
+
+* **home:** 快捷添加黑名单 ([11df967](https://github.com/XYShaoKang/refined-leetcode/commit/11df9674910ecf3df9bd8b2b9e7665b57c178bae))
+
 ## [0.7.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.7.1...v0.7.2) (2022-11-02)
 
 
