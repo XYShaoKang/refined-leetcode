@@ -1,4 +1,4 @@
-# Refined LeetCode-cn
+# Refined LeetCode
 
 [![chrome-store-image][chrome-store-image]][chrome-store-url]
 [![semantic-release][semantic-release-image]][semantic-release-url] [![GitHub Action][actions-release-image]][actions-release-url]
