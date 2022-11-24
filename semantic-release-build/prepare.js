@@ -69,6 +69,13 @@ const prepare = (pluginConfig = {}, context) => {
       fs.mkdir
       fs.writeFileSync(path.resolve(`${name}.crx`), crxBuffer)
     })
+
+  logger.log('打包 zip')
+  const crxarchive = archiver('zip', { zlib: { level: 9 } })
+  const crxoutput = path.resolve(`${name}.crx.zip`)
+  crxarchive.pipe(fs.createWriteStream(crxoutput))
+  crxarchive.file(path.resolve(`${name}.crx`), { name: `${name}.crx` })
+  crxarchive.finalize()
 }
 
 module.exports = prepare

@@ -36,6 +36,10 @@ module.exports = {
             path: 'refined-leetcode.zip',
             name: 'refined-leetcode-${nextRelease.gitTag}.zip',
           },
+          {
+            path: 'refined-leetcode.crx.zip',
+            name: 'refined-leetcode-${nextRelease.gitTag}.crx.zip',
+          },
         ],
       },
     ],
