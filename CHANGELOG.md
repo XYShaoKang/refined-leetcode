@@ -1,3 +1,10 @@
+## [0.8.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.8.1...v0.8.2) (2022-11-26)
+
+
+### Bug Fixes
+
+* **ranking:** 切换积分预测数据源 ([ff7abde](https://github.com/XYShaoKang/refined-leetcode/commit/ff7abde0839adea486b3617a74e94dd367b60a90))
+
 ## [0.8.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.8.0...v0.8.1) (2022-11-14)
 
 
