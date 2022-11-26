@@ -9,9 +9,11 @@
     "128": "icons/icon-128.png"
   },
   "content_security_policy": {
-    "extension_pages": "default-src 'self' http://localhost:9100; script-src 'self' http://localhost:9100; script-src-elem 'self' http://localhost:9100; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:9100 http://localhost:9100 https://leetcode-rating-predictor.herokuapp.com https://leetcode-predictor.herokuapp.com https://leetcode-cn.com https://leetcode.cn"
+    "extension_pages": "default-src 'self' http://localhost:9100; script-src 'self' http://localhost:9100; script-src-elem 'self' http://localhost:9100; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:9100 http://localhost:9100 https://leetcode-rating-predictor.herokuapp.com https://leetcode-predictor.herokuapp.com https://leetcode-cn.com https://leetcode.cn https://lccn.lbao.site"
   },
-  "permissions": ["scripting"],
+  "permissions": [
+    "scripting"
+  ],
   "web_accessible_resources": [
     {
       "resources": [
@@ -21,7 +23,10 @@
         "/*.map",
         "/file-icons/*.svg"
       ],
-      "matches": ["*://leetcode-cn.com/*", "*://leetcode.cn/*"]
+      "matches": [
+        "*://leetcode-cn.com/*",
+        "*://leetcode.cn/*"
+      ]
     }
   ],
   "host_permissions": [
@@ -29,16 +34,27 @@
     "https://leetcode.cn/*",
     "http://localhost:9100/*",
     "https://leetcode-rating-predictor.herokuapp.com/*",
-    "https://leetcode-predictor.herokuapp.com/*"
+    "https://leetcode-predictor.herokuapp.com/*",
+    "https://lccn.lbao.site/*"
   ],
   "content_scripts": [
     {
-      "matches": ["https://leetcode-cn.com/*", "https://leetcode.cn/*"],
-      "js": ["content-load.bundle.js"]
+      "matches": [
+        "https://leetcode-cn.com/*",
+        "https://leetcode.cn/*"
+      ],
+      "js": [
+        "content-load.bundle.js"
+      ]
     }
   ],
-  "background": { "service_worker": "background.bundle.js" },
+  "background": {
+    "service_worker": "background.bundle.js"
+  },
   "externally_connectable": {
-    "matches": ["https://leetcode-cn.com/*", "https://leetcode.cn/*"]
+    "matches": [
+      "https://leetcode-cn.com/*",
+      "https://leetcode.cn/*"
+    ]
   }
 }

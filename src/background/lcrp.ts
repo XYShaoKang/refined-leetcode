@@ -1,5 +1,10 @@
 // Leetcode Rating Predictor
-import { getContest, fileIconData, getMyRanking, predictorApi } from './utils'
+import {
+  getContest,
+  fileIconData,
+  getMyRanking,
+  lbaoPredictorApi as predictorApi,
+} from './utils'
 
 type GetContestMessage = {
   type: 'get-contest'
@@ -78,21 +83,21 @@ async function getPredictionHandle(
   const { contestId, region, page, username } = message
 
   const { total_rank } = await getContest(contestId, page, region)
-  let usernames = total_rank.map(({ username }) => username)
+  let users = total_rank.map(({ username, data_region }) => ({
+    username,
+    data_region,
+  }))
 
   if (username) {
-    usernames = [username, ...usernames]
+    users = [{ username, data_region: 'CN' }, ...users]
   }
 
   try {
-    const data = await predictorApi({
-      contestId,
-      handles: [...new Set(usernames)],
-    })
+    const data = await predictorApi(contestId, users)
 
-    const itemMap = new Map(data.items.map(item => [item._id, item]))
+    const itemMap = new Map(data.map(item => [item.username, item]))
 
-    sendResponse(usernames.map(username => itemMap.get(username)))
+    sendResponse(users.map(user => itemMap.get(user.username)))
   } catch (error) {
     // TODO
   }

@@ -38,7 +38,7 @@ const ToolTip = styled.div`
   }
 `
 const Content = styled.div`
-  width: 280px;
+  width: 200px;
   padding: 8px 3px 10px;
 
   color: #fff;
@@ -59,12 +59,12 @@ const Title: FC = () => {
             <Content>
               预测数据来自
               <a
-                href="https://lcpredictor.herokuapp.com/"
+                href="https://lccn.lbao.site/"
                 target="_blank"
                 rel="noreferrer"
                 style={{ paddingLeft: 2 }}
               >
-                lcpredictor.herokuapp.com
+                lccn.lbao.site
               </a>
             </Content>
           </ToolTip>

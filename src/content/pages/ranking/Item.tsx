@@ -70,7 +70,7 @@ const Item: FC<ItmeType> = ({ row, hasMyRank }) => {
   predictor = Math.round(predictor * 100) / 100
 
   return (
-    <div style={{ color: predictor > 0 ? 'green' : 'gray' }}>
+    <div style={{ color: predictor >= 0 ? 'green' : 'gray' }}>
       {predictor > 0 ? `+${predictor}` : predictor}
     </div>
   )
