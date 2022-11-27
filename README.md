@@ -16,11 +16,11 @@
 
 ## 安装
 
-有两种安装方式,可以选择从 [Chrome Web Store][chrome-store-url] 安装,或者 [离线安装](#离线安装)
+有两种安装方式，可以选择从 [Chrome Web Store][chrome-store-url] 安装，或者 [离线安装](#离线安装)
 
-> 推荐直接通过 [Chrome Web Store][chrome-store-url] 来安装,比较方便.
+> 推荐直接通过 [Chrome Web Store][chrome-store-url] 来安装，比较方便，并且当扩展有更新的时候，会自动更新到最新版本。
 >
-> 不过因为提交到商店需要进行审核,有时需要进行一些时间的等待,这时如果想要尝鲜,或者是因为某些原因无法连接到商店,可以尝试进行 [离线安装](#离线安装)
+> 不过因为提交到商店需要进行审核，有时需要进行一些时间的等待，这时如果想要尝鲜，或者是因为某些原因无法连接到商店，可以尝试进行 [离线安装](#离线安装)，不过这样如果想要获取更新就需要没到手动来下载一下了。
 
 ## 功能
 
@@ -83,10 +83,15 @@
 ### 竞赛排名页面显示预测
 
 - 2022-02-24 完成初始版本
+- 2022-11-27 更新预测数据源
 
 此功能源码 [src/content/pages/ranking](./src/content/pages/ranking)
 
-效果如下,预测数据来自 https://lcpredictor.herokuapp.com/
+目前预测数据 API 已经切换至 https://lccn.lbao.site/
+
+> ~~效果如下,预测数据来自 https://lcpredictor.herokuapp.com/~~
+>
+> https://lcpredictor.herokuapp.com/ 目前在[迁移](https://github.com/SysSn13/leetcode-rating-predictor/issues/48)，旧的 API 已经失效，新的 API 未知，无法获取数据。
 
 ![rating-predictor](./docs/assets/rating-predictor.png)
 
