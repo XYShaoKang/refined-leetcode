@@ -300,7 +300,13 @@ const BlockUserList: FC<BlockUserListProps> = props => {
                 overflow: 'hidden',
               }}
             >
-              {name}
+              <a
+                href={`https://leetcode.cn/u/${slug}/`}
+                target="__blank"
+                style={{ color: 'inherit' }}
+              >
+                {name}
+              </a>
             </div>
             <div
               style={{
