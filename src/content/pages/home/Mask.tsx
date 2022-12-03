@@ -1,5 +1,6 @@
 import { useEffect, FC } from 'react'
 import 'styled-components/macro'
+import { Portal } from '../components/Portal'
 
 import { isValid } from './DragAndDrop'
 
@@ -19,32 +20,34 @@ const Mask: FC<MaskProps> = ({ open, setOpen }) => {
       el = e.target as HTMLElement
       if (!(el instanceof HTMLAnchorElement)) return
       if (!isValid(el.href)) return
-      setOpen(true)
+      setTimeout(() => setOpen(true), 100)
     }
     const handleDragend = () => {
       setOpen(false)
     }
-    document.body.addEventListener('drag', handleDragstart)
+    document.body.addEventListener('dragstart', handleDragstart)
     document.body.addEventListener('dragend', handleDragend)
     return () => {
-      document.body.removeEventListener('drag', handleDragstart)
+      document.body.removeEventListener('dragstart', handleDragstart)
       document.body.removeEventListener('dragend', handleDragend)
     }
   }, [])
   if (!open) return null
 
   return (
-    <div
-      css={`
-        top: 0;
-        left: 0;
-        position: fixed;
-        width: 100vw;
-        height: 100vh;
-        backdrop-filter: blur(5px);
-        z-index: 10;
-      `}
-    />
+    <Portal>
+      <div
+        css={`
+          top: 0;
+          left: 0;
+          position: fixed;
+          width: 100vw;
+          height: 100vh;
+          backdrop-filter: blur(5px);
+          z-index: 10;
+        `}
+      />
+    </Portal>
   )
 }
 

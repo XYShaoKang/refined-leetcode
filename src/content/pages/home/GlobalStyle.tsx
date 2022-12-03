@@ -23,16 +23,5 @@ const GlobalStyle = styled.createGlobalStyle`
   .refined-leetcode-block.refined-leetcode-temp:hover {
     filter: none;
   }
-
-  /* 设置当前鼠标悬浮的帖子元素，以显示拖拽手柄和定位 */
-  .css-1pej3s6-FeedContainer:hover {
-    position: relative;
-    & > span {
-      display: block;
-    }
-  }
-  .css-1pej3s6-FeedContainer > span {
-    display: none;
-  }
 `
 export default GlobalStyle

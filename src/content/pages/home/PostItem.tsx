@@ -3,6 +3,7 @@ import { css } from 'styled-components/macro'
 import { useDrag } from 'react-dnd'
 
 import Popper from '../components/PopperUnstyled'
+import { useHover } from '../hooks'
 
 export const ItemTypes = {
   POST: 'post',
@@ -22,13 +23,24 @@ const PostItem: FC<{
 }> = ({ setOpen }) => {
   const [container, setContainer] = useState<HTMLElement | null>(null)
   const postElements = useRef<HTMLElement[]>([])
+  const [hoverRef, hoverIcon] = useHover()
+  const [hoverContainer, setHoverContainer] = useState(false)
+  const timer = useRef<ReturnType<typeof setTimeout>>()
 
   const handleMouseEnter = (e: MouseEvent) => {
     const el = e.target as HTMLDivElement
 
     if (el && !el.classList.contains('refined-leetcode-block')) {
-      setContainer(() => el ?? null)
+      if (timer.current) clearTimeout(timer.current)
+      setContainer(el)
+      setHoverContainer(true)
     }
+  }
+
+  const handleMouseLeave = () => {
+    timer.current = setTimeout(() => {
+      setHoverContainer(false)
+    }, 100)
   }
 
   useEffect(() => {
@@ -39,11 +51,13 @@ const PostItem: FC<{
     )
     postElements.current.forEach(el => {
       el.addEventListener('mouseenter', handleMouseEnter)
+      el.addEventListener('mouseleave', handleMouseLeave)
     })
 
     return () => {
       postElements.current.forEach(el => {
         el.removeEventListener('mouseenter', handleMouseEnter)
+        el.removeEventListener('mouseleave', handleMouseLeave)
       })
       postElements.current = []
     }
@@ -58,6 +72,7 @@ const PostItem: FC<{
             if (type === 'QUESTION' || type === 'SOLUTION') {
               postElements.current.push(node)
               node.addEventListener('mouseenter', handleMouseEnter)
+              node.addEventListener('mouseleave', handleMouseLeave)
             }
           }
         }
@@ -104,15 +119,17 @@ const PostItem: FC<{
     }
   }, [container, isDragging, setOpen])
 
-  if (!container) return null
+  if (!hoverContainer && !hoverIcon && !isDragging) return null
   preview(container)
 
   return (
     <Popper
       anchorEl={container}
-      container={container}
       placement="top"
-      ref={drag}
+      ref={(ref: HTMLSpanElement | null) => {
+        hoverRef(ref)
+        drag(ref)
+      }}
       offset={{ top: 36, left: 339 }}
     >
       <svg
