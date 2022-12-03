@@ -12,9 +12,6 @@ import {
 } from './blockUsersSlice'
 import Mask from './Mask'
 
-type PostItem = {
-  PostElement: HTMLElement
-}
 type NativeTypeHTML = {
   html: string
   dataTransfer: {
