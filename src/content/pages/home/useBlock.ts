@@ -2,13 +2,14 @@ import { useEffect } from 'react'
 
 import { selectAllPosts, fetchPosts } from './postsSlice'
 import { selectAllBlockUsers } from './blockUsersSlice'
-import { useAppDispatch, useAppSelector } from '../hooks'
+import { useAppDispatch, useAppSelector, useEvent } from '../hooks'
 
 export const useBlock = (): void => {
   const posts = useAppSelector(selectAllPosts)
   const users = useAppSelector(selectAllBlockUsers)
   const dispatch = useAppDispatch()
-  useEffect(() => {
+
+  const handleBlock = useEvent(() => {
     const blockUsers = new Set(
         users.filter(user => user.block).map(user => user.slug)
       ),
@@ -49,6 +50,9 @@ export const useBlock = (): void => {
         }
       }
     })
+  })
+  useEffect(() => {
+    handleBlock()
   }, [posts, users])
 
   useEffect(() => {
@@ -56,6 +60,8 @@ export const useBlock = (): void => {
 
     const handleFetchPost = async () => {
       await dispatch(fetchPosts(10)).unwrap()
+      // 防止某些元素加载比较慢的情况，延迟再触发一次
+      setTimeout(handleBlock, 500)
     }
 
     const handleClick = (e: Event) => {
