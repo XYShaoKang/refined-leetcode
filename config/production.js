@@ -15,7 +15,6 @@ const production = env => ({
         : JSON.stringify('error'),
     }),
   ],
-  devtool: 'source-map',
   mode: 'production',
 })
 
