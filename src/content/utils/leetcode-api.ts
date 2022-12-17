@@ -1,3 +1,4 @@
+import { previousMonday } from 'date-fns/fp'
 import { logger } from '../../utils'
 import { isObject, sleep } from './utils'
 
@@ -416,7 +417,10 @@ class LeetCodeApi {
     if (cache) {
       try {
         const res = JSON.parse(cache)
-        return res
+        if (res.update && new Date(res.update) > previousMonday(new Date())) {
+          console.log(res)
+          return res.questions
+        }
       } catch (error) {
         console.log('解析缓存失败')
       }
@@ -443,10 +447,13 @@ class LeetCodeApi {
     }
 
     return this.graphqlApi({ body }).then(data => {
-      const res = data?.data?.allQuestions
-      if (res) {
-        localStorage.setItem('lc-extend:allQuestions', JSON.stringify(res))
-        return res
+      const questions = data?.data?.allQuestions
+      if (questions) {
+        localStorage.setItem(
+          'lc-extend:allQuestions',
+          JSON.stringify({ questions: questions, update: new Date() })
+        )
+        return questions
       }
       throw new Error('获取题目列表失败,返回结果为: ' + JSON.stringify(data))
     })
