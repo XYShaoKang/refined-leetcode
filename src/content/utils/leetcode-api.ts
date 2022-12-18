@@ -403,6 +403,39 @@ export type GlobalData = {
   } | null
   commonNojPermissionTypes: any[]
 }
+
+export type ProblemsetQuestion = {
+  hasMore: boolean
+  total: number
+  questions: Array<{
+    acRate: number
+    difficulty: string
+    freqBar: number
+    frontendQuestionId: string
+    isFavor: boolean
+    paidOnly: boolean
+    solutionNum: number
+    status: string
+    title: string
+    titleCn: string
+    titleSlug: string
+    topicTags: Array<{
+      name: string
+      nameTranslated: string
+      id: string
+      slug: string
+    }>
+    extra: Array<{
+      companyTagNum: number
+      hasVideoSolution: boolean
+      topCompanyTags: {
+        imgUrl: string
+        slug: string
+        numSubscribed: number
+      }
+    }>
+  }>
+}
 class LeetCodeApi {
   public graphqlApi: (
     { method, body }: { endpoint?: string; method?: string; body?: unknown },
@@ -441,7 +474,6 @@ class LeetCodeApi {
       try {
         const res = JSON.parse(cache)
         if (res.update && new Date(res.update) > previousMonday(new Date())) {
-          console.log(res)
           return res.questions
         }
       } catch (error) {
@@ -1320,6 +1352,72 @@ class LeetCodeApi {
       `,
     }
     return this.graphqlApi({ body }).then(({ data }) => data)
+  }
+
+  /** 获取题单题目列表
+   *
+   */
+  public getProblemsetQuestionList(
+    listId: string,
+    limit = 100,
+    skip = 0
+  ): Promise<ProblemsetQuestion['questions']> {
+    const body = {
+      query: /* GraphQL */ `
+        query problemsetQuestionList(
+          $categorySlug: String
+          $limit: Int
+          $skip: Int
+          $filters: QuestionListFilterInput
+        ) {
+          problemsetQuestionList(
+            categorySlug: $categorySlug
+            limit: $limit
+            skip: $skip
+            filters: $filters
+          ) {
+            hasMore
+            total
+            questions {
+              acRate
+              difficulty
+              freqBar
+              frontendQuestionId
+              isFavor
+              paidOnly
+              solutionNum
+              status
+              title
+              titleCn
+              titleSlug
+              topicTags {
+                name
+                nameTranslated
+                id
+                slug
+              }
+              extra {
+                hasVideoSolution
+                topCompanyTags {
+                  imgUrl
+                  slug
+                  numSubscribed
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        categorySlug: '',
+        skip,
+        limit,
+        filters: { listId },
+      },
+    }
+    return this.graphqlApi({ body }).then(
+      ({ data }) => data.problemsetQuestionList.questions
+    )
   }
 }
 

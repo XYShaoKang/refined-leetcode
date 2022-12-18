@@ -23,17 +23,32 @@ const Random: FC = () => {
   const isPremium = useAppSelector(selectIsPremium)
 
   const handldClick = async () => {
-    let allQuestions = await api.getAllQuestions()
+    const favorite = new URL(location.href).searchParams.get('favorite')
 
-    if (!isPremium) {
-      allQuestions = allQuestions.filter(question => !question.isPaidOnly)
+    let allQuestions: {
+      titleSlug: string
+      paidOnly?: boolean
+      isPaidOnly?: boolean
+    }[]
+    if (favorite) {
+      allQuestions = await api.getProblemsetQuestionList(favorite)
+      if (!isPremium) {
+        allQuestions = allQuestions.filter(question => !question.paidOnly)
+      }
+    } else {
+      allQuestions = await api.getAllQuestions()
+
+      if (!isPremium) {
+        allQuestions = allQuestions.filter(question => !question.isPaidOnly)
+      }
     }
     let i = Math.floor(Math.random() * (allQuestions.length - 1))
     if (allQuestions[i].titleSlug === location.pathname.split('/')[1]) {
       i = allQuestions.length - 1
     }
-
-    ;(window as any).next.router.push(`/problems/${allQuestions[i].titleSlug}/`)
+    let nextUrl = `/problems/${allQuestions[i].titleSlug}/`
+    if (favorite) nextUrl += `?favorite=${favorite}`
+    ;(window as any).next.router.push(nextUrl)
   }
 
   return (
