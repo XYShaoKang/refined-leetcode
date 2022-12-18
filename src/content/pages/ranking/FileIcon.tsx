@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components/macro'
 import { debounce } from '../../../utils'
+import { withRoot } from '../../hoc'
 
 import { ParamType, useGetContestQuery } from './rankSlice'
 
@@ -91,4 +92,4 @@ const FileIcon: FC<ItmeType> = ({ row, col, hasMyRank }) => {
   )
 }
 
-export default FileIcon
+export default withRoot(FileIcon)

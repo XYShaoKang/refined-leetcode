@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import styled from 'styled-components/macro'
+import { withRoot } from '../../hoc'
 
 import { useHover } from '../hooks'
 
@@ -74,4 +75,4 @@ const Title: FC = () => {
   )
 }
 
-export default Title
+export default withRoot(Title)

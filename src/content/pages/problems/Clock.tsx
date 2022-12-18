@@ -7,6 +7,7 @@ import {
   SuccessCheckReturnType,
   findElement,
 } from '../../utils'
+import { withRoot } from '../../hoc'
 import {
   submissionOnMarkChange,
   checkIfSubmitKey,
@@ -399,4 +400,4 @@ const Clock: FC<{ beta?: boolean }> = ({ beta }) => {
   )
 }
 
-export default Clock
+export default withRoot(Clock)

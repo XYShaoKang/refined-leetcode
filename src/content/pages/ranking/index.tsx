@@ -1,8 +1,4 @@
-import { StrictMode } from 'react'
 import ReactDOM, { render } from 'react-dom'
-import { Provider } from 'react-redux'
-
-import store from '../../app/store'
 
 import { debounce } from '../../../utils'
 import {
@@ -31,12 +27,7 @@ async function loadTitle() {
     const root = document.createElement('th')
     predictorNodes.push(root)
     parent.append(root)
-    render(
-      <StrictMode>
-        <Title />
-      </StrictMode>,
-      root
-    )
+    render(<Title />, root)
   } else {
     await sleep(100)
     loadTitle()
@@ -52,14 +43,7 @@ async function loadPredictor() {
   trs.forEach((tr, i) => {
     const root = document.createElement('td')
     predictorNodes.push(root)
-    render(
-      <StrictMode>
-        <Provider store={store}>
-          <Item row={i} hasMyRank={hasMyRank} />
-        </Provider>
-      </StrictMode>,
-      root
-    )
+    render(<Item row={i} hasMyRank={hasMyRank} />, root)
 
     tr.append(root)
   })
@@ -79,14 +63,7 @@ async function loadFileIcon() {
         if (fileIconStates[i][j]) continue
         parent.removeChild(iconEl)
 
-        render(
-          <StrictMode>
-            <Provider store={store}>
-              <FileIcon row={i} col={j} hasMyRank={hasMyRank} />
-            </Provider>
-          </StrictMode>,
-          parent
-        )
+        render(<FileIcon row={i} col={j} hasMyRank={hasMyRank} />, parent)
 
         fileIconStates[i][j] = iconEl
       } else {
