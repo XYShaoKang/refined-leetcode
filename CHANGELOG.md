@@ -1,3 +1,12 @@
+## [0.8.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.8.2...v0.8.3) (2022-12-03)
+
+
+### Bug Fixes
+
+* **home:** 修复点击`加载更多`按钮时有些帖子不会隐藏 ([62969a5](https://github.com/XYShaoKang/refined-leetcode/commit/62969a50f7328027fe2eac93ae656b1a523929ea))
+* **home:** 定位问题 ([10d20ef](https://github.com/XYShaoKang/refined-leetcode/commit/10d20ef223196880dcc62f92ec7d01393f62e0e2))
+* **home:** 点击列表中的用户名可跳转至对应的主页 ([eca9f88](https://github.com/XYShaoKang/refined-leetcode/commit/eca9f8816eb8ad56c6ea2f63db8d5dd3f999885a))
+
 ## [0.8.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.8.1...v0.8.2) (2022-11-26)
 
 
