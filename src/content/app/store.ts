@@ -19,9 +19,18 @@ import storage from 'redux-persist/lib/storage'
 import { apiSlice } from '../pages/ranking/rankSlice'
 import postsReducer from '../pages/home/postsSlice'
 import blockUsersReducer from '../pages/home/blockUsersSlice'
+import { globalDataSlice, fetchGlobalData } from '../pages/global/globalSlice'
 
 const config = {
-  whitelist: ['users/userAdded'],
+  whitelist: [
+    'users/setBlockUserBySlug/fulfilled',
+    'users/setBlockUserByPostId/fulfilled',
+    'users/setBlockUserByCommunityArticleId/fulfilled',
+    'users/setBlockUserBySolutionSlug/fulfilled',
+    'blockUsers/unSetBlockUser',
+    'blockUsers/toggleBlockUser',
+    'global/fetchGlobalData/fulfilled',
+  ],
 }
 
 const persistConfig = {
@@ -66,6 +75,7 @@ const store = configureStore({
     [apiSlice.reducerPath]: apiSlice.reducer,
     posts: postsReducer,
     blockUsers: persistedUsersReducer,
+    globalData: globalDataSlice.reducer,
   },
   devTools: false,
   middleware: getDefaultMiddleware =>
@@ -94,3 +104,5 @@ export default store
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
+
+store.dispatch(fetchGlobalData())

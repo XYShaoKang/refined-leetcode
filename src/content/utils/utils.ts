@@ -141,3 +141,20 @@ export function getExtensionId(): string | undefined {
     document.getElementById('refined-leetcode')?.dataset.extensionid
   return extensionId
 }
+
+/** 判断当前是否使用新版 UI
+ *
+ */
+export const isBetaUI: () => Promise<boolean> = (() => {
+  let beta: boolean | null = null
+  return async function isBetaUI() {
+    if (beta !== null) return beta
+
+    const root = await Promise.race([
+      findElement('#__next'),
+      findElement('#app'),
+    ])
+    beta = root.id === '__next'
+    return beta
+  }
+})()

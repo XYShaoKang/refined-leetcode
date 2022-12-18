@@ -1,10 +1,9 @@
-import { StrictMode } from 'react'
 import ReactDOM, { render } from 'react-dom'
 
 import Clock from './Clock'
 import Random from './Random'
-import { getRoot, isBetaUI } from './utils'
-import { IS_MAC, findElement } from '../../utils'
+import { getRoot } from './utils'
+import { IS_MAC, findElement, isBetaUI } from '../../utils'
 
 let root: HTMLDivElement | null = null,
   randomRoot: HTMLDivElement | null = null,
@@ -37,12 +36,7 @@ async function load() {
         root.style.alignItems = 'center'
         root.style.flexShrink = '0'
 
-        render(
-          <StrictMode>
-            <Clock beta={beta} />
-          </StrictMode>,
-          root
-        )
+        render(<Clock beta={beta} />, root)
       }
 
       parent.prepend(root)
@@ -56,12 +50,7 @@ async function load() {
         root.style.flexShrink = '0'
         root.style.marginRight = '15px'
 
-        render(
-          <StrictMode>
-            <Clock />
-          </StrictMode>,
-          root
-        )
+        render(<Clock />, root)
       }
 
       parent.prepend(root)
@@ -89,12 +78,7 @@ async function loadRandom() {
       randomRoot = document.createElement('div')
       randomRoot.style.lineHeight = '0'
 
-      render(
-        <StrictMode>
-          <Random />
-        </StrictMode>,
-        randomRoot
-      )
+      render(<Random />, randomRoot)
     }
     nav.append(randomRoot)
   }

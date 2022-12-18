@@ -1,5 +1,5 @@
 import { logger } from '../../../utils'
-import { IS_MAC, findElement } from '../../utils'
+import { IS_MAC, findElement, isBetaUI } from '../../utils'
 
 const log = logger.child({ prefix: 'Clock' })
 
@@ -138,23 +138,6 @@ const checkIfSubmitKey = (e: KeyboardEvent): boolean => {
 const checkIfGlobalSubmitIsDisabled = (): boolean =>
   localStorage.getItem('global_disabled_submit_code') === 'false'
 
-/** 判断当前是否使用新版 UI
- *
- */
-const isBetaUI: () => Promise<boolean> = (() => {
-  let beta: boolean | null = null
-  return async function isBetaUI() {
-    if (beta !== null) return beta
-
-    const root = await Promise.race([
-      findElement('#__next'),
-      findElement('#app'),
-    ])
-    beta = root.id === '__next'
-    return beta
-  }
-})()
-
 /** 答题页内获取需要放置计时组件的 root
  *
  * 根据是否为新版 UI 选择不同的元素
@@ -177,7 +160,6 @@ export {
   submissionOnMarkChange,
   checkIfSubmitKey,
   checkIfGlobalSubmitIsDisabled,
-  isBetaUI as isBetaUI,
   getRoot,
   IS_MAC,
 }
