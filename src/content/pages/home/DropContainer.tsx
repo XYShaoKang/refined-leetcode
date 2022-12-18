@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import styled from 'styled-components/macro'
 import { ConnectDropTarget } from 'react-dnd'
-import { Portal } from '../components/Portal'
+import { Portal } from '@/components/Portal'
 
 const Container = styled.div<{ active?: boolean }>`
   position: fixed;

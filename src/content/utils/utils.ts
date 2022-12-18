@@ -1,5 +1,5 @@
 import { DefaultTheme } from 'styled-components/macro'
-import { darkTheme, lightTheme } from '../theme'
+import { darkTheme, lightTheme } from '@/theme'
 
 export function download(str: string, filename = 'contest.md'): void {
   const blob = new Blob([str], { type: 'text/plain' })

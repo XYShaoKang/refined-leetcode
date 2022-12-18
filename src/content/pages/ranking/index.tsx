@@ -1,12 +1,8 @@
 import ReactDOM, { render } from 'react-dom'
 
+import { initUrlChangeEvent, sleep, findAllElement, findElement } from '@/utils'
+
 import { debounce } from '../../../utils'
-import {
-  initUrlChangeEvent,
-  sleep,
-  findAllElement,
-  findElement,
-} from '../../utils'
 import Item from './Item'
 import Title from './Title'
 import FileIcon from './FileIcon'

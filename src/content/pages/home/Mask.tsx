@@ -1,6 +1,7 @@
 import { useEffect, FC } from 'react'
 import 'styled-components/macro'
-import { Portal } from '../components/Portal'
+
+import { Portal } from '@/components/Portal'
 
 import { isValid } from './DragAndDrop'
 

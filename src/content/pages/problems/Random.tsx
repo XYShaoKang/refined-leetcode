@@ -1,10 +1,11 @@
 import React, { FC } from 'react'
 import styled from 'styled-components/macro'
 
-import { LeetCodeApi } from '../../utils'
-import { withRoot } from '../../hoc'
+import { LeetCodeApi } from '@/utils'
+import { withRoot } from '@/hoc'
+import { useAppSelector } from '@/hooks'
+
 import { selectIsPremium } from '../global/globalSlice'
-import { useAppSelector } from '../hooks'
 
 const StyledBtn = styled.button`
   line-height: 0;

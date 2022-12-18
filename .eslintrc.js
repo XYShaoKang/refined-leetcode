@@ -28,6 +28,10 @@ const eslintConfig = {
     react: {
       version: 'detect',
     },
+    'import/resolver': {
+      typescript: true,
+      node: true,
+    },
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
@@ -104,6 +108,8 @@ const eslintConfig = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-member-accessibility': 'off',
+
+    'prefer-const': 'warn',
   },
   overrides: [
     {

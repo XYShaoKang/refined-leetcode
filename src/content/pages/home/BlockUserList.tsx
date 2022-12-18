@@ -8,15 +8,16 @@ import React, {
 } from 'react'
 import styled, { keyframes, ThemeContext } from 'styled-components/macro'
 
-import { Placement, Popper } from '../components/Popper'
-import { ToolTip } from '../components/ToolTip'
+import { Placement, Popper } from '@/components/Popper'
+import { ToolTip } from '@/components/ToolTip'
+import { useAppDispatch, useAppSelector } from '@/hooks'
+
 import {
   setBlockUserBySlug,
   selectAllBlockUsers,
   unSetBlockUser,
   toggleBlockUser,
 } from './blockUsersSlice'
-import { useAppDispatch, useAppSelector } from '../hooks'
 
 interface BlockUserListProps {
   placement?: Placement

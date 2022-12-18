@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import styled from 'styled-components/macro'
-import { withRoot } from '../../hoc'
 
-import { useHover } from '../hooks'
+import { withRoot } from '@/hoc'
+import { useHover } from '@/hooks'
 
 const StyleSpan = styled.span`
   position: relative;

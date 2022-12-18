@@ -6,8 +6,11 @@ import {
   LeetCodeApi,
   SuccessCheckReturnType,
   findElement,
-} from '../../utils'
-import { withRoot } from '../../hoc'
+} from '@/utils'
+import { withRoot } from '@/hoc'
+import { useEvent, useHover } from '@/hooks'
+import { ToolTip } from '@/components/ToolTip'
+
 import {
   submissionOnMarkChange,
   checkIfSubmitKey,
@@ -16,8 +19,6 @@ import {
 } from './utils'
 import { useTimer } from './useTimer'
 import { logger } from '../../../utils'
-import { useEvent, useHover } from '../hooks'
-import { ToolTip } from '../components/ToolTip'
 
 const log = logger.child({ prefix: 'Clock' })
 

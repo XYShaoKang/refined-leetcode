@@ -2,9 +2,10 @@ import React, { FC, useState } from 'react'
 import { DropTargetMonitor, useDrop } from 'react-dnd'
 import { NativeTypes } from 'react-dnd-html5-backend'
 
+import { useAppDispatch } from '@/hooks'
+
 import PostItem, { ItemTypes, PostItemType } from './PostItem'
 import DropContainer from './DropContainer'
-import { useAppDispatch } from '../hooks'
 import {
   setBlockUserByCommunityArticleId,
   setBlockUserByPostId,

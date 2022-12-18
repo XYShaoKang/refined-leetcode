@@ -1,6 +1,8 @@
 import { FC, useEffect, useState } from 'react'
+
+import { withRoot } from '@/hoc'
+
 import { debounce } from '../../../utils'
-import { withRoot } from '../../hoc'
 
 import { ParamType, useGetPredictionQuery } from './rankSlice'
 

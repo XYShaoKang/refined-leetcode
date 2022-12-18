@@ -4,14 +4,15 @@ import {
   createEntityAdapter,
   PayloadAction,
 } from '@reduxjs/toolkit'
-import { RootState } from '../../app/store'
+
+import { RootState } from '@/app/store'
 import {
   LeetCodeApi,
   UserProfilePublicProfile,
   QAQuestion,
   SolutionArticle,
   CommunityArticle,
-} from '../../utils'
+} from '@/utils'
 
 const api = new LeetCodeApi(location.origin)
 

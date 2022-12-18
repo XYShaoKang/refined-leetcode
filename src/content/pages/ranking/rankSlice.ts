@@ -1,5 +1,6 @@
 import { createApi, BaseQueryFn } from '@reduxjs/toolkit/query/react'
-import { getExtensionId } from '../../utils'
+
+import { getExtensionId } from '@/utils'
 
 export type ParamType = {
   contestId: string

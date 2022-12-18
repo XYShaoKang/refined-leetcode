@@ -9,9 +9,9 @@ import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 import { ThemeProvider } from 'styled-components/macro'
 
-import store, { persistor } from '../app/store'
-import { darkTheme, lightTheme } from '../theme'
-import { getTheme, isBetaUI } from '../utils'
+import store, { persistor } from '@/app/store'
+import { darkTheme, lightTheme } from '@/theme'
+import { getTheme, isBetaUI } from '@/utils'
 
 export const withRoot = <T extends ComponentType<any>>(Component: T): T => {
   const Root = forwardRef(function App(props: any, ref: any) {

@@ -1,7 +1,8 @@
 import ReactDOM, { render } from 'react-dom'
 
+import { initUrlChangeEvent, findElement } from '@/utils'
+
 import App from './App'
-import { initUrlChangeEvent, findElement } from '../../utils'
 
 initUrlChangeEvent()
 

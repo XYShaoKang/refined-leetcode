@@ -7,7 +7,9 @@ import {
   useEffect,
 } from 'react'
 import styled, { StyledComponentProps } from 'styled-components/macro'
-import { useEvent } from '../hooks'
+
+import { useEvent } from '@/hooks'
+
 import { Portal } from './Portal'
 
 export type Placement = 'top' | 'bottom' | 'left' | 'right'

@@ -2,8 +2,8 @@ import React, { FC, useEffect, useRef, useState } from 'react'
 import { css } from 'styled-components/macro'
 import { useDrag } from 'react-dnd'
 
-import Popper from '../components/PopperUnstyled'
-import { useHover } from '../hooks'
+import Popper from '@/components/PopperUnstyled'
+import { useHover } from '@/hooks'
 
 export const ItemTypes = {
   POST: 'post',

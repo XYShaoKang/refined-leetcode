@@ -16,10 +16,10 @@ import {
 } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
-import { apiSlice } from '../pages/ranking/rankSlice'
-import postsReducer from '../pages/home/postsSlice'
-import blockUsersReducer from '../pages/home/blockUsersSlice'
-import { globalDataSlice, fetchGlobalData } from '../pages/global/globalSlice'
+import { apiSlice } from '@/pages/ranking/rankSlice'
+import postsReducer from '@/pages/home/postsSlice'
+import blockUsersReducer from '@/pages/home/blockUsersSlice'
+import { globalDataSlice, fetchGlobalData } from '@/pages/global/globalSlice'
 
 const config = {
   whitelist: [

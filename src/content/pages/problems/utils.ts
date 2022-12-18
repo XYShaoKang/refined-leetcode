@@ -1,5 +1,6 @@
+import { IS_MAC, findElement, isBetaUI } from '@/utils'
+
 import { logger } from '../../../utils'
-import { IS_MAC, findElement, isBetaUI } from '../../utils'
 
 const log = logger.child({ prefix: 'Clock' })
 
@@ -161,5 +162,4 @@ export {
   checkIfSubmitKey,
   checkIfGlobalSubmitIsDisabled,
   getRoot,
-  IS_MAC,
 }

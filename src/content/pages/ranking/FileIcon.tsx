@@ -1,7 +1,9 @@
 import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components/macro'
+
+import { withRoot } from '@/hoc'
+
 import { debounce } from '../../../utils'
-import { withRoot } from '../../hoc'
 
 import { ParamType, useGetContestQuery } from './rankSlice'
 

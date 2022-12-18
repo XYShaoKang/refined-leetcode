@@ -4,8 +4,8 @@ import {
   createEntityAdapter,
 } from '@reduxjs/toolkit'
 
-import { RootState } from '../../app/store'
-import { LeetCodeApi, NotyArticleType, NotyItem } from '../../utils'
+import { RootState } from '@/app/store'
+import { LeetCodeApi, NotyArticleType, NotyItem } from '@/utils'
 
 const api = new LeetCodeApi(location.origin)
 

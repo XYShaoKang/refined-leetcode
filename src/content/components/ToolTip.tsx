@@ -7,7 +7,8 @@ import {
   cloneElement,
 } from 'react'
 
-import { useHover } from '../hooks'
+import { useHover } from '@/hooks'
+
 import { Popper, Placement } from './Popper'
 
 export interface TooltipProps

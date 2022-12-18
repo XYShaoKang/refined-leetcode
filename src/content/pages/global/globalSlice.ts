@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-import { RootState } from '../../app/store'
-import { LeetCodeApi, GlobalData } from '../../utils'
+import { RootState } from '@/app/store'
+import { LeetCodeApi, GlobalData } from '@/utils'
 
 const api = new LeetCodeApi(location.origin)
 

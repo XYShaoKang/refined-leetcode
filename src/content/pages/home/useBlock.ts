@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
 
+import { useAppDispatch, useAppSelector, useEvent } from '@/hooks'
+
 import { selectAllPosts, fetchPosts } from './postsSlice'
 import { selectAllBlockUsers } from './blockUsersSlice'
-import { useAppDispatch, useAppSelector, useEvent } from '../hooks'
 
 export const useBlock = (): void => {
   const posts = useAppSelector(selectAllPosts)

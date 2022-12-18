@@ -14,7 +14,8 @@
     "lint": "pnpm lint:prettier && pnpm lint:eslint",
     "lint:prettier": "prettier --check src",
     "lint:eslint": "eslint \"src/**/*.{ts,tsx}\"",
-    "test": "jest"
+    "test": "jest",
+    "reduxdev": "redux-devtools --open"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.8",
@@ -52,6 +53,7 @@
     "crx": "^5.0.1",
     "eslint": "^8.7.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-typescript": "^3.5.2",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-prettier": "^4.0.0",
