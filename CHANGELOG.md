@@ -1,3 +1,13 @@
+## [0.8.4](https://github.com/XYShaoKang/refined-leetcode/compare/v0.8.3...v0.8.4) (2022-12-18)
+
+
+### Bug Fixes
+
+* **problems:** 随机一题 ([4a112c8](https://github.com/XYShaoKang/refined-leetcode/commit/4a112c8788341b45e0bc48a42080df20e7c6b9cf))
+* **problems:** 题单内部随机 ([c890cc2](https://github.com/XYShaoKang/refined-leetcode/commit/c890cc2db2126704fd94781ad72f808026d173ca))
+* 添加缓存的过期时间 ([1786bab](https://github.com/XYShaoKang/refined-leetcode/commit/1786bab573a415c6f03e34aa53000ba78bb1be6a))
+* 添加获取 globalData api ([d125d14](https://github.com/XYShaoKang/refined-leetcode/commit/d125d1439bd4e473a6d8834e0bb032bdf553b1b1))
+
 ## [0.8.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.8.2...v0.8.3) (2022-12-03)
 
 
