@@ -380,6 +380,29 @@ export type CommunityArticle = {
     __typename: string
   }
 }
+
+export type GlobalData = {
+  userStatus: {
+    isSignedIn: boolean
+    isPremium: boolean
+    username: string
+    realName: string
+    avatar: string
+    userSlug: string
+    isAdmin: boolean
+    checkedInToday: boolean
+    useTranslation: boolean
+    premiumExpiredAt: number
+    isTranslator: boolean
+    isSuperuser: boolean
+    isPhoneVerified: boolean
+    isVerified: boolean
+  }
+  jobsMyCompany: {
+    nameSlug: string
+  } | null
+  commonNojPermissionTypes: any[]
+}
 class LeetCodeApi {
   public graphqlApi: (
     { method, body }: { endpoint?: string; method?: string; body?: unknown },
@@ -1263,6 +1286,40 @@ class LeetCodeApi {
       `,
     }
     return this.graphqlApi({ body }).then(({ data }) => data.columnsArticleById)
+  }
+
+  /** 获取全局状态
+   *
+   */
+  public queryGlobalData(): Promise<GlobalData> {
+    const body = {
+      variables: {},
+      query: /* GraphQL */ `
+        query globalData {
+          userStatus {
+            isSignedIn
+            isPremium
+            username
+            realName
+            avatar
+            userSlug
+            isAdmin
+            checkedInToday
+            useTranslation
+            premiumExpiredAt
+            isTranslator
+            isSuperuser
+            isPhoneVerified
+            isVerified
+          }
+          jobsMyCompany {
+            nameSlug
+          }
+          commonNojPermissionTypes
+        }
+      `,
+    }
+    return this.graphqlApi({ body }).then(({ data }) => data)
   }
 }
 
