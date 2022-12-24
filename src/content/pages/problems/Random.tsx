@@ -51,7 +51,7 @@ const Random: FC = () => {
       isPaidOnly?: boolean
     }[]
 
-    const currentTitleSlug = location.pathname.split('/')[1]
+    const currentTitleSlug = location.pathname.split('/').filter(Boolean)[1]
     const predicates: ((question: any) => boolean | undefined)[] = []
     // 过滤当前题目
     predicates.push(({ titleSlug }) => titleSlug === currentTitleSlug)
