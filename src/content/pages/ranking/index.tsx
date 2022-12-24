@@ -1,6 +1,6 @@
 import ReactDOM, { render } from 'react-dom'
 
-import { initUrlChangeEvent, sleep, findAllElement, findElement } from '@/utils'
+import { sleep, findAllElement, findElement } from '@/utils'
 
 import { debounce } from '../../../utils'
 import Item from './Item'
@@ -94,8 +94,6 @@ if (urlMatchReg.test(location.pathname)) {
   loadPredictor()
   loadFileIcon()
 }
-
-initUrlChangeEvent()
 
 window.addEventListener('urlchange', async function () {
   /**

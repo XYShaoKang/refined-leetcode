@@ -1,10 +1,8 @@
 import ReactDOM, { render } from 'react-dom'
 
-import { initUrlChangeEvent, findElement } from '@/utils'
+import { findElement } from '@/utils'
 
 import App from './App'
-
-initUrlChangeEvent()
 
 /** 存储前端组件的容器,当离开首页时,用来卸载组件
  *
