@@ -31,3 +31,5 @@ export const selectIsPremium = (state: RootState): boolean | undefined =>
   state.globalData?.userStatus?.isPremium
 export const selectIsSignedIn = (state: RootState): boolean | undefined =>
   state.globalData?.userStatus?.isSignedIn
+
+export default globalDataSlice.reducer

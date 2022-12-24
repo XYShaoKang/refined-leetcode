@@ -19,7 +19,8 @@ import storage from 'redux-persist/lib/storage'
 import { apiSlice } from '@/pages/ranking/rankSlice'
 import postsReducer from '@/pages/home/postsSlice'
 import blockUsersReducer from '@/pages/home/blockUsersSlice'
-import { globalDataSlice, fetchGlobalData } from '@/pages/global/globalSlice'
+import globalDataReducer, { fetchGlobalData } from '@/pages/global/globalSlice'
+import optionReducer from '@/pages/global/optionSlice'
 
 const config = {
   whitelist: [
@@ -75,7 +76,8 @@ const store = configureStore({
     [apiSlice.reducerPath]: apiSlice.reducer,
     posts: postsReducer,
     blockUsers: persistedUsersReducer,
-    globalData: globalDataSlice.reducer,
+    globalData: globalDataReducer,
+    option: optionReducer,
   },
   devTools: false,
   middleware: getDefaultMiddleware =>

@@ -436,6 +436,20 @@ export type ProblemsetQuestion = {
     }>
   }>
 }
+
+export type QuestionType = {
+  translatedTitle: string
+  title: string
+  questionFrontendId: string
+  titleSlug: string
+  questionId: string
+  categoryTitle: string
+  isPaidOnly: boolean
+  status: string
+  difficulty: string
+  __typename: string
+}
+
 class LeetCodeApi {
   public graphqlApi: (
     { method, body }: { endpoint?: string; method?: string; body?: unknown },
@@ -455,29 +469,22 @@ class LeetCodeApi {
     this.baseApi = baseApi.bind(null, REGION_URL)
   }
 
-  public async getAllQuestions(): Promise<
-    {
-      translatedTitle: string
-      title: string
-      questionFrontendId: string
-      titleSlug: string
-      questionId: string
-      categoryTitle: string
-      isPaidOnly: boolean
-      status: string
-      difficulty: string
-      __typename: string
-    }[]
-  > {
-    const cache = localStorage.getItem('lc-extend:allQuestions')
-    if (cache) {
-      try {
-        const res = JSON.parse(cache)
-        if (res.update && new Date(res.update) > previousMonday(new Date())) {
-          return res.questions
+  /** 获取所有题目
+   *
+   *  @param useCache 是否使用缓存，使用缓存的话，会将查询结果缓存到 LocalStorage 中，更新间隔为每个礼拜一，如果发现上次缓存是在礼拜一之前的话，就重新获取
+   */
+  public async getAllQuestions(useCache = true): Promise<QuestionType[]> {
+    if (useCache) {
+      const cache = localStorage.getItem('lc-extend:allQuestions')
+      if (cache) {
+        try {
+          const res = JSON.parse(cache)
+          if (res.update && new Date(res.update) > previousMonday(new Date())) {
+            return res.questions
+          }
+        } catch (error) {
+          console.log('解析缓存失败')
         }
-      } catch (error) {
-        console.log('解析缓存失败')
       }
     }
     const body = {
