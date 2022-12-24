@@ -61,6 +61,20 @@ const development = env => ({
         ? JSON.stringify(env.LOG_LEVEL)
         : JSON.stringify('debug'),
     }),
+    new webpack.BannerPlugin({
+      banner: file => {
+        if (file.filename === 'content.bundle.js') {
+          return `
+          const frame = document.createElement('frame')
+          document.body.append(frame)
+          const console = frame.contentWindow.console
+          window.console = console
+          frame.remove();`
+        }
+        return ''
+      },
+      raw: true,
+    }),
   ],
   devtool: false,
   mode: 'development',
