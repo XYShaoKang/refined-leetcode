@@ -1423,7 +1423,21 @@ class LeetCodeApi {
       },
     }
     return this.graphqlApi({ body }).then(
-      ({ data }) => data.problemsetQuestionList.questions
+      async ({
+        data: {
+          problemsetQuestionList: { questions, hasMore },
+        },
+      }) => {
+        if (hasMore) {
+          const next = await this.getProblemsetQuestionList(
+            listId,
+            limit,
+            skip + limit
+          )
+          return questions.concat(next)
+        }
+        return questions
+      }
     )
   }
 }
