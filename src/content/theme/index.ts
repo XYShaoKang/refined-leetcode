@@ -28,6 +28,10 @@ export const darkTheme: DefaultTheme = {
       text: `rgba(255, 255, 255, 1)`,
       disable: `rgb(110 110 110)`,
     },
+    checkbox: {
+      backgroundColor: 'hsla(0,0%,100%,.14)',
+      checkedBackgroundColor: 'rgb(10, 132, 255)',
+    },
   },
   shadows: {
     1: `0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 4px rgba(0, 0, 0, 0.25)`,
@@ -61,6 +65,10 @@ export const lightTheme: DefaultTheme = {
       hover: `rgba(0, 90, 216)`,
       text: `rgba(255, 255, 255, 1)`,
       disable: `rgb(110 110 110)`,
+    },
+    checkbox: {
+      backgroundColor: 'rgba(0,10,32,.05)',
+      checkedBackgroundColor: 'rgb(0, 122, 255)',
     },
   },
   shadows: {

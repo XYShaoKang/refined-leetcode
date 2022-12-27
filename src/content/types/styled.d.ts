@@ -32,6 +32,10 @@ declare module 'styled-components' {
         text: string
         disable: string
       }
+      checkbox: {
+        backgroundColor: string
+        checkedBackgroundColor: string
+      }
     }
     shadows: {
       [key: number]: string

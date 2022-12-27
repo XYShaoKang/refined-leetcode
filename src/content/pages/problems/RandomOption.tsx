@@ -46,13 +46,10 @@ const RandomOption = forwardRef(function RandomOption(
     >
       <div
         css={css`
-          background-color: rgb(48 48 48);
+          background-color: ${props => props.theme.palette.primary.light};
           border-radius: 0.5rem;
           padding: 0.625rem;
-          box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-            rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-            rgba(0, 0, 0, 0.24) 0px 1px 3px 0px,
-            rgba(0, 0, 0, 0.16) 0px 6px 16px 0px;
+          box-shadow: ${props => props.theme.shadows[1]};
           margin-left: 10px;
         `}
       >
@@ -66,9 +63,11 @@ const RandomOption = forwardRef(function RandomOption(
               display: flex;
               align-items: center;
               cursor: pointer;
+              border-radius: 4px;
               &:hover {
                 background-color: rgb(255 255 255 / 7%);
               }
+              color: ${({ theme }) => theme.palette.text.light};
             `}
           >
             <input
@@ -78,8 +77,22 @@ const RandomOption = forwardRef(function RandomOption(
               checked={option[key]}
               onChange={toggle(key)}
               css={css`
+                appearance: none;
                 margin-right: 8px;
                 cursor: pointer;
+                color: currentColor;
+                border-radius: 4px;
+                width: 16px;
+                height: 16px;
+                background-color: ${props =>
+                  props.theme.palette.checkbox.backgroundColor};
+                &:checked {
+                  background-color: ${props =>
+                    props.theme.palette.checkbox.checkedBackgroundColor};
+                }
+                &:checked::before {
+                  content: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16px" height="16px" fill="rgb(255 255 255)" aria-hidden="true"%3E%3Cpath fill-rule="evenodd" d="M9.688 15.898l-3.98-3.98a1 1 0 00-1.415 1.414L8.98 18.02a1 1 0 001.415 0L20.707 7.707a1 1 0 00-1.414-1.414l-9.605 9.605z" clip-rule="evenodd"%3E%3C/path%3E%3C/svg%3E');
+                }
               `}
             />
             <label
