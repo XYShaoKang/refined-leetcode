@@ -1,3 +1,14 @@
+## [0.8.5](https://github.com/XYShaoKang/refined-leetcode/compare/v0.8.4...v0.8.5) (2022-12-30)
+
+
+### Bug Fixes
+
+* **problems:** 修复 currentTitleSlug 获取错误 ([4fc1a83](https://github.com/XYShaoKang/refined-leetcode/commit/4fc1a83dae5256fa55ee13871ee3f569e536dda5))
+* **problems:** 修复查找定时器挂载元素错误 ([e55cd21](https://github.com/XYShaoKang/refined-leetcode/commit/e55cd211967c7f654234f49ec0a8b77e788ae76e))
+* **problems:** 修复随机一题选项的配色 ([30535e2](https://github.com/XYShaoKang/refined-leetcode/commit/30535e2946798105f6401c781abcd4b9a2c21184))
+* **problems:** 添加随机一题的选项 ([f1df66e](https://github.com/XYShaoKang/refined-leetcode/commit/f1df66ea14b87d55f430bda4507969c824ae3b57))
+* **utils:** 当题单中包含较多题目时，需分页获取所有题目 ([ae5bfdc](https://github.com/XYShaoKang/refined-leetcode/commit/ae5bfdc18b908380c2e5262cbc3e277106e207fe))
+
 ## [0.8.4](https://github.com/XYShaoKang/refined-leetcode/compare/v0.8.3...v0.8.4) (2022-12-18)
 
 
