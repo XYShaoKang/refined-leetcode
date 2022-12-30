@@ -151,7 +151,7 @@ window.addEventListener('urlchange', async function () {
    * 而第三第四种清理可以不用处理
    */
 
-  if (!(isProblemPage() || location.pathname === '/problemset/all/')) {
+  if (!isProblemPage()) {
     // 从答题页跳转到非答题页时,卸载计时组件
     unmountRoot()
     unmountRandomRoot()

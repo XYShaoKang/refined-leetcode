@@ -1,4 +1,4 @@
-import { IS_MAC, findElement, isBetaUI } from '@/utils'
+import { IS_MAC, findElement, isBetaUI, findElementByXPath } from '@/utils'
 
 import { logger } from '../../../utils'
 
@@ -146,11 +146,9 @@ const checkIfGlobalSubmitIsDisabled = (): boolean =>
 async function getRoot(): Promise<HTMLElement> {
   const useBetaUI = await isBetaUI()
   if (useBetaUI) {
-    let parent = await findElement('.ssg__qd-splitter-secondary-h>div>div')
-    parent = [...parent.children].slice(-1)[0].children[0]
-      .children[0] as HTMLElement
-    parent = [...parent.children].slice(-1)[0] as HTMLElement
-    return parent
+    const xpath = "//button[text()='提交']"
+    const submit = await findElementByXPath(xpath)
+    return submit.parentElement!
   } else {
     const parent = await findElement('.container__Kjnx>.action__KaAP')
     return parent
