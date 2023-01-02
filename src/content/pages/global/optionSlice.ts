@@ -7,7 +7,7 @@ export interface RandomOptionType {
 }
 
 export const labelOfKey = {
-  skipAC: '过滤已AC',
+  skipAC: '跳过已解答题目',
 }
 
 const defaultRandomOption = (): RandomOptionType => ({ skipAC: false })
