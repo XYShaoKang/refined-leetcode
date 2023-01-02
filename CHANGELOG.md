@@ -1,3 +1,11 @@
+## [0.9.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.9.0...v0.9.1) (2023-01-02)
+
+
+### Bug Fixes
+
+* **problem-list:** 完善保存按钮的动画 ([c2d87e3](https://github.com/XYShaoKang/refined-leetcode/commit/c2d87e317d84a004995cd3d53f7526f57d32faeb))
+* **problem-list:** 完善添加新题单的流程 ([07d4da5](https://github.com/XYShaoKang/refined-leetcode/commit/07d4da5060f3e156253bbc02c0acc11463c6d5d3))
+
 # [0.9.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.8.5...v0.9.0) (2023-01-02)
 
 
