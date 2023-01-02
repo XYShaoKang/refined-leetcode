@@ -6,10 +6,11 @@ import React, {
   useContext,
   useRef,
 } from 'react'
-import styled, { keyframes, ThemeContext } from 'styled-components/macro'
+import styled, { ThemeContext } from 'styled-components/macro'
 
 import { Placement, Popper } from '@/components/Popper'
 import { ToolTip } from '@/components/ToolTip'
+import Button from '@/components/Button'
 import { useAppDispatch, useAppSelector } from '@/hooks'
 
 import {
@@ -70,83 +71,6 @@ const Input = styled.input`
   background: ${props => props.theme.palette.secondary.main};
   &:focus {
     background-color: ${props => props.theme.palette.secondary.hover};
-  }
-`
-
-const Add = styled.button<{ _disable: boolean }>`
-  flex-shrink: 0;
-  width: 70px;
-  color-scheme: dark;
-  font-feature-settings: 'tnum';
-  box-sizing: border-box;
-  margin: 0;
-  border: none;
-  line-height: 20px;
-  outline: none;
-  user-select: none;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition-property: color, box-shadow, background-color, opacity;
-  transition-duration: 0.3s;
-  overflow: hidden;
-  cursor: pointer;
-  opacity: 1;
-  font-size: 14px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  color: ${props => props.theme.palette.button.text};
-  background-color: ${props =>
-    props._disable
-      ? props.theme.palette.button.disable
-      : props.theme.palette.button.main};
-  &:hover {
-    background-color: ${props =>
-      props._disable ? '' : `${props.theme.palette.button.hover};`};
-  }
-`
-
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-`
-
-const Loading = styled.div`
-  border-radius: 50%;
-  background: linear-gradient(to right, #fff 10%, rgba(128, 0, 255, 0) 42%);
-  position: relative;
-  transform: translateZ(0);
-  height: 16px;
-  width: 16px;
-  animation: ${rotate} 0.2s infinite linear;
-  &::before {
-    width: 50%;
-    height: 50%;
-    background: #fff;
-    border-radius: 100% 0 0 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    content: '';
-  }
-  &::after {
-    background-color: ${props => props.theme.palette.button.disable};
-    width: 75%;
-    height: 75%;
-    border-radius: 50%;
-    content: '';
-    margin: auto;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
   }
 `
 
@@ -286,9 +210,13 @@ const BlockUserList: FC<BlockUserListProps> = props => {
           title={!slug ? '请输入 slug' : ''}
           style={{ whiteSpace: 'nowrap' }}
         >
-          <Add onClick={handleAdd} _disable={!slug || status === 'loading'}>
-            {status === 'loading' ? <Loading /> : '添加'}
-          </Add>
+          <Button
+            onClick={handleAdd}
+            disabled={!slug}
+            loading={status === 'loading'}
+          >
+            添加
+          </Button>
         </ToolTip>
       </div>
       <List style={{ marginTop: users.length ? 10 : 0 }}>

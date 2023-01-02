@@ -9,7 +9,7 @@ import {
 import { css } from 'styled-components/macro'
 
 import { useAppSelector, useAppDispatch, useHover } from '@/hooks'
-import { Button } from '@/components/Button'
+import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import ErrorToolTip from '@/components/ErrorToolTip'
 import { ToolTip } from '@/components/ToolTip'

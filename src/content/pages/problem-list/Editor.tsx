@@ -1,58 +1,13 @@
 import { ChangeEventHandler, FC, useEffect, useRef, useState } from 'react'
-import { css } from 'styled-components/macro'
 
 import { Input } from '@/components/Input'
-import { Button } from '@/components/Button'
+import Button from '@/components/Button'
 import ErrorToolTip from '@/components/ErrorToolTip'
-import { rotate360Deg } from '@/components/animation'
 
 interface EditorProps {
   text?: string
   onSave?: (text: string) => void | Promise<void>
   onCancel?: (...arg: any) => void
-}
-
-const Loading = () => {
-  return (
-    <div
-      css={css`
-        border-radius: 50%;
-        background: linear-gradient(
-          to right,
-          #fff 10%,
-          rgba(128, 0, 255, 0) 42%
-        );
-        position: relative;
-        transform: translateZ(0);
-        height: 16px;
-        width: 16px;
-        animation: ${rotate360Deg} 0.2s infinite linear;
-        &::before {
-          width: 50%;
-          height: 50%;
-          background: #fff;
-          border-radius: 100% 0 0 0;
-          position: absolute;
-          top: 0;
-          left: 0;
-          content: '';
-        }
-        &::after {
-          background-color: ${props => props.theme.palette.button.disable};
-          width: 75%;
-          height: 75%;
-          border-radius: 50%;
-          content: '';
-          margin: auto;
-          position: absolute;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          right: 0;
-        }
-      `}
-    />
-  )
 }
 
 const Editor: FC<EditorProps> = ({ text: initText = '', onSave, onCancel }) => {
@@ -140,10 +95,11 @@ const Editor: FC<EditorProps> = ({ text: initText = '', onSave, onCancel }) => {
         </Button>
         <Button
           style={{ height: 24 }}
-          disabled={!text || loading}
+          disabled={!text}
+          loading={loading}
           onClick={handleSave}
         >
-          {loading ? <Loading /> : '保存'}
+          保存
         </Button>
       </div>
     </div>
