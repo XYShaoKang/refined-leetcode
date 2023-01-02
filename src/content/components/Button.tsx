@@ -1,6 +1,8 @@
 import styled from 'styled-components/macro'
 
-export const Button = styled.button<{ _disable?: boolean }>`
+export const Button = styled.button.attrs<{ disabled?: boolean }>(props => ({
+  disable: props.disabled,
+}))`
   flex-shrink: 0;
   width: 70px;
   color-scheme: dark;
@@ -18,18 +20,18 @@ export const Button = styled.button<{ _disable?: boolean }>`
   transition-property: color, box-shadow, background-color, opacity;
   transition-duration: 0.3s;
   overflow: hidden;
-  cursor: ${props => (props._disable ? '' : 'pointer')};
+  cursor: ${props => (props.disabled ? '' : 'pointer')};
   opacity: 1;
   font-size: 14px;
   padding: 6px 12px;
   border-radius: 8px;
   color: ${props => props.theme.palette.button.text};
   background-color: ${props =>
-    props._disable
+    props.disabled
       ? props.theme.palette.button.disable
       : props.theme.palette.button.main};
   &:hover {
     background-color: ${props =>
-      props._disable ? '' : `${props.theme.palette.button.hover};`};
+      props.disabled ? '' : `${props.theme.palette.button.hover};`};
   }
 `
