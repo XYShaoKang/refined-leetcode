@@ -3,6 +3,7 @@ import { render, unmountComponentAtNode } from 'react-dom'
 import { findElement } from '@/utils'
 
 import App from './App'
+import { fixRandom } from './fixRandom'
 
 let _root: HTMLDivElement | null = null
 
@@ -37,6 +38,7 @@ const isProblemList = () => {
 void (async function main() {
   if (isProblemList()) {
     mount()
+    fixRandom()
   }
 })()
 
@@ -44,6 +46,7 @@ window.addEventListener('urlchange', async function () {
   if (isProblemList()) {
     if (!_root) {
       mount()
+      fixRandom()
     }
   } else {
     unmount()

@@ -66,7 +66,7 @@ export async function findAllElement(
  */
 export async function findElement(
   selectors: string,
-  fn = (el: HTMLElement) => !!el,
+  fn = (el: HTMLElement | null) => !!el,
   timeout = 10000
 ): Promise<HTMLElement> {
   const element = await findBase<HTMLElement>(
@@ -86,7 +86,7 @@ export async function findElement(
  */
 export async function findElementByXPath(
   xpath: string,
-  fn = (el: HTMLElement) => !!el,
+  fn = (el: HTMLElement | null) => !!el,
   timeout = 10000
 ): Promise<HTMLElement> {
   const element = await findBase<HTMLElement>(
