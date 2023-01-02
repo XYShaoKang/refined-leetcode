@@ -55,7 +55,7 @@ export function graphqlApi(
     mode: 'cors',
     credentials: 'include',
   }).then(res => {
-    if (res.status === 200) {
+    if (res.status >= 200 && res.status < 300) {
       return res.json()
     }
 
@@ -88,26 +88,32 @@ export function baseApi(
 
   method = method.toUpperCase()
   let bodyStr: null | string
+  const headers: HeadersInit = {
+    accept: 'application/json, text/plain, */*',
+  }
 
   if (method === 'GET') {
     bodyStr = null
   } else {
-    bodyStr = isObject(body) ? JSON.stringify(body) : body
+    if (isObject(body)) {
+      bodyStr = isObject(body) ? JSON.stringify(body) : body
+      headers['content-type'] = 'application/json'
+    } else {
+      bodyStr = body
+    }
   }
 
   return fetch(REGION_URL + url, {
-    headers: {
-      accept: 'application/json, text/plain, */*',
-    },
-    referrer: `REGION_URL`,
+    headers,
+    referrer: location.href,
     referrerPolicy: 'strict-origin-when-cross-origin',
     body: bodyStr,
     method,
     mode: 'cors',
     credentials: 'include',
-  }).then(res => {
-    if (res.status === 200) {
-      return res.json()
+  }).then(async res => {
+    if (res.status >= 200 && res.status < 300) {
+      return res
     }
 
     if (res.status === 429) {
@@ -122,7 +128,16 @@ export function baseApi(
         baseApi(REGION_URL, url, method, body, retry + 1)
       )
     }
-
+    if (res.status === 400) {
+      let error: string
+      try {
+        const data = await res.json()
+        error = data.error
+      } catch (error) {
+        throw new Error(`错误状态: ${res.status}`)
+      }
+      throw new Error(error)
+    }
     throw new Error(`未知状态: ${res.status}`)
   })
 }
@@ -450,6 +465,60 @@ export type QuestionType = {
   __typename: string
 }
 
+export type Favorite = {
+  idHash: string
+  name: string
+  id: string
+  isPublicFavorite: boolean
+  viewCount: number
+  questions: {
+    questionId: string
+    title: string
+    titleSlug: string
+    __typename: string
+  }
+  topic_id: number
+  __typename: string
+}
+
+export type FavoriteDetail = {
+  description: string
+  idHash: string
+  name: string
+  creator: {
+    realName: string
+    userAvatar: string
+    userSlug: string
+  }
+  link: string
+  isFavored: boolean
+  coverUrl: string
+  tags: {
+    name: string
+    nameTranslated: string
+    slug: string
+    tagType: string
+  }[]
+  __typename: string
+}
+
+export type AddFavoriteResult = {
+  ok: boolean
+  error: null | string
+  name: string
+  isPublicFavorite: boolean
+  favoriteIdHash: string
+  questionId: string
+  __typename: string
+}
+
+export type ProblemsetPageProps = {
+  featuredLists: Pick<
+    FavoriteDetail,
+    'coverUrl' | 'creator' | 'description' | 'idHash' | 'link' | 'name' | 'tags'
+  >[]
+}
+
 class LeetCodeApi {
   public graphqlApi: (
     { method, body }: { endpoint?: string; method?: string; body?: unknown },
@@ -521,6 +590,9 @@ class LeetCodeApi {
     })
   }
 
+  /** 获取提交列表
+   *
+   */
   public async getSubmissions(
     questionSlug: string,
     limit = 40,
@@ -588,6 +660,9 @@ class LeetCodeApi {
     return this.graphqlApi({ body }).then(({ data }) => data.submissionList)
   }
 
+  /** 获取提交详情
+   *
+   */
   private async getSubmissionDetailByLocal(submissionId: string): Promise<{
     id: string
     code: string
@@ -668,6 +743,10 @@ class LeetCodeApi {
 
     return this.graphqlApi({ body }).then(({ data }) => data.submissionDetail)
   }
+
+  /** 获取提交分布信息
+   *
+   */
   private async getDistributionLocal(submissionId: string): Promise<{
     runtimeDistribution: {
       lang: string
@@ -679,23 +758,28 @@ class LeetCodeApi {
     } | null
   }> {
     const runtimeApi = `/submissions/api/runtime_distribution/${submissionId}/`
-    const runtimeDistribution = await this.baseApi(runtimeApi).then(
-      ({ runtime_distribution_formatted }) =>
+    const runtimeDistribution = await this.baseApi(runtimeApi)
+      .then(res => res.json())
+      .then(({ runtime_distribution_formatted }) =>
         runtime_distribution_formatted
           ? JSON.parse(runtime_distribution_formatted)
           : null
-    )
+      )
     const memoryApi = `/submissions/api/memory_distribution/${submissionId}/`
-    const memoryDistribution = await this.baseApi(memoryApi).then(
-      ({ memory_distribution_formatted }) =>
+    const memoryDistribution = await this.baseApi(memoryApi)
+      .then(res => res.json())
+      .then(({ memory_distribution_formatted }) =>
         memory_distribution_formatted
           ? JSON.parse(memory_distribution_formatted)
           : null
-    )
+      )
 
     return { runtimeDistribution, memoryDistribution }
   }
 
+  /** 获取提交详情（世界服）
+   *
+   */
   private async getSubmissionDetailByGlobal(
     submissionId: string
   ): Promise<GlobalSubmissionDetail> {
@@ -722,6 +806,9 @@ class LeetCodeApi {
     return data
   }
 
+  /** 获取提交详情，根据当前 REGION_URL 确定是从国服还是世界服获取
+   *
+   */
   public async getSubmissionDetail(submissionId: string): Promise<{
     id: string // submissionId
     code: string // submissionCode
@@ -775,6 +862,9 @@ class LeetCodeApi {
     }
   }
 
+  /** 获取对应提交时间的详细代码（旧版）
+   *
+   */
   public getCodeByTime(
     lang: string,
     questionId: string,
@@ -782,9 +872,14 @@ class LeetCodeApi {
   ): Promise<string> {
     const api = `/submissions/api/detail/${questionId}/${lang}/${time}/`
 
-    return this.baseApi(api).then(data => data.code)
+    return this.baseApi(api)
+      .then(res => res.json())
+      .then(data => data.code)
   }
 
+  /** 获取对应提交内存的详细代码（旧版）
+   *
+   */
   public getCodeByMemory(
     lang: string,
     questionId: string,
@@ -792,14 +887,22 @@ class LeetCodeApi {
   ): Promise<string> {
     const api = `/submissions/api/detail/${questionId}/${lang}/memory/${memory}/`
 
-    return this.baseApi(api).then(data => data.code)
+    return this.baseApi(api)
+      .then(res => res.json())
+      .then(data => data.code)
   }
 
+  /** 检查对应提交的状态
+   *
+   */
   public check(submissionId: string): Promise<CheckReturnType> {
     const api = `/submissions/detail/${submissionId}/check/`
-    return this.baseApi(api)
+    return this.baseApi(api).then(res => res.json())
   }
 
+  /** 添加备注信息
+   *
+   */
   public submissionCreateOrUpdateSubmissionComment(
     submissionId: string,
     flagType: 'BLUE' | 'ORANGE' | 'GREEN' | 'PURPLE' | 'RED',
@@ -1439,6 +1542,289 @@ class LeetCodeApi {
         return questions
       }
     )
+  }
+
+  /** 获取题单（收藏夹）列表，包括自己创建的和官方题单
+   *
+   */
+  public getFavorites(): Promise<{
+    allFavorites: Favorite[]
+    officialFavorites: Favorite[]
+  }> {
+    const body = {
+      operationName: 'allFavorites',
+      variables: {},
+      query: /* GraphQL */ `
+        query allFavorites {
+          favoritesLists {
+            allFavorites {
+              idHash
+              name
+              isPublicFavorite
+              questions {
+                questionId
+                __typename
+              }
+              __typename
+            }
+            officialFavorites {
+              idHash
+              name
+              questions {
+                questionId
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+        }
+      `,
+    }
+    return this.graphqlApi({ body }).then(({ data }) => data.favoritesLists)
+  }
+
+  /** 获取题单（收藏夹）列表，包括自己创建的和收藏的第三方题单
+   *
+   */
+  public async getFavoriteMyFavorites(
+    limit = 20,
+    skip = 0
+  ): Promise<FavoriteDetail[]> {
+    const body = {
+      operationName: 'favoriteMyFavorites',
+      variables: { limit, skip },
+      query: /* GraphQL */ `
+        query favoriteMyFavorites($limit: Int, $skip: Int) {
+          __typename
+          favoriteMyFavorites(limit: $limit, skip: $skip) {
+            hasMore
+            total
+            favorites {
+              acNumber
+              coverUrl
+              created
+              isPublicFavorite
+              name
+              link
+              idHash
+              questionNumber
+              creator {
+                realName
+                userSlug
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+        }
+      `,
+    }
+    const data = await this.graphqlApi({ body }).then(
+      ({ data }) => data.favoriteMyFavorites
+    )
+
+    if (data.hasMore) {
+      const next = await this.getFavoriteMyFavorites(20, limit + skip)
+      data.favorites = data.favorites.concat(next)
+    }
+    return data.favorites
+  }
+
+  /** 获取题单（收藏夹）详细信息
+   *
+   */
+  public async getFavoriteDetail(
+    favoriteIdHashs: string[]
+  ): Promise<FavoriteDetail[]> {
+    const body = {
+      query: /* GraphQL */ `
+        query featuredListDetail {
+          ${favoriteIdHashs.map(
+            (favoriteIdHash, i) => /* GraphQL */ `
+            favorite_${i}:favoriteDetail(favoriteIdHash:"${favoriteIdHash}" ) {
+              description
+              idHash
+              name
+              creator {
+                realName
+                userAvatar
+                userSlug
+              }
+              link
+              isFavored
+              coverUrl
+              tags {
+                name
+                nameTranslated
+                slug
+                tagType
+              }
+              __typename
+            }`
+          )}
+          
+        }
+      `,
+      operationName: 'featuredListDetail',
+      variables: {},
+    }
+
+    const data = await this.graphqlApi({ body }).then(({ data }) => data)
+    const res: FavoriteDetail[] = []
+    for (let i = 0; i < favoriteIdHashs.length; i++) {
+      res[i] = data[`favorite_${i}`]
+    }
+    return res
+  }
+
+  /** 添加题单（收藏夹）
+   *
+   */
+  public async addFavorite(favoriteName: string): Promise<AddFavoriteResult> {
+    const body = {
+      operationName: 'addQuestionToNewFavorite',
+      variables: {
+        questionId: '1',
+        isPublicFavorite: false,
+        name: favoriteName,
+      },
+      query: /* GraphQL */ `
+        mutation addQuestionToNewFavorite(
+          $name: String!
+          $isPublicFavorite: Boolean!
+          $questionId: String!
+        ) {
+          addQuestionToNewFavorite(
+            name: $name
+            isPublicFavorite: $isPublicFavorite
+            questionId: $questionId
+          ) {
+            ok
+            error
+            name
+            isPublicFavorite
+            favoriteIdHash
+            questionId
+            __typename
+          }
+        }
+      `,
+    }
+    const res = (await this.graphqlApi({ body }).then(
+      ({ data }) => data.addQuestionToNewFavorite
+    )) as AddFavoriteResult
+    if (!res.ok) {
+      throw new Error(res.error!)
+    }
+    await this.deleteQuestionFromFavorite(res.favoriteIdHash, '1')
+    return res
+  }
+
+  /** 删除除单（收藏夹）
+   *
+   */
+  public async deleteFavorite(favoriteId: string): Promise<void> {
+    await this.baseApi(`/list/api/${favoriteId}`, 'DELETE')
+  }
+
+  /** 删除对第三方除单（收藏夹）的收藏
+   *
+   */
+  public async deleteThirdFavorite(
+    favoriteId: string
+  ): Promise<{ error: null | string; ok: boolean; __typename: string }> {
+    const body = {
+      operationName: 'favoriteRemoveFavoriteFromMyCollection',
+      variables: { favoriteIdHash: favoriteId },
+      query: /* GraphQL */ `
+        mutation favoriteRemoveFavoriteFromMyCollection(
+          $favoriteIdHash: String!
+        ) {
+          __typename
+          favoriteRemoveFavoriteFromMyCollection(
+            favoriteIdHash: $favoriteIdHash
+          ) {
+            error
+            ok
+            __typename
+          }
+        }
+      `,
+    }
+
+    return this.graphqlApi({ body }).then(
+      ({ data }) => data.favoriteRemoveFavoriteFromMyCollection
+    )
+  }
+
+  /** 添加题目到题单（收藏夹）中
+   *
+   */
+  public addQuestionToFavorite(
+    favoriteId: string,
+    frontendQuestionIds: string[]
+  ): Promise<{ [key: string]: { questionId: string; __typename: string } }> {
+    const body = {
+      query: /* GraphQL */ `
+      mutation addQuestionToFavorite {
+        ${frontendQuestionIds
+          .map(
+            (
+              questionId,
+              i
+            ) => `add${i}: addQuestionToFavorite(favoriteIdHash: "${favoriteId}", questionId: "${questionId}") {
+                  questionId
+                  __typename
+                }`
+          )
+          .join('\n')}
+        }`,
+      operationName: 'addQuestionToFavorite',
+      variables: {},
+    }
+    return this.graphqlApi({ body }).then(({ data }) => data)
+  }
+
+  /** 从题单（收藏夹）中的删除题目
+   *
+   */
+  public async deleteQuestionFromFavorite(
+    favoriteId: string,
+    frontendQuestionId: string
+  ): Promise<void> {
+    await this.baseApi(
+      `/list/api/questions/${favoriteId}/${frontendQuestionId}`,
+      'DELETE'
+    )
+  }
+
+  /** 更新题单（收藏夹）信息
+   *
+   * 可以通过不传递 name 和 is_public_favorite 检测当前是否处于审核状态
+   */
+  public async setFavorite(data: {
+    favorite_id_hash: string
+    name?: string
+    is_public_favorite?: boolean
+  }): Promise<void> {
+    await this.baseApi(`/list/api/`, 'PUT', data)
+  }
+
+  /** 获取 PageProps
+   *
+   * 其中包含 featuredLists（精选题单的列表）
+   *
+   */
+  public getProblemsetPageProps(): Promise<ProblemsetPageProps> {
+    return this.baseApi(
+      `/_next/data/${
+        (window as any).__NEXT_DATA__.buildId
+      }/problemset/all.json?slug=all`
+    )
+      .then(res => res.json())
+      .then(res => res.pageProps)
   }
 }
 

@@ -35,6 +35,7 @@ export const darkTheme: DefaultTheme = {
   },
   shadows: {
     1: `0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 4px rgba(0, 0, 0, 0.25)`,
+    2: `rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.24) 0px 1px 3px 0px, rgba(0, 0, 0, 0.16) 0px 2px 8px 0px`,
   },
 }
 
@@ -55,7 +56,7 @@ export const lightTheme: DefaultTheme = {
     },
     text: {
       main: `hsl(0deg 0% 15%)`,
-      light: `hsl(0deg 0% 15% / 75%)`,
+      light: `hsl(0deg 0% 3%)`,
       dark: `hsl(0deg 0% 10%)`,
     },
     button: {
@@ -73,5 +74,6 @@ export const lightTheme: DefaultTheme = {
   },
   shadows: {
     1: `0 2px 8px rgba(0, 0, 0, 0.08),0 1px 2px rgba(0, 0, 0, 0.1)`,
+    2: `rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 1px 3px 0px, rgba(0, 0, 0, 0.08) 0px 2px 8px 0px`,
   },
 }

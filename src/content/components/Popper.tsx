@@ -5,32 +5,13 @@ import {
   useState,
   useLayoutEffect,
 } from 'react'
-import styled, { css, StyledComponentProps } from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 import { Portal } from './Portal'
+import { StyledComponent, SCProps } from './utils'
 
 export type Placement = 'top' | 'bottom' | 'left' | 'right'
 
-type SCProps<
-  BaseProps extends object,
-  AsC extends string | React.ComponentType<any>,
-  FAsC extends string | React.ComponentType<any> = AsC
-> = StyledComponentProps<AsC, never, BaseProps, never, FAsC> & {
-  as?: AsC | undefined
-  forwardedAs?: FAsC | undefined
-}
-
-type StyledComponent<
-  BaseProps extends object,
-  DefaultAsC extends string | React.ComponentType<any>
-> = <
-  AsC extends string | React.ComponentType<any> = DefaultAsC,
-  FAsC extends string | React.ComponentType<any> = AsC
->(
-  props: SCProps<BaseProps, AsC>,
-  ref?: React.Ref<AsC>
-) => React.ReactElement<SCProps<BaseProps, AsC, FAsC>> | null
-
-interface PopperProps {
+export interface PopperProps {
   /**
    * 用于定位弹出窗口的元素
    */
@@ -80,7 +61,7 @@ export const Popper: StyledComponent<PopperProps, 'span'> = forwardRef(
       }
     }, [arrow, placement])
 
-    if (!anchorEl) return <></>
+    if (!anchorEl) return null
 
     return (
       <Portal>
@@ -144,19 +125,20 @@ function caclArrowPos(
  */
 function caclPopperPos(placement: Placement, el: HTMLElement) {
   const [{ left, top }] = el.getClientRects()
-  const { offsetHeight, offsetWidth } = el
+  const { height, width } = el.getBoundingClientRect()
+
   switch (placement) {
     case 'top':
-      return { left: left + offsetWidth / 2, top }
+      return { left: left + width / 2, top }
 
     case 'bottom':
-      return { left: left + offsetWidth / 2, top: top + offsetHeight }
+      return { left: left + width / 2, top: top + height }
 
     case 'left':
-      return { left, top: top + offsetHeight / 2 }
+      return { left, top: top + height / 2 }
 
     case 'right':
-      return { left: left + offsetWidth, top: top + offsetHeight / 2 }
+      return { left: left + width, top: top + height / 2 }
 
     default:
       // eslint-disable-next-line no-case-declarations

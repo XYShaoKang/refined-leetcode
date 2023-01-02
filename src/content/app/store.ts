@@ -21,6 +21,7 @@ import postsReducer from '@/pages/home/postsSlice'
 import blockUsersReducer from '@/pages/home/blockUsersSlice'
 import globalDataReducer, { fetchGlobalData } from '@/pages/global/globalSlice'
 import optionReducer from '@/pages/global/optionSlice'
+import favoritesReducer from '@/pages/problem-list/favoriteSlice'
 
 const config = {
   whitelist: [
@@ -76,8 +77,9 @@ const store = configureStore({
     [apiSlice.reducerPath]: apiSlice.reducer,
     posts: postsReducer,
     blockUsers: persistedUsersReducer,
-    globalData: globalDataReducer,
+    global: globalDataReducer,
     option: optionReducer,
+    favorites: favoritesReducer,
   },
   devTools: false,
   middleware: getDefaultMiddleware =>
