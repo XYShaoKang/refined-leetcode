@@ -5,6 +5,7 @@ import { IS_MAC, findElement, isBetaUI } from '@/utils'
 import Clock from './Clock'
 import Random from './Random'
 import { getRoot } from './utils'
+import { fixBack } from './fixBack'
 
 let root: HTMLDivElement | null = null,
   randomRoot: HTMLDivElement | null = null,
@@ -105,6 +106,7 @@ void (async function main() {
   if (isProblemPage()) {
     const beta = await isBetaUI()
     if (beta) {
+      fixBack()
       loadRandom()
       const params = location.pathname.split('/').filter(Boolean)
       // 新版 UI 中，如果一开始打开的就是题解页面，则当前并不存在提交栏，也就无法也不需要去挂载即使组件
@@ -158,6 +160,7 @@ window.addEventListener('urlchange', async function () {
   } else {
     const beta = await isBetaUI()
     if (beta) {
+      fixBack()
       loadRandom()
       const params = location.pathname.split('/').filter(Boolean)
       // 新版 UI 中，跳转到题解页面之后，如果跳转回去，会导致提交栏发生变化，需要先卸载掉。
