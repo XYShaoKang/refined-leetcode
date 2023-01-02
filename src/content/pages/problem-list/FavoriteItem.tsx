@@ -6,13 +6,14 @@ import {
   useRef,
   useState,
 } from 'react'
-import { css, keyframes } from 'styled-components/macro'
+import { css } from 'styled-components/macro'
 
 import { useAppSelector, useAppDispatch, useHover } from '@/hooks'
 import { Button } from '@/components/Button'
 import Modal from '@/components/Modal'
 import ErrorToolTip from '@/components/ErrorToolTip'
 import { ToolTip } from '@/components/ToolTip'
+import { rotate360Deg } from '@/components/animation'
 
 import {
   selectFavoriteById,
@@ -27,16 +28,6 @@ import Editor from './Editor'
 const DEFAULT_COVER =
   'https://static.leetcode.cn/cn-frontendx-assets/production/_next/static/images/default-logo-5a15811cf52298855a46a3f400663063.png'
 const DEFAULT_FAVORITE_NAME = 'Favorite'
-
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-`
 
 interface FavoriteItemProps {
   idHash: string
@@ -237,9 +228,9 @@ const FavoriteItem: FC<FavoriteItemProps> = ({
                     text-align: center;
                     line-height: 18px;
                     transform: translateZ(0);
-                    animation: ${rotate} 10s infinite linear;
+                    animation: ${rotate360Deg} 10s infinite linear;
                     &:hover {
-                      animation: ${rotate} 1s infinite linear;
+                      animation: ${rotate360Deg} 1s infinite linear;
                     }
                   `}
                 >
