@@ -1,3 +1,12 @@
+## [0.9.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.9.1...v0.9.2) (2023-01-02)
+
+
+### Bug Fixes
+
+* **problem-list:**  修复题单页中的随机一题按钮 ([9f9f44b](https://github.com/XYShaoKang/refined-leetcode/commit/9f9f44b94132533b5b0802dbfd0e9eb78666010b))
+* **problems:** 修复答题页内点击题单名称会跳转到题库的问题 ([787fe54](https://github.com/XYShaoKang/refined-leetcode/commit/787fe5446156c29ca1c6f7ce96c743b646a4d867))
+* 修复选项显示文本 ([c8fab2a](https://github.com/XYShaoKang/refined-leetcode/commit/c8fab2aa0e9b3eb349e7c1335a27221730a2c2fa))
+
 ## [0.9.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.9.0...v0.9.1) (2023-01-02)
 
 
