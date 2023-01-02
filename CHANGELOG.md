@@ -1,3 +1,15 @@
+# [0.9.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.8.5...v0.9.0) (2023-01-02)
+
+
+### Bug Fixes
+
+* 修复按钮禁用的属性 ([4a9a49b](https://github.com/XYShaoKang/refined-leetcode/commit/4a9a49b14901156a0cb747c6197cf6f4e4070302))
+
+
+### Features
+
+* **problem-list:** 题单侧边栏 ([dbc0fb4](https://github.com/XYShaoKang/refined-leetcode/commit/dbc0fb491a92429a8e4daf93940e1369d976861a))
+
 ## [0.8.5](https://github.com/XYShaoKang/refined-leetcode/compare/v0.8.4...v0.8.5) (2022-12-30)
 
 
