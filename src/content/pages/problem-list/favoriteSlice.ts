@@ -145,6 +145,13 @@ const favoritesSlice = createSlice({
       const favorite = state.entities[action.payload]
       if (favorite) favorite.isInAudit = !favorite.isInAudit
     },
+    updateShowName(
+      state,
+      action: PayloadAction<{ idHash: string; showName: string }>
+    ) {
+      const favorite = state.entities[action.payload.idHash]
+      if (favorite) favorite.showName = action.payload.showName
+    },
   },
   extraReducers(builder) {
     builder
@@ -232,5 +239,6 @@ export const selectFavoriteIdsByCategory =
         : 'thirdPartyFavoriteIds'
     ]
 
-export const { addFavorite } = favoritesSlice.actions
+export const { addFavorite, toggleFavoriteAuditStatus, updateShowName } =
+  favoritesSlice.actions
 export default favoritesSlice.reducer

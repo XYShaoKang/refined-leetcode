@@ -9,6 +9,8 @@ import {
   saveFavorite,
   addFavorite,
   fetchFavoriteDetails,
+  toggleFavoriteAuditStatus,
+  updateShowName,
 } from './favoriteSlice'
 import { selectFeaturedLists } from '../global/globalSlice'
 import FavoriteItem from './FavoriteItem'
@@ -42,10 +44,12 @@ const FavoriteList: FC<{ category: FavoriteCategory }> = ({ category }) => {
   }
 
   const handleAddFavorite = async (text: string) => {
-    const res = await dispatch(saveFavorite(text)).unwrap()
-    if (res.ok) {
-      await dispatch(addFavorite(res.favoriteIdHash))
-      await dispatch(fetchFavoriteDetails([res.favoriteIdHash]))
+    const { ok, favoriteIdHash } = await dispatch(saveFavorite(text)).unwrap()
+    if (ok) {
+      await dispatch(addFavorite(favoriteIdHash))
+      await dispatch(fetchFavoriteDetails([favoriteIdHash]))
+      await dispatch(toggleFavoriteAuditStatus(favoriteIdHash))
+      await dispatch(updateShowName({ idHash: favoriteIdHash, showName: text }))
     }
     toggleEnableEdit()
   }
