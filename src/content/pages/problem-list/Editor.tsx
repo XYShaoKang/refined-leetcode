@@ -3,6 +3,7 @@ import { ChangeEventHandler, FC, useEffect, useRef, useState } from 'react'
 import { Input } from '@/components/Input'
 import Button from '@/components/Button'
 import ErrorToolTip from '@/components/ErrorToolTip'
+import { css } from 'styled-components/macro'
 
 interface EditorProps {
   text?: string
@@ -55,7 +56,7 @@ const Editor: FC<EditorProps> = ({ text: initText = '', onSave, onCancel }) => {
 
   return (
     <div
-      css={`
+      css={css`
         width: 100%;
       `}
     >
@@ -73,14 +74,14 @@ const Editor: FC<EditorProps> = ({ text: initText = '', onSave, onCancel }) => {
         />
       </ErrorToolTip>
       <div
-        css={`
+        css={css`
           display: flex;
           justify-content: space-around;
           margin-top: 6px;
         `}
       >
         <Button
-          css={`
+          css={css`
             && {
               height: 24px;
               background-color: #555;
