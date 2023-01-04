@@ -175,15 +175,44 @@ export function getExtensionId(): string | undefined {
  *
  */
 export const isBetaUI: () => Promise<boolean> = (() => {
-  let beta: boolean | null = null
+  let beta: boolean | null = null,
+    promise: Promise<HTMLElement> | null = null
   return async function isBetaUI() {
     if (beta !== null) return beta
+    if (!promise) {
+      promise = Promise.race([
+        findElement('#__next'), // 新版 UI
+        findElement('#app'), // 旧版 UI
+        findElement('body.pc-body'), // 祖传 UI
+      ])
+    }
 
-    const root = await Promise.race([
-      findElement('#__next'),
-      findElement('#app'),
-    ])
+    const root = await promise
     beta = root.id === '__next'
     return beta
   }
 })()
+
+export interface ProblemRankData {
+  Rating: number
+  ID: number // questionFrontendId
+  Title: string
+  TitleZH: string
+  TitleSlug: string
+  ContestSlug: string
+  ProblemIndex: string
+  ContestID_en: string
+  ContestID_zh: string
+}
+
+export const getProblemRankData = async (): Promise<ProblemRankData[]> => {
+  const data = await Promise.race([
+    fetch(
+      'https://cdn.jsdelivr.net/gh/zerotrac/leetcode_problem_rating/data.json'
+    ).then(res => res.json()),
+    fetch(
+      'https://raw.githubusercontent.com/zerotrac/leetcode_problem_rating/main/data.json'
+    ).then(res => res.json()),
+  ])
+  return data
+}
