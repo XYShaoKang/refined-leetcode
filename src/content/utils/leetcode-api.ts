@@ -1,4 +1,5 @@
 import { previousMonday } from 'date-fns/fp'
+import JSON5 from 'json5'
 import { logger } from '../../utils'
 import { isObject, sleep } from './utils'
 
@@ -420,36 +421,39 @@ export type GlobalData = {
 }
 
 export type ProblemsetQuestion = {
+  acRate: number
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD'
+  freqBar: number
+  frontendQuestionId: string
+  isFavor: boolean
+  paidOnly: boolean
+  solutionNum: number
+  status: 'NOT_STARTED' | 'AC' | 'TRIED'
+  title: string
+  titleCn: string
+  titleSlug: string
+  topicTags: Array<{
+    name: string
+    nameTranslated: string
+    id: string
+    slug: string
+  }>
+  extra: Array<{
+    companyTagNum: number
+    hasVideoSolution: boolean
+    topCompanyTags: {
+      imgUrl: string
+      slug: string
+      numSubscribed: number
+    }
+  }>
+}
+
+export type ProblemsetQuestionList = {
   hasMore: boolean
   total: number
-  questions: Array<{
-    acRate: number
-    difficulty: string
-    freqBar: number
-    frontendQuestionId: string
-    isFavor: boolean
-    paidOnly: boolean
-    solutionNum: number
-    status: string
-    title: string
-    titleCn: string
-    titleSlug: string
-    topicTags: Array<{
-      name: string
-      nameTranslated: string
-      id: string
-      slug: string
-    }>
-    extra: Array<{
-      companyTagNum: number
-      hasVideoSolution: boolean
-      topCompanyTags: {
-        imgUrl: string
-        slug: string
-        numSubscribed: number
-      }
-    }>
-  }>
+  questions: ProblemsetQuestion[]
+  __typename: string
 }
 
 export type QuestionType = {
@@ -493,6 +497,7 @@ export type FavoriteDetail = {
   link: string
   isFavored: boolean
   coverUrl: string
+  questionIds: number[]
   tags: {
     name: string
     nameTranslated: string
@@ -517,6 +522,28 @@ export type ProblemsetPageProps = {
     FavoriteDetail,
     'coverUrl' | 'creator' | 'description' | 'idHash' | 'link' | 'name' | 'tags'
   >[]
+}
+
+export type CategorySlugType =
+  | ''
+  | 'algorithms'
+  | 'database'
+  | 'shell'
+  | 'concurrency'
+export type ProblemsetQuestionListFilterType = {
+  listId?: string
+  difficulty?: 'EASY' | 'MEDIUM' | 'HARD'
+  status?: 'NOT_STARTED' | 'AC' | 'TRIED'
+  tags?: string[]
+  premiumOnly?: boolean
+  orderBy?:
+    | 'FRONTEND_ID'
+    | 'SOLUTION_NUM'
+    | 'AC_RATE'
+    | 'DIFFICULTY'
+    | 'FREQUENCY'
+  sortOrder?: 'DESCENDING' | 'ASCENDING'
+  searchKeywords?: string
 }
 
 class LeetCodeApi {
@@ -1467,12 +1494,19 @@ class LeetCodeApi {
   /** 获取题单题目列表
    *
    */
-  public getProblemsetQuestionList(
-    listId: string,
+  public async getProblemsetQuestionList({
+    categorySlug = '',
+    skip = 0,
     limit = 100,
-    skip = 0
-  ): Promise<ProblemsetQuestion['questions']> {
+    filters = {},
+  }: {
+    categorySlug?: CategorySlugType
+    skip?: number
+    limit?: number
+    filters?: ProblemsetQuestionListFilterType
+  } = {}): Promise<ProblemsetQuestionList> {
     const body = {
+      operationName: 'problemsetQuestionList',
       query: /* GraphQL */ `
         query problemsetQuestionList(
           $categorySlug: String
@@ -1518,30 +1552,92 @@ class LeetCodeApi {
           }
         }
       `,
-      variables: {
-        categorySlug: '',
-        skip,
-        limit,
-        filters: { listId },
-      },
+      variables: { categorySlug, skip, limit, filters },
     }
     return this.graphqlApi({ body }).then(
-      async ({
-        data: {
-          problemsetQuestionList: { questions, hasMore },
-        },
-      }) => {
-        if (hasMore) {
-          const next = await this.getProblemsetQuestionList(
-            listId,
-            limit,
-            skip + limit
-          )
-          return questions.concat(next)
-        }
-        return questions
-      }
+      ({ data }) => data.problemsetQuestionList
     )
+  }
+
+  /** 获取筛选过后的列表的所有题目
+   *
+   */
+  public async getProblemsetQuestionListAll(
+    {
+      categorySlug = '',
+      filters = {},
+    }: {
+      categorySlug?: CategorySlugType
+      filters?: ProblemsetQuestionListFilterType
+    } = {},
+    total?: number
+  ): Promise<ProblemsetQuestion[]> {
+    // 获取列表中题目的总数量
+    if (total === undefined) {
+      total = (
+        await this.getProblemsetQuestionList({
+          categorySlug,
+          filters,
+          skip: 0,
+          limit: 1,
+        })
+      ).total
+    }
+    const n = Math.ceil(total / 100)
+    const filterStr = JSON5.stringify(filters, { quote: '"' })
+    const body = {
+      operationName: 'problemsetQuestionList',
+      query: /* GraphQL */ `
+      query problemsetQuestionList {
+        ${[...new Array(n).keys()].map(
+          i => `q${i}: problemsetQuestionList(categorySlug: "${categorySlug}", limit: 100, skip: ${
+            i * 100
+          }, filters: ${filterStr}) {
+          ...questionFragment
+        }`
+        )}
+      }
+      fragment questionFragment on QuestionListNode {
+        hasMore
+        total
+        questions {
+          acRate
+          difficulty
+          freqBar
+          frontendQuestionId
+          isFavor
+          paidOnly
+          solutionNum
+          status
+          title
+          titleCn
+          titleSlug
+          topicTags {
+            name
+            nameTranslated
+            id
+            slug
+          }
+          extra {
+            hasVideoSolution
+            topCompanyTags {
+              imgUrl
+              slug
+              numSubscribed
+            }
+          }
+        }
+        __typename
+      }
+    `,
+      variables: {},
+    }
+    const { data } = await this.graphqlApi({ body })
+    const res: ProblemsetQuestion[] = []
+    for (let i = 0; i < n; i++) {
+      res.push(...data[`q${i}`].questions)
+    }
+    return res
   }
 
   /** 获取题单（收藏夹）列表，包括自己创建的和官方题单
@@ -1655,6 +1751,7 @@ class LeetCodeApi {
               link
               isFavored
               coverUrl
+              questionIds
               tags {
                 name
                 nameTranslated

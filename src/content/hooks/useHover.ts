@@ -1,3 +1,4 @@
+import { setRef } from '@/utils'
 import { useCallback, useRef, useState } from 'react'
 import { useEvent } from './useEvent'
 
@@ -6,8 +7,13 @@ import { useEvent } from './useEvent'
  * @param delay hover 效果消失的延迟时间
  */
 export const useHover = <T extends HTMLElement>(
-  delay = 0
-): [ref: (el: T | null) => void, hover: boolean] => {
+  delay = 0,
+  refs?: React.Ref<T>[]
+): [
+  bindRef: (el: T | null) => void,
+  hover: boolean,
+  ref: React.MutableRefObject<T | null | undefined>
+] => {
   const ref = useRef<T | null>()
   const [hover, setHover] = useState(false)
   const timer = useRef<ReturnType<typeof setTimeout>>()
@@ -40,6 +46,7 @@ export const useHover = <T extends HTMLElement>(
       ref.current.removeEventListener('mouseleave', handleMouseLeave)
     }
 
+    refs?.forEach(ref => setRef(el, ref))
     ref.current = el
     if (ref.current) {
       ref.current.addEventListener('mouseenter', handleMouseEnter)
@@ -47,5 +54,5 @@ export const useHover = <T extends HTMLElement>(
     }
   }, [])
 
-  return [refcb, hover]
+  return [refcb, hover, ref]
 }

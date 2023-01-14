@@ -1,7 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import { RootState } from '@/app/store'
-import { LeetCodeApi, GlobalData, ProblemsetPageProps } from '@/utils'
+import {
+  LeetCodeApi,
+  GlobalData,
+  ProblemsetPageProps,
+  ProblemRankData,
+  getProblemRankData,
+} from '@/utils'
 
 const api = new LeetCodeApi(location.origin)
 
@@ -23,11 +29,21 @@ export const fetchProblemsetPageProps = createAsyncThunk<
   return res
 })
 
+export const fetchProblemRankData = createAsyncThunk<
+  ProblemRankData[],
+  undefined,
+  { state: RootState }
+>('global/fetchProblemRankData', async () => {
+  const res = await getProblemRankData()
+  return res
+})
+
 export const globalDataSlice = createSlice({
   name: 'global',
-  initialState: {} as {
+  initialState: { ProblemRankData: {} } as {
     globalData?: GlobalData
     problemsetPageProps?: ProblemsetPageProps
+    ProblemRankData: { [key: string]: ProblemRankData }
   },
   reducers: {},
   extraReducers(builder) {
@@ -37,6 +53,11 @@ export const globalDataSlice = createSlice({
       })
       .addCase(fetchProblemsetPageProps.fulfilled, (state, action) => {
         state.problemsetPageProps = action.payload
+      })
+      .addCase(fetchProblemRankData.fulfilled, (state, action) => {
+        for (const rank of action.payload) {
+          state.ProblemRankData[rank.TitleSlug] = rank
+        }
       })
   },
 })
@@ -50,5 +71,10 @@ export const selectFeaturedLists = (
   state: RootState
 ): ProblemsetPageProps['featuredLists'] | undefined =>
   state.global.problemsetPageProps?.featuredLists
+
+export const selectProblemRankDataByTitleSlug = (
+  state: RootState,
+  titleSlug: string
+): ProblemRankData | undefined => state.global.ProblemRankData[titleSlug]
 
 export default globalDataSlice.reducer

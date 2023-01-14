@@ -23,6 +23,7 @@ const common = {
     alias: {
       'react/jsx-runtime': 'react/jsx-runtime.js',
       '@': path.join(__dirname, '../src/content'),
+      src: path.join(__dirname, '../src'),
     },
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },

@@ -6,30 +6,19 @@ import React, {
   cloneElement,
   ForwardedRef,
 } from 'react'
-
 import { useHover } from '@/hooks'
-
+import { setRef } from '@/utils'
 import { Popper, Placement, PopperProps } from './Popper'
 import { StyledComponent, SCProps } from './utils'
 
 export interface TooltipOwnerProps {
-  title: string
+  title: ReactElement | string
   placement?: Placement
   open?: boolean
   arrow?: boolean
   icon?: ReactElement
   delay?: number
   children: React.ReactElement<any, any>
-}
-
-function setRef<T>(el: T, ref?: React.Ref<T>): void {
-  if (ref) {
-    if (typeof ref === 'function') {
-      ref(el)
-    } else if ('current' in ref) {
-      ;(ref as React.MutableRefObject<T>).current = el
-    }
-  }
 }
 
 export const ToolTip: StyledComponent<TooltipOwnerProps & PopperProps, 'span'> =

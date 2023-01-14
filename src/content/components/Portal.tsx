@@ -4,10 +4,11 @@ import { createPortal } from 'react-dom'
 
 export const Portal = function Portal({
   children,
-  container = document.body,
+  container,
 }: {
   children: ReactNode
-  container?: HTMLElement
+  container?: HTMLElement | null
 }): React.ReactPortal {
+  if (!container) container = document.body
   return createPortal(children, container)
 }

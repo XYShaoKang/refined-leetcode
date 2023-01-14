@@ -37,6 +37,8 @@
     "@types/jest": "^27.4.0",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
+    "@types/react-redux": "^7.1.25",
+    "@types/redux-logger": "^3.0.9",
     "@types/redux-state-sync": "^3.1.5",
     "@types/remote-redux-devtools": "^0.5.5",
     "@types/styled-components": "^5.1.20",
@@ -80,6 +82,8 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.7.1",
     "date-fns": "^2.28.0",
+    "json5": "^2.2.3",
+    "localforage": "^1.10.0",
     "pino": "^7.11.0",
     "react": "^17.0.2",
     "react-dnd": "^16.0.1",
@@ -87,6 +91,7 @@
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.6",
     "redux": "^4.1.2",
+    "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
     "redux-state-sync": "^3.1.4",
     "styled-components": "^5.3.3"

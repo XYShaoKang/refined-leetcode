@@ -92,4 +92,8 @@ const ButtonStyled = styled.button.attrs<{ disabled?: boolean }>(props => ({
     background-color: ${props =>
       props.disabled ? '' : `${props.theme.palette.button.hover};`};
   }
+  &:focus {
+    background-color: ${props =>
+      props.disabled ? '' : `${props.theme.palette.button.hover};`};
+  }
 `

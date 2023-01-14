@@ -14,26 +14,49 @@ export function download(str: string, filename = 'contest.md'): void {
   document.body.removeChild(a)
 }
 
-function findBase<T>(
+/** 等待匹配函数成功，或者超时
+ *
+ * @param fn 判断是否成功的函数
+ * @param timeout 超时，时间 ms（毫秒）
+ * @param delay 延时时间，时间 ms（毫秒）
+ */
+export function awaitFn(
+  fn: (...args: any) => boolean | Promise<boolean>,
+  timeout = 10000,
+  delay = 100
+): Promise<void> {
+  const start = new Date().valueOf()
+  return new Promise<void>(function (resolve, reject) {
+    const timer = setInterval(async () => {
+      if (await fn()) {
+        clearInterval(timer)
+        resolve()
+      } else {
+        if (new Date().valueOf() - start > timeout) {
+          clearInterval(timer)
+          reject('超时')
+        }
+      }
+    }, delay)
+  })
+}
+
+async function findBase<T>(
   find: () => any,
   fn: (el: T) => boolean,
   time = 10000,
   delay = 100
 ): Promise<T> {
-  return new Promise(function (resolve, reject) {
-    const timer = setInterval(() => {
-      const element = find()
-      if (fn(element)) {
-        clearInterval(timer)
-        resolve(element)
-      }
-      if (time <= 0) {
-        clearInterval(timer)
-        reject('超时')
-      }
-      time -= delay
-    }, delay)
-  })
+  let element: T
+  await awaitFn(
+    () => {
+      element = find()
+      return fn(element)
+    },
+    time,
+    delay
+  )
+  return element!
 }
 
 /** 查找匹配选择器的所有元素
@@ -215,4 +238,35 @@ export const getProblemRankData = async (): Promise<ProblemRankData[]> => {
     ).then(res => res.json()),
   ])
   return data
+}
+
+/** 判断对应的页面是否加载
+ *
+ *  在使用前端路由跳转的时候，如果只使用 url 进行判断的话，
+ *  有可能出现 url 已经变成对应的页面，但页面还停留在其他页面的情况，
+ *  会导致结果出错，这里通过判断对应页面的导航按钮的样式来确定是否已经加载对应的页面
+ *  @param name 对应页面在导航中的名称
+ *
+ */
+export const pageIsLoad = async (name: string): Promise<boolean> => {
+  const el = await findElementByXPath(`//li[text()="${name}"]`)
+  const hr = el.parentElement?.nextElementSibling
+  if (!hr) return false
+  return getComputedStyle(hr)['visibility'] === 'visible'
+}
+
+export function routerTo(url: string): void {
+  const next = (window as any).next
+  if (!next) return
+  next.router.push(url, undefined, { shallow: true })
+}
+
+export function setRef<T>(el: T, ref?: React.Ref<T>): void {
+  if (ref) {
+    if (typeof ref === 'function') {
+      ref(el)
+    } else if ('current' in ref) {
+      ;(ref as React.MutableRefObject<T>).current = el
+    }
+  }
 }

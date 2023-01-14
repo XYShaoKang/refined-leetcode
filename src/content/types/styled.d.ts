@@ -5,7 +5,7 @@ import type {} from 'styled-components/cssprop'
 // and extend them!
 declare module 'styled-components' {
   export interface DefaultTheme {
-    mode: string
+    mode: 'dark' | 'light'
     palette: {
       primary: {
         main: string

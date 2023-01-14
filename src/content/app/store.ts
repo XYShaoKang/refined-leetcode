@@ -1,20 +1,11 @@
-import { configureStore } from '@reduxjs/toolkit'
-// import devToolsEnhancer from 'remote-redux-devtools'
+import { configureStore, ConfigureStoreOptions } from '@reduxjs/toolkit'
 import {
   createStateSyncMiddleware,
   initMessageListener,
 } from 'redux-state-sync'
-import {
-  persistStore,
-  persistReducer,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
-} from 'redux-persist'
+import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
+import localforage from 'localforage'
 
 import { apiSlice } from '@/pages/ranking/rankSlice'
 import postsReducer from '@/pages/home/postsSlice'
@@ -22,6 +13,19 @@ import blockUsersReducer from '@/pages/home/blockUsersSlice'
 import globalDataReducer, { fetchGlobalData } from '@/pages/global/globalSlice'
 import optionReducer from '@/pages/global/optionSlice'
 import favoritesReducer from '@/pages/problem-list/favoriteSlice'
+import questionsReducer from '@/pages/problemset/questionsSlice'
+
+// debug
+// import logger from 'redux-logger'
+// import devToolsEnhancer from 'remote-redux-devtools'
+const enhancers: ConfigureStoreOptions['enhancers'] = [
+  // 配置 Redux DevTools
+  // devToolsEnhancer({
+  //   hostname: 'localhost',
+  //   port: 8000,
+  //   realtime: true,
+  // }),
+]
 
 const config = {
   whitelist: [
@@ -71,6 +75,13 @@ const persistConfig = {
 }
 
 const persistedUsersReducer = persistReducer(persistConfig, blockUsersReducer)
+const persistedQuestionsReducer = persistReducer(
+  {
+    key: 'refined-leetcode-questions',
+    storage: localforage,
+  },
+  questionsReducer
+)
 
 const store = configureStore({
   reducer: {
@@ -80,24 +91,17 @@ const store = configureStore({
     global: globalDataReducer,
     option: optionReducer,
     favorites: favoritesReducer,
+    questions: persistedQuestionsReducer,
   },
   devTools: false,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
+      serializableCheck: false,
+      immutableCheck: false,
     })
       .concat(apiSlice.middleware)
-      .concat(createStateSyncMiddleware(config)),
-  enhancers: [
-    // 配置 Redux DevTools
-    // devToolsEnhancer({
-    //   hostname: 'localhost',
-    //   port: 8000,
-    //   realtime: true,
-    // }),
-  ],
+      .concat(createStateSyncMiddleware(config)), //.concat(logger)
+  enhancers,
 })
 
 export const persistor = persistStore(store)

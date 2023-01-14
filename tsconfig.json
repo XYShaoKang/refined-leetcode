@@ -17,7 +17,8 @@
     "downlevelIteration": true,
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/content/*"]
+      "@/*": ["src/content/*"],
+      "src/*": ["src/*"]
     }
   },
   "include": ["src", "config"]

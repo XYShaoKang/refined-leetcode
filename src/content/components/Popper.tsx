@@ -124,8 +124,7 @@ function caclArrowPos(
  * @returns 返回弹出窗口的定位信息
  */
 function caclPopperPos(placement: Placement, el: HTMLElement) {
-  const [{ left, top }] = el.getClientRects()
-  const { height, width } = el.getBoundingClientRect()
+  const { height, width, left, top } = el.getBoundingClientRect()
 
   switch (placement) {
     case 'top':
@@ -157,7 +156,7 @@ export const PopperpStyled = styled.span<{
     top?: number | string
   }
 }>`
-  position: absolute;
+  position: fixed;
   transform: ${props => {
     const offset = props.arrow ? 18 : 10
     switch (props.placement) {
@@ -225,7 +224,7 @@ export const PopperpStyled = styled.span<{
 
     return css`
       &::before {
-        position: absolute;
+        position: fixed;
         box-sizing: content-box;
         content: '';
         display: block;

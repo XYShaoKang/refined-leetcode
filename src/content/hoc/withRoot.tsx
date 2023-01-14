@@ -13,6 +13,8 @@ import store, { persistor } from '@/app/store'
 import { darkTheme, lightTheme } from '@/theme'
 import { getTheme, isBetaUI } from '@/utils'
 
+const Loading = () => <></>
+
 export const withRoot = <T extends ComponentType<any>>(Component: T): T => {
   const Root = forwardRef(function App(props: any, ref: any) {
     const [theme, setTheme] = useState(getTheme())
@@ -42,7 +44,7 @@ export const withRoot = <T extends ComponentType<any>>(Component: T): T => {
 
     return (
       <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
+        <PersistGate loading={<Loading />} persistor={persistor}>
           <StrictMode>
             <ThemeProvider theme={theme}>
               <Component ref={ref} {...props} />
