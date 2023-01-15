@@ -15,13 +15,13 @@ import {
 
 const api = new LeetCodeApi(location.origin)
 
-const favoritesAdapter = createEntityAdapter<
-  Favorite &
-    Partial<Omit<FavoriteDetail, keyof Favorite>> & {
-      showName?: string
-      isInAudit?: boolean
-    }
->({
+type FavoriteType = Favorite &
+  Partial<Omit<FavoriteDetail, keyof Favorite>> & {
+    showName?: string
+    isInAudit?: boolean
+  }
+
+const favoritesAdapter = createEntityAdapter<FavoriteType>({
   selectId: favorite => favorite.idHash,
 })
 
@@ -32,13 +32,8 @@ export const fetchFavorites = createAsyncThunk<
   },
   undefined,
   { state: RootState }
->('favorites/fetchFavorites', async (_, { dispatch }) => {
+>('favorites/fetchFavorites', async () => {
   const res = await api.getFavorites()
-  const ids = res.allFavorites
-    .concat(res.officialFavorites)
-    .map(({ idHash }) => idHash)
-  dispatch(fetchFavoriteDetails(ids))
-  dispatch(fetchFavoriteMyFavorites())
   return res
 })
 
