@@ -1,4 +1,6 @@
+import store from '@/app/store'
 import { findElementByXPath, LeetCodeApi } from '@/utils'
+import { selectIsPremium } from '../global/globalSlice'
 
 const getCurrentId = () => {
   const strs = location.pathname.split('/').filter(Boolean)
@@ -11,7 +13,11 @@ const handleRandom = async (e: MouseEvent) => {
   e.preventDefault()
   e.stopPropagation()
   const id = getCurrentId()
-  const questions = await api.getProblemsetQuestionList(id)
+  let questions = await api.getProblemsetQuestionListAll({
+    filters: { listId: id },
+  })
+  const isPremium = selectIsPremium(store.getState())
+  if (!isPremium) questions = questions.filter(q => !q.paidOnly)
 
   const i = Math.floor(Math.random() * (questions.length - 1))
   const url = `/problems/${questions[i].titleSlug}/?favorite=${id}`
