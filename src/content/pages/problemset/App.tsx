@@ -18,7 +18,7 @@ import Rank from './Rank'
 import RankTitle from './Title'
 import RankRange from './RankRange'
 import Open, { Pos } from './Open'
-import { fetchAllQuestions } from './questionsSlice'
+import { fetchAllQuestionIds, fetchAllQuestions } from './questionsSlice'
 import { OrderBy, parseParams, SORT_KEY, serializationPrams } from './utils'
 
 interface AppProps {
@@ -34,9 +34,9 @@ interface AppProps {
  * 但如果请求是除了自定义排序的参数外，其他参数都相同，则 Next.js 会缓存前一次的数据，
  * 导致没有拦截请求的机会，这时候可以通过每次传入不同的参数，让 Next.js 每次都重新去请求。
  *
- * 这样会有一个问题，因为我们需要通过拦截请求，返回通过 Rank 排序的数据，
- * 如果之后用户取消 Rank 排序，但其他的参数相同时，
- * 则因为缓存的关系，则不会进行请求，而是依然会返回按照 Rank 排序的数据，导致结果错误。
+ * 但这样会有一个问题，因为我们拦截请求返回的是通过 Rank 排序的数据，
+ * 如果之后用户不进行取消 Rank 排序，但其他的参数相同时，
+ * 则因为缓存的关系，依然会返回按照 Rank 排序的数据，导致结果错误。
  *
  * 通过测试发现，对于 sorting 的参加，其中包含一个 sortOrder 的属性，
  * 如果这个属性赋值为正整数的话，那么会按照 ASCENDING 去处理，
@@ -45,7 +45,7 @@ interface AppProps {
  * 利用这个性质，我们每次在 Rank 的参数中，每次将一个递增的正整数赋值给 sortOrder，
  * 这样既能让 Next.js 每次重新去获取数据，也不会造成其他排序的错误。
  *
- * 这时会有另外一个问题，就是如果之前的 sorking 的参数跟当前参数不同时
+ * 这样会有另外一个问题，就是如果之前的 sorking 的参数跟当前参数不同时
  * （比如 orderBy 不同，或是 sortOrder 不为 ASCENDING 或正整数时），
  * 则 Next.js 会重定向到对应的参数，这时候可以提前先将 sortOrder 设置为 ASCENDING，
  * 然后在跳转到 Rank 排序，就不会进行重定向了。
@@ -99,9 +99,9 @@ const App: FC<AppProps> = ({ root, tableEl, width }) => {
   useEffect(() => {
     // 管理原来的排序按钮
     if (enable) {
-      dispatch(fetchProblemRankData())
-      dispatch(fetchAllQuestions())
       root.style.display = 'block'
+      dispatch(fetchProblemRankData())
+      dispatch(fetchAllQuestions()).then(() => dispatch(fetchAllQuestionIds()))
     } else {
       root.style.display = 'none'
     }
@@ -209,7 +209,7 @@ const App: FC<AppProps> = ({ root, tableEl, width }) => {
               align-items: center;
               padding: 10px 10px 10px 16px;
               margin-left: -6px;
-              margin-top: 4px;
+              margin-top: 1px;
               cursor: pointer;
               border-top-right-radius: 6px;
               border-bottom-right-radius: 6px;

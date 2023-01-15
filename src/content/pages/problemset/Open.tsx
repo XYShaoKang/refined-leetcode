@@ -48,11 +48,16 @@ const Open: FC<OpenProps> = ({ onEnable, pos }) => {
         justify-content: center;
         cursor: pointer;
         border-radius: 8px;
-        background-color: rgb(40 40 40);
-        color: rgba(239, 241, 246, 0.75);
-        box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+        background-color: ${props =>
+          props.theme.mode === 'dark' ? '#282828' : '#fff'};
+        color: ${props =>
+          props.theme.mode === 'dark' ? `#eff1f6bf` : `#262626`};
+        box-shadow: ${props =>
+          props.theme.mode === 'dark'
+            ? css`rgba(0, 0, 0, 0) 0px 0px 0px 0px,
           rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.24) 0px 1px 3px 0px,
-          rgba(0, 0, 0, 0.16) 0px 2px 8px 0px;
+          rgba(0, 0, 0, 0.16) 0px 2px 8px 0px`
+            : css`rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 1px 3px 0px, rgba(0, 0, 0, 0.08) 0px 2px 8px 0px`};
       `}
       onClick={handleClick}
     >

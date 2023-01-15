@@ -31,7 +31,7 @@ export const fetchAllQuestions = createAsyncThunk<
   ProblemsetQuestion[] | null,
   undefined,
   { state: RootState }
->('global/fetchAllQuestions', async (_, { getState, dispatch }) => {
+>('questions/fetchAllQuestions', async (_, { getState }) => {
   const questions = getState().questions
   const date = new Date(questions.update)
   const dif = differenceInHours(date)(new Date())
@@ -46,18 +46,14 @@ export const fetchAllQuestions = createAsyncThunk<
     if (total === questions.total) return null
   }
 
-  const res = await api.getProblemsetQuestionListAll({}, total)
-  dispatch(fetchAllQuestionIds())
-  return res
+  return api.getProblemsetQuestionListAll({}, total)
 })
 
 export const fetchAllQuestionIds = createAsyncThunk<
   QuestionType[],
   undefined,
   { state: RootState }
->('global/fetchAllQuestionIds', async () => {
-  return api.getAllQuestions()
-})
+>('questions/fetchAllQuestionIds', async () => api.getAllQuestions())
 
 const initialState = questionsAdapter.getInitialState({
   total: 0,
@@ -108,17 +104,8 @@ export const selectQuestonsByOption = (
   if (option?.filters?.listId) {
     const map = new Map<string, ProblemsetQuestion>()
     for (const id of questions.ids) {
-      if (!questions.entities[id]!.questionId)
-        return {
-          data: {
-            problemsetQuestionList: {
-              __typename: 'QuestionListNode',
-              questions: [],
-              hasMore: false,
-              total: 0,
-            },
-          },
-        }
+      // allQuestions 这个 API 无法获取最新的一个会员题，遇到这种情况直接跳过
+      if (!questions.entities[id]!.questionId) continue
 
       map.set(questions.entities[id]!.questionId!, questions.entities[id]!)
     }

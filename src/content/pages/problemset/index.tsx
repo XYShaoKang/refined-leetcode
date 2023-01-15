@@ -1,10 +1,8 @@
 import { render, unmountComponentAtNode } from 'react-dom'
-
 import { awaitFn, findElementByXPath, pageIsLoad, sleep } from '@/utils'
-
 import ProblemListApp from '../problem-list/App'
-import { intercept } from './intercept'
 import App from './App'
+import './intercept'
 
 let _root: HTMLDivElement | null = null
 
@@ -77,8 +75,7 @@ const isProblemset = () => {
 }
 
 void (async function main() {
-  intercept()
-  if (isProblemset()) {
+  if ((window as any).next) {
     const routerEventNames = [
       'routeChangeStart',
       'routeChangeComplete',
@@ -93,6 +90,8 @@ void (async function main() {
       }
       router.events.on(event, handle)
     }
+  }
+  if (isProblemset()) {
     mount()
   }
 })()

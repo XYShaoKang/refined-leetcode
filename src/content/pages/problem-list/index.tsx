@@ -1,23 +1,51 @@
 import { render, unmountComponentAtNode } from 'react-dom'
 
-import { findElement } from '@/utils'
+import { awaitFn, findElementByXPath, pageIsLoad, sleep } from '@/utils'
 
 import App from './App'
 import { fixRandom } from './fixRandom'
+import RankApp from '../problemset/App'
 
-let _root: HTMLDivElement | null = null
+let _root: HTMLDivElement | null = null,
+  rankTitle: HTMLDivElement | null = null
+
+function getListEl() {
+  return findElementByXPath(
+    '//*[@id="__next"]/*//span[text()="精选题单"]/../..'
+  )
+}
 
 async function mount() {
-  const selector =
-    '#__next > div > div.w-full > div > div:nth-child(2) > div > div:nth-child(2)'
-  const el = await findElement(
-    selector,
-    el => el?.children[0]?.textContent === '精选题单'
-  )
+  const el = await getListEl()
+  if (_root) return
+
   _root = document.createElement('div')
   el.parentNode?.insertBefore(_root, el)
 
   render(<App />, _root)
+
+  const tableEl = await findElementByXPath('//div[@role="table"]')
+
+  const titleRow = tableEl.children[0]?.children[0]?.children[0]
+  const width = 90
+  if (!rankTitle && titleRow) {
+    rankTitle = document.createElement('div')
+    rankTitle.setAttribute(
+      'style',
+      `
+        box-sizing: border-box;
+        flex: ${width} 0 auto;
+        min-width: 0px;
+        width: ${width + 16}px;
+        cursor: pointer;
+        `
+    )
+    render(
+      <RankApp tableEl={tableEl} width={width} root={rankTitle} />,
+      rankTitle
+    )
+    titleRow.append(rankTitle)
+  }
 }
 
 function unmount() {
@@ -44,10 +72,15 @@ void (async function main() {
 
 window.addEventListener('urlchange', async function () {
   if (isProblemList()) {
-    if (!_root) {
-      mount()
-      fixRandom()
-    }
+    await getListEl()
+    await Promise.race([
+      sleep(500),
+      findElementByXPath('//span[text()="分享"]'),
+    ])
+    // 等待跳转到题单页，通过判断「导航栏的题单按钮是否取消高亮」
+    await awaitFn(async () => !(await pageIsLoad('题库')))
+    mount()
+    fixRandom()
   } else {
     unmount()
   }

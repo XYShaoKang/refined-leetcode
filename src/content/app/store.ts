@@ -82,6 +82,13 @@ const persistedQuestionsReducer = persistReducer(
   },
   questionsReducer
 )
+const persistedOptionReducer = persistReducer(
+  {
+    key: 'refined-leetcode-option',
+    storage: localforage,
+  },
+  optionReducer
+)
 
 const store = configureStore({
   reducer: {
@@ -89,7 +96,7 @@ const store = configureStore({
     posts: postsReducer,
     blockUsers: persistedUsersReducer,
     global: globalDataReducer,
-    option: optionReducer,
+    option: persistedOptionReducer,
     favorites: favoritesReducer,
     questions: persistedQuestionsReducer,
   },
