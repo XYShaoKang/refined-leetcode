@@ -109,7 +109,7 @@ const Popper: StyledComponent<PopperProps, 'span'> = forwardRef(function Popper<
   }, [anchorEl, placement, update])
 
   useEffect(() => {
-    const parents: HTMLElement[] = [],
+    const parents: (HTMLElement | Window)[] = [],
       options: AddEventListenerOptions = { passive: true }
     if (followScroll && anchorEl) {
       if (position === 'fixed') {
@@ -120,6 +120,8 @@ const Popper: StyledComponent<PopperProps, 'span'> = forwardRef(function Popper<
           if (!node.parentElement) break
           node = node.parentElement
         } while (node !== document.documentElement)
+        window.addEventListener('scroll', update, options)
+        parents.push(window)
       } else {
         let node = anchorEl
         do {
