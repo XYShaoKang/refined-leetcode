@@ -165,13 +165,13 @@ const RankTitle: FC<RankTitleProps> = ({ otherRoots }) => {
         `}
       >
         <TitleBase
-          title="Rating"
+          title="题目评分"
           onSort={handleCustomSort('RANKING', true)}
           isSort={params.custom?.sort?.orderBy === 'RANKING'}
           sortOrder={params.custom?.sort?.sortOrder}
           showHelpIcon={true}
           help={
-            <div style={{ width: 340 }}>
+            <div style={{ width: 350 }}>
               题目评分数据来自
               <a
                 href="https://github.com/zerotrac/leetcode_problem_rating"
