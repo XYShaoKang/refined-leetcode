@@ -1,3 +1,29 @@
+# [0.10.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.9.3...v0.10.0) (2023-01-16)
+
+
+### Bug Fixes
+
+* **home:** 禁用按钮后无法显示提示文本 ([2ccf2b8](https://github.com/XYShaoKang/refined-leetcode/commit/2ccf2b835fd62a49b302ab2f146724b5033b5993))
+* **problem-list:** 修复下方的外边距 ([ecd8827](https://github.com/XYShaoKang/refined-leetcode/commit/ecd8827e6755da463202f4043242f5fdde19fd69))
+* **problem-list:** 修复前端路由跳转的逻辑 ([12caf9e](https://github.com/XYShaoKang/refined-leetcode/commit/12caf9ed1b8b560b080233327faf8f616d0736c9))
+* **problem-list:** 修复收藏夹数据的加载顺序 ([e2e4a89](https://github.com/XYShaoKang/refined-leetcode/commit/e2e4a8962a273b713ecda6a6a66793d5a1ea68b4))
+* **problem-list:** 修复随机按钮 ([7729ae4](https://github.com/XYShaoKang/refined-leetcode/commit/7729ae4243c76b15183df78d42ee0e1ad0a240be))
+* **problem-list:** 题单页中的随机一题自动选择是否过滤会员题 ([61ce171](https://github.com/XYShaoKang/refined-leetcode/commit/61ce17152d511e2b7a4acae96170618b5ada7cce))
+* **problemset:** 新增将筛选出的题目添加到某个题单的功能 ([ee6ecb1](https://github.com/XYShaoKang/refined-leetcode/commit/ee6ecb18460f190a3cc3382b121f3f65c34c2499))
+* **problemset:** 更新显示文本 ([3e91429](https://github.com/XYShaoKang/refined-leetcode/commit/3e91429b5354951a91938b280c56726825e07def))
+* **problemset:** 更新题目状态 ([6fa0462](https://github.com/XYShaoKang/refined-leetcode/commit/6fa04629994b999a63a92e6565e718447340fa75))
+* **problemset:** 适配题单页 ([8c5450d](https://github.com/XYShaoKang/refined-leetcode/commit/8c5450d692479a7f582574a22a8f49eb1896b0fd))
+* **problems:** 添加比赛答题页中禁用快捷键的选项 ([c7e79f4](https://github.com/XYShaoKang/refined-leetcode/commit/c7e79f4b11eef3fe36bcdfde139a020744ccc527))
+* 修复其他页面中关于是否新版 UI 的判断 ([2363206](https://github.com/XYShaoKang/refined-leetcode/commit/2363206149b3bc9db6fc9283c9714ad8e585b46e))
+* 修复自定义题单侧边栏加载错位问题 ([1edf47a](https://github.com/XYShaoKang/refined-leetcode/commit/1edf47a1301f78e96b2f9a5a0bbfe67a2cb855a5))
+* 未登录的状态下无法操作 ([74334a3](https://github.com/XYShaoKang/refined-leetcode/commit/74334a32ef9e9a08d95d2ff63c41a521a79bd3ed))
+* 页面滚动时弹出框不会跟着移动 ([975f039](https://github.com/XYShaoKang/refined-leetcode/commit/975f039e4218212cc5ab5e8e354cd9b71902fde0))
+
+
+### Features
+
+* **problemset:** 添加题目评分 ([bfdbe1a](https://github.com/XYShaoKang/refined-leetcode/commit/bfdbe1a7f1275fc7d836c2db61954a3520db4508))
+
 ## [0.9.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.9.2...v0.9.3) (2023-01-03)
 
 
