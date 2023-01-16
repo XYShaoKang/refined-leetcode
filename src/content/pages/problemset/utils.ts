@@ -1,3 +1,6 @@
+import { CategorySlugType, ProblemsetQuestionListFilterType } from '@/utils'
+import { Option } from './questionsSlice'
+
 export type OrderBy =
   | 'FRONTEND_ID'
   | 'SOLUTION_NUM'
@@ -56,6 +59,49 @@ export function parseParams(): ParamType {
     if (map[key]) params[key] = map[key](value) as any
   }
   return params
+}
+
+export function parseParamsToBody(): Option {
+  const search = new URLSearchParams(location.search)
+  const body: Option = { categorySlug: '', filters: {} }
+  const paths = location.pathname.split('/').filter(Boolean)
+  if (paths[0] === 'problemset' && paths[1] !== 'all') {
+    body.categorySlug = paths[1] as CategorySlugType
+  } else if (paths[0] === 'problem-list') {
+    body.filters!.listId = paths[1]
+  }
+  if (search.has('page')) {
+    const page = Number(search.get('page'))
+    if (!isNaN(page)) {
+      const itemsPerPage = Number(
+        localStorage.getItem('problem-list:itemsPerPage') ?? '50'
+      )
+      body.limit = itemsPerPage
+      body.skip = itemsPerPage * (page - 1)
+    }
+  }
+  if (body.filters) {
+    if (search.has('custom')) {
+      body.filters.custom = map.custom(search.get('custom')!)
+    } else if (search.has('sorting')) {
+      const [{ orderBy, sortOrder }] = map.sorting(search.get('sorting')!)
+      if (orderBy) {
+        body.filters = { ...body.filters, orderBy, sortOrder }
+      }
+    }
+    if (search.has('search')) {
+      body.filters.searchKeywords = search.get('search')!
+    }
+    if (search.has('topicSlugs')) {
+      body.filters.tags = search.get('topicSlugs')!.split(',')
+    }
+    type KeyType = keyof ProblemsetQuestionListFilterType
+    for (const key of ['listId', 'difficulty', 'status'] as KeyType[]) {
+      if (search.has(key)) body.filters[key] = search.get(key)! as any
+    }
+  }
+
+  return body
 }
 
 /** 将参数序列化为字符串

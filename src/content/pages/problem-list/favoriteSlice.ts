@@ -123,6 +123,20 @@ export const updateFavoriteName = createAsyncThunk<
   }
 )
 
+export const addQuestionsToFavorite = createAsyncThunk<
+  {
+    questionId: string
+    __typename: string
+  }[],
+  { favoriteId: string; frontendQuestionIds: string[] },
+  { state: RootState }
+>(
+  'favorites/addQuestionsToFavorite',
+  async ({ favoriteId, frontendQuestionIds }) => {
+    return await api.addQuestionToFavorite(favoriteId, frontendQuestionIds)
+  }
+)
+
 const initialState = favoritesAdapter.getInitialState({
   customFavoriteIds: [] as string[],
   officialFavoriteIds: [] as string[],
@@ -233,6 +247,17 @@ export const selectFavoriteIdsByCategory =
         ? 'officialFavoriteIds'
         : 'thirdPartyFavoriteIds'
     ]
+
+export const selectFavoriteByCategory =
+  (category: FavoriteCategory) =>
+  (state: RootState): FavoriteType[] =>
+    state.favorites[
+      category === 'custom'
+        ? 'customFavoriteIds'
+        : category === 'official'
+        ? 'officialFavoriteIds'
+        : 'thirdPartyFavoriteIds'
+    ].map(id => state.favorites.entities[id]!)
 
 export const { addFavorite, toggleFavoriteAuditStatus, updateShowName } =
   favoritesSlice.actions

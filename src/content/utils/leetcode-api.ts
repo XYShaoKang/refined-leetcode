@@ -480,7 +480,7 @@ export type Favorite = {
     title: string
     titleSlug: string
     __typename: string
-  }
+  }[]
   topic_id: number
   __typename: string
 }
@@ -515,6 +515,12 @@ export type AddFavoriteResult = {
   favoriteIdHash: string
   questionId: string
   __typename: string
+}
+export type RemoveFavoriteResult = {
+  error: null | string
+  favoriteIdHash: string
+  ok: boolean
+  questionId: string
 }
 
 export type ProblemsetPageProps = {
@@ -568,6 +574,7 @@ class LeetCodeApi {
   /** 获取所有题目
    *
    *  @param useCache 是否使用缓存，使用缓存的话，会将查询结果缓存到 LocalStorage 中，更新间隔为每个礼拜一，如果发现上次缓存是在礼拜一之前的话，就重新获取
+   * TODO: 重新设计使用缓存时机
    */
   public async getAllQuestions(useCache = true): Promise<QuestionType[]> {
     if (useCache) {
@@ -1585,51 +1592,58 @@ class LeetCodeApi {
     }
     const n = Math.ceil(total / 100)
     const filterStr = JSON5.stringify(filters, { quote: '"' })
+
+    const str = [...new Array(n).keys()].map(
+      i => /* GraphQL */ `
+      q${i}: problemsetQuestionList(
+        categorySlug: "${categorySlug}", 
+        limit: 100, 
+        skip: ${i * 100}, 
+        filters: ${filterStr}
+      ) {
+        ...questionFragment
+      }`
+    )
+
     const body = {
       operationName: 'problemsetQuestionList',
       query: /* GraphQL */ `
-      query problemsetQuestionList {
-        ${[...new Array(n).keys()].map(
-          i => `q${i}: problemsetQuestionList(categorySlug: "${categorySlug}", limit: 100, skip: ${
-            i * 100
-          }, filters: ${filterStr}) {
-          ...questionFragment
-        }`
-        )}
-      }
-      fragment questionFragment on QuestionListNode {
-        hasMore
-        total
-        questions {
-          acRate
-          difficulty
-          freqBar
-          frontendQuestionId
-          isFavor
-          paidOnly
-          solutionNum
-          status
-          title
-          titleCn
-          titleSlug
-          topicTags {
-            name
-            nameTranslated
-            id
-            slug
-          }
-          extra {
-            hasVideoSolution
-            topCompanyTags {
-              imgUrl
+        query problemsetQuestionList {
+          ${str}
+        }
+        fragment questionFragment on QuestionListNode {
+          hasMore
+          total
+          questions {
+            acRate
+            difficulty
+            freqBar
+            frontendQuestionId
+            isFavor
+            paidOnly
+            solutionNum
+            status
+            title
+            titleCn
+            titleSlug
+            topicTags {
+              name
+              nameTranslated
+              id
               slug
-              numSubscribed
+            }
+            extra {
+              hasVideoSolution
+              topCompanyTags {
+                imgUrl
+                slug
+                numSubscribed
+              }
             }
           }
+          __typename
         }
-        __typename
-      }
-    `,
+      `,
       variables: {},
     }
     const { data } = await this.graphqlApi({ body })
@@ -1815,7 +1829,7 @@ class LeetCodeApi {
     if (!res.ok) {
       throw new Error(res.error!)
     }
-    await this.deleteQuestionFromFavorite(res.favoriteIdHash, '1')
+    await this.deleteQuestionFromFavorite(res.favoriteIdHash, ['1'])
     return res
   }
 
@@ -1856,45 +1870,81 @@ class LeetCodeApi {
     )
   }
 
-  /** 添加题目到题单（收藏夹）中
+  /** 批量添加题目到题单（收藏夹）中
+   *
+   *  当一次性添加的熟练超过 100 以后，很大概率会 502，
+   *  如果超过 100，通过分两次添加
    *
    */
-  public addQuestionToFavorite(
+  public async addQuestionToFavorite(
     favoriteId: string,
-    frontendQuestionIds: string[]
-  ): Promise<{ [key: string]: { questionId: string; __typename: string } }> {
+    questionIds: string[]
+  ): Promise<{ questionId: string; __typename: string }[]> {
+    if (questionIds.length > 200) {
+      throw new Error('题单题目超出上限: 200')
+    }
+    if (questionIds.length > 100) {
+      return (
+        await this.addQuestionToFavorite(favoriteId, questionIds.slice(0, 100))
+      ).concat(
+        await this.addQuestionToFavorite(favoriteId, questionIds.slice(100))
+      )
+    }
     const body = {
       query: /* GraphQL */ `
       mutation addQuestionToFavorite {
-        ${frontendQuestionIds
+        ${questionIds
           .map(
-            (
-              questionId,
-              i
-            ) => `add${i}: addQuestionToFavorite(favoriteIdHash: "${favoriteId}", questionId: "${questionId}") {
-                  questionId
-                  __typename
-                }`
+            (questionId, i) => /* GraphQL */ `
+            add${i}: addQuestionToFavorite(
+              favoriteIdHash: "${favoriteId}", 
+              questionId: "${questionId}") {
+                questionId
+                __typename
+              }`
           )
           .join('\n')}
-        }`,
+      }`,
       operationName: 'addQuestionToFavorite',
       variables: {},
     }
-    return this.graphqlApi({ body }).then(({ data }) => data)
+    const { data } = await this.graphqlApi({ body })
+    return questionIds.map((_, i) => data[`q${i}`])
   }
 
-  /** 从题单（收藏夹）中的删除题目
+  /** 从题单（收藏夹）中的批量删除题目
    *
    */
   public async deleteQuestionFromFavorite(
     favoriteId: string,
-    frontendQuestionId: string
-  ): Promise<void> {
-    await this.baseApi(
-      `/list/api/questions/${favoriteId}/${frontendQuestionId}`,
-      'DELETE'
+    questionIds: string[]
+  ): Promise<RemoveFavoriteResult[]> {
+    const str = questionIds.map(
+      (id, i) => /* GraphQL */ `
+      q${i}:  removeQuestionFromFavorite(
+          favoriteIdHash: "${favoriteId}"
+          questionId: "${id}"
+        ) {
+          ok
+          error
+          favoriteIdHash
+          questionId
+        }`
     )
+    const body = {
+      query: /* GraphQL */ `
+        mutation removeQuestionFromFavorite {
+          ${str}
+        }
+      `,
+      variables: {},
+    }
+    const res: RemoveFavoriteResult[] = []
+    const { data } = await this.graphqlApi({ body })
+    for (let i = 0; i < questionIds.length; i++) {
+      res[i] = data[`q${i}`]
+    }
+    return res
   }
 
   /** 更新题单（收藏夹）信息

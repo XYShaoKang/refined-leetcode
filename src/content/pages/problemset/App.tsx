@@ -20,6 +20,7 @@ import RankRange from './RankRange'
 import Open, { Pos } from './Open'
 import { fetchAllQuestionIds, fetchAllQuestions } from './questionsSlice'
 import { OrderBy, parseParams, SORT_KEY, serializationPrams } from './utils'
+import AddQuestion from './AddQuestion'
 
 interface AppProps {
   root: HTMLDivElement
@@ -189,6 +190,7 @@ const App: FC<AppProps> = ({ root, tableEl, width }) => {
               border-bottom-right-radius: 0;
             `}
           >
+            <AddQuestion />
             <RankRange />
           </div>
         </Portal>

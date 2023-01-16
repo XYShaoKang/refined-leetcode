@@ -88,11 +88,11 @@ export const {
   selectIds: selectQuestionIds,
 } = questionsAdapter.getSelectors<RootState>(state => state.questions)
 
-type Option = {
+export type Option = {
   categorySlug?: CategorySlugType
   skip?: number
   limit?: number
-  filters?: ProblemsetQuestionListFilterType & { custom: CustomFilter }
+  filters?: ProblemsetQuestionListFilterType & { custom?: CustomFilter }
 }
 export const selectQuestonsByOption = (
   state: RootState,
@@ -170,7 +170,7 @@ export const selectQuestonsByOption = (
       return true
     })
 
-    if (custom.sort) {
+    if (custom && custom.sort) {
       const { sortOrder, orderBy } = custom.sort
       const defalutValue = sortOrder === 'DESCENDING' ? 0 : Infinity
       const getValue = (q: ProblemsetQuestion): number => {
