@@ -1,0 +1,6 @@
+export { default as HelpIcon } from './HelpIcon'
+export { default as AddIcon } from './AddIcon'
+export { default as EditIcon } from './EditIcon'
+export { default as RemoveIcon } from './RemoveIcon'
+export { default as PublicIcon } from './PublicIcon'
+export { default as PrivateIcon } from './PrivateIcon'

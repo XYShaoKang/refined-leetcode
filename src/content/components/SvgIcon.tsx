@@ -1,10 +1,15 @@
-interface SvgIconProps {
+import { SCProps, StyledComponent } from './utils'
+
+interface OwnSvgIconProps {
   children?: React.ReactNode
   height?: number
 }
-const SvgIcon: React.FC<SvgIconProps> = ({ children, height = 24 }) => {
+export type SvgIconProps = SCProps<OwnSvgIconProps, 'svg'>
+export type SvgIconType = StyledComponent<OwnSvgIconProps, 'svg'>
+
+const SvgIcon: SvgIconType = ({ children, height = 24, ...props }) => {
   return (
-    <svg viewBox="0 0 24 24" height={height} fill="currentColor">
+    <svg {...props} viewBox="0 0 24 24" height={height} fill="currentColor">
       {children}
     </svg>
   )

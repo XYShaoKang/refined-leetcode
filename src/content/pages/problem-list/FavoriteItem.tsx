@@ -24,6 +24,13 @@ import {
   fetchFavoriteDetails,
 } from './favoriteSlice'
 import Editor from './Editor'
+import { routerTo } from '@/utils'
+import {
+  EditIcon,
+  PrivateIcon,
+  PublicIcon,
+  RemoveIcon,
+} from '@/components/icons'
 
 const DEFAULT_COVER =
   'https://static.leetcode.cn/cn-frontendx-assets/production/_next/static/images/default-logo-5a15811cf52298855a46a3f400663063.png'
@@ -32,15 +39,13 @@ const DEFAULT_FAVORITE_NAME = 'Favorite'
 interface FavoriteItemProps {
   idHash: string
   current: boolean
-  isCustom: boolean
-  hoverHelp: boolean
+  showEditIcon?: boolean
 }
 
 const FavoriteItem: FC<FavoriteItemProps> = ({
   idHash,
   current,
-  isCustom,
-  hoverHelp: showEditBtn,
+  showEditIcon,
 }) => {
   const favorite = useAppSelector(state => selectFavoriteById(state, idHash))
   const dispatch = useAppDispatch()
@@ -101,9 +106,7 @@ const FavoriteItem: FC<FavoriteItemProps> = ({
   const handleClick: MouseEventHandler = e => {
     e.preventDefault()
     if (!current) {
-      ;(window as any).next.router.push(
-        `https://leetcode.cn/problem-list/${idHash}/`
-      )
+      routerTo(`/problem-list/${idHash}/`)
     }
   }
   const handleRemove: MouseEventHandler = async e => {
@@ -128,7 +131,11 @@ const FavoriteItem: FC<FavoriteItemProps> = ({
       setTogglePublicStateError({ message: error.message, show: true })
     }
   }
-  const toggleEnableEdit: () => void = () => {
+  const toggleEnableEdit: (e?: React.MouseEvent) => void = e => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
     setEnableEdit(enableEdit => !enableEdit)
   }
   const updateName = async (name: string) => {
@@ -142,7 +149,11 @@ const FavoriteItem: FC<FavoriteItemProps> = ({
     dispatch(fetchFavoriteDetails([idHash]))
     toggleEnableEdit()
   }
-  const toggleShowRemove: () => void = () => {
+  const toggleShowRemove: (e?: React.MouseEvent) => void = e => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
     setShowRemove(showRemove => !showRemove)
   }
 
@@ -181,6 +192,7 @@ const FavoriteItem: FC<FavoriteItemProps> = ({
           grid-template-columns: 32px 1fr;
           column-gap: 8px;
           color: ${props => props.theme.palette.text.light};
+          align-items: center;
           &:hover {
             background-color: ${props => props.theme.palette.secondary.hover};
           }
@@ -240,7 +252,7 @@ const FavoriteItem: FC<FavoriteItemProps> = ({
               {name}
             </span>
           </ToolTip>
-          {isCustom && (
+          {showEditIcon && (
             <div
               css={css`
                 display: flex;
@@ -248,44 +260,21 @@ const FavoriteItem: FC<FavoriteItemProps> = ({
                 align-items: center;
               `}
             >
-              {(hover || showEditBtn) &&
+              {hover &&
                 favorite.name !== DEFAULT_FAVORITE_NAME &&
                 !favorite.isInAudit && (
                   <>
-                    <svg
-                      viewBox="0 0 24 24"
-                      css={css`
-                        width: 20px;
-                        height: 20px;
-                        grid-area: a;
-                      `}
-                      onClick={e => {
-                        e.stopPropagation()
-                        e.preventDefault()
-                        toggleEnableEdit()
-                      }}
-                    >
-                      <path
-                        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="#d05451"
-                      onClick={e => {
-                        e.stopPropagation()
-                        e.preventDefault()
-                        toggleShowRemove()
-                      }}
-                      css={css`
-                        width: 20px;
-                        height: 20px;
-                        grid-area: b;
-                      `}
-                    >
-                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12 1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z" />
-                    </svg>
+                    <EditIcon
+                      height={20}
+                      css={'grid-area: a;'}
+                      onClick={toggleEnableEdit}
+                    />
+                    <RemoveIcon
+                      height={20}
+                      css={'grid-area: b;'}
+                      color="#d05451"
+                      onClick={toggleShowRemove}
+                    />
                   </>
                 )}
 
@@ -295,27 +284,16 @@ const FavoriteItem: FC<FavoriteItemProps> = ({
                   transform: translate(-88%, calc(-100% - 10px));
                 `}
               >
-                <svg
-                  viewBox="0 0 24 24"
+                <div
                   onClick={handleToggleFavoritePublicState}
-                  css={css`
-                    width: 20px;
-                    height: 20px;
-                    grid-area: c;
-                  `}
+                  css={' grid-area: c;'}
                 >
                   {favorite.isPublicFavorite ? (
-                    <path
-                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"
-                      fill="currentColor"
-                    />
+                    <PublicIcon height={20} />
                   ) : (
-                    <path
-                      d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"
-                      fill="currentColor"
-                    />
+                    <PrivateIcon height={20} />
                   )}
-                </svg>
+                </div>
               </ErrorToolTip>
             </div>
           )}
