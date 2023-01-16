@@ -210,13 +210,15 @@ const BlockUserList: FC<BlockUserListProps> = props => {
           title={!slug ? '请输入 slug' : ''}
           style={{ whiteSpace: 'nowrap' }}
         >
-          <Button
-            onClick={handleAdd}
-            disabled={!slug}
-            loading={status === 'loading'}
-          >
-            添加
-          </Button>
+          <div>
+            <Button
+              onClick={handleAdd}
+              disabled={!slug}
+              loading={status === 'loading'}
+            >
+              添加
+            </Button>
+          </div>
         </ToolTip>
       </div>
       <List style={{ marginTop: users.length ? 10 : 0 }}>
