@@ -260,23 +260,23 @@ const FavoriteItem: FC<FavoriteItemProps> = ({
                 align-items: center;
               `}
             >
-              {hover &&
-                favorite.name !== DEFAULT_FAVORITE_NAME &&
-                !favorite.isInAudit && (
-                  <>
+              {hover && favorite.name !== DEFAULT_FAVORITE_NAME && (
+                <>
+                  {!favorite.isInAudit && (
                     <EditIcon
                       height={20}
                       css={'grid-area: a;'}
                       onClick={toggleEnableEdit}
                     />
-                    <RemoveIcon
-                      height={20}
-                      css={'grid-area: b;'}
-                      color="#d05451"
-                      onClick={toggleShowRemove}
-                    />
-                  </>
-                )}
+                  )}
+                  <RemoveIcon
+                    height={20}
+                    css={'grid-area: b;'}
+                    color="#d05451"
+                    onClick={toggleShowRemove}
+                  />
+                </>
+              )}
 
               <ErrorToolTip
                 error={togglePublicStateError}
