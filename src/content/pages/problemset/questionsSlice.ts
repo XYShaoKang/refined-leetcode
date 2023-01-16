@@ -13,7 +13,9 @@ import {
   ProblemsetQuestion,
   ProblemsetQuestionList,
   ProblemsetQuestionListFilterType,
+  QuestionStatus,
   QuestionType,
+  userProfileQuestion,
 } from '@/utils'
 
 import { selectFavoriteById } from '../problem-list/favoriteSlice'
@@ -31,7 +33,7 @@ export const fetchAllQuestions = createAsyncThunk<
   ProblemsetQuestion[] | null,
   undefined,
   { state: RootState }
->('questions/fetchAllQuestions', async (_, { getState }) => {
+>('questions/fetchAllQuestions', async (_, { getState, dispatch }) => {
   const questions = getState().questions
   const date = new Date(questions.update)
   const dif = differenceInHours(date)(new Date())
@@ -43,11 +45,24 @@ export const fetchAllQuestions = createAsyncThunk<
     // 只需要更新一些最新的变化既可以，比如在上次更新时间之后的成功提交，会造成 status 的变化
     // 另外如果原本没有会员，新开了会员之后，是可以获取到 freqBar [出现频率] 这个信息的，
     // 这时候就需要重新去获取一下。
-    if (total === questions.total) return null
+    if (total === questions.total) {
+      // 更新最近提交的题目状态
+      await dispatch(fetchLastACQuestions({ last: date, status: 'ACCEPTED' }))
+      await dispatch(fetchLastACQuestions({ last: date, status: 'FAILED' }))
+      return null
+    }
   }
 
   return api.getProblemsetQuestionListAll({}, total)
 })
+
+export const fetchLastACQuestions = createAsyncThunk<
+  userProfileQuestion[],
+  { last: Date; status: QuestionStatus },
+  { state: RootState }
+>('questions/fetchLastACQuestions', async ({ last, status }) =>
+  api.queryACQuestions(last, status)
+)
 
 export const fetchAllQuestionIds = createAsyncThunk<
   QuestionType[],
@@ -75,8 +90,19 @@ const questionsSlice = createSlice({
       })
       .addCase(fetchAllQuestionIds.fulfilled, (state, action) => {
         for (const q of action.payload) {
-          if (state.entities[q.questionFrontendId])
-            state.entities[q.questionFrontendId]!.questionId = q.questionId
+          const question = state.entities[q.questionFrontendId]
+          question && (question.questionId = q.questionId)
+        }
+      })
+      .addCase(fetchLastACQuestions.fulfilled, (state, action) => {
+        for (const q of action.payload) {
+          const question = state.entities[q.frontendId]
+          if (!question) continue
+          if (action.meta.arg.status === 'ACCEPTED') {
+            question.status = 'AC'
+          } else if (action.meta.arg.status === 'FAILED') {
+            question.status = 'TRIED'
+          }
         }
       })
   },
@@ -234,7 +260,6 @@ export const selectQuestonsByOption = (
   }
   const start = option.skip ?? 0,
     end = start + (option.limit ?? 50)
-
   return {
     data: {
       problemsetQuestionList: {

@@ -552,6 +552,20 @@ export type ProblemsetQuestionListFilterType = {
   searchKeywords?: string
 }
 
+export type userProfileQuestion = {
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD'
+  frontendId: `${number}`
+  lastSubmissionSrc: null
+  lastSubmittedAt: number
+  numSubmitted: number
+  title: string
+  titleSlug: string
+  translatedTitle: string
+  __typename: 'ProgressQuestionNode'
+}
+
+export type QuestionStatus = 'ACCEPTED' | 'FAILED' | 'UNTOUCHED'
+
 class LeetCodeApi {
   public graphqlApi: (
     { method, body }: { endpoint?: string; method?: string; body?: unknown },
@@ -1568,6 +1582,7 @@ class LeetCodeApi {
 
   /** 获取筛选过后的列表的所有题目
    *
+   * // TODO: 如果获取的总数过大，一次请求有可能会造成超时，尝试分成多次请求
    */
   public async getProblemsetQuestionListAll(
     {
@@ -1972,6 +1987,111 @@ class LeetCodeApi {
     )
       .then(res => res.json())
       .then(res => res.pageProps)
+  }
+
+  /** 查询当前用户题目的状态
+   *
+   */
+  public async queryQuestionsStatus(
+    skip = 0,
+    limit = 100,
+    status: QuestionStatus = 'ACCEPTED',
+    sortField:
+      | 'LAST_SUBMITTED_AT'
+      | 'QUESTION_FRONTEND_ID'
+      | 'NUM_SUBMITTED' = 'LAST_SUBMITTED_AT',
+    sortOrder: 'ASCENDING' | 'DESCENDING' = 'DESCENDING',
+    difficulty: ('EASY' | 'MEDIUM' | 'HARD')[] = []
+  ): Promise<{ questions: userProfileQuestion[]; totalNum: number }> {
+    const body = {
+      operationName: 'userProfileQuestions',
+      variables: {
+        status,
+        skip,
+        first: limit,
+        sortField,
+        sortOrder,
+        difficulty,
+      },
+      query: /* GraphQL */ `
+        query userProfileQuestions(
+          $status: StatusFilterEnum!
+          $skip: Int!
+          $first: Int!
+          $sortField: SortFieldEnum!
+          $sortOrder: SortingOrderEnum!
+          $keyword: String
+          $difficulty: [DifficultyEnum!]
+        ) {
+          userProfileQuestions(
+            status: $status
+            skip: $skip
+            first: $first
+            sortField: $sortField
+            sortOrder: $sortOrder
+            keyword: $keyword
+            difficulty: $difficulty
+          ) {
+            totalNum
+            questions {
+              translatedTitle
+              frontendId
+              titleSlug
+              title
+              difficulty
+              lastSubmittedAt
+              numSubmitted
+              lastSubmissionSrc {
+                sourceType
+                ... on SubmissionSrcLeetbookNode {
+                  slug
+                  title
+                  pageId
+                  __typename
+                }
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+        }
+      `,
+    }
+    return this.graphqlApi({ body }).then(
+      ({ data }) => data.userProfileQuestions
+    )
+  }
+
+  /** 查询最近某种状态的题目
+   *
+   */
+  public async queryACQuestions(
+    last: Date,
+    status: QuestionStatus = 'ACCEPTED',
+    skip = 0,
+    limit = 100
+  ): Promise<userProfileQuestion[]> {
+    const compare = (q: userProfileQuestion) =>
+      q.lastSubmittedAt * 1000 >= last.valueOf()
+    const { questions, totalNum } = await this.queryQuestionsStatus(
+      skip,
+      limit,
+      status
+    )
+    if (!questions.length) return []
+    if (!compare(questions.at(-1)!)) {
+      // 因为是按照提交日期排序的，并且当前拿到的最后一个元素已经是在指定日期之前的，
+      // 那后面就肯定没有满足要求的提交，可以不用在继续请求，直接返回当前满足条件的题目提交
+      return questions.filter(compare)
+    }
+    if (skip + limit >= totalNum) {
+      // 已经没有更多提交了
+      return questions
+    }
+    return questions.concat(
+      await this.queryACQuestions(last, status, skip + limit, limit)
+    )
   }
 }
 

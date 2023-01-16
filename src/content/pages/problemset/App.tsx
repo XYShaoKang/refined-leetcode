@@ -100,9 +100,15 @@ const App: FC<AppProps> = ({ root, tableEl, width }) => {
   useEffect(() => {
     // 管理原来的排序按钮
     if (enable) {
-      root.style.display = 'block'
-      dispatch(fetchProblemRankData())
-      dispatch(fetchAllQuestions()).then(() => dispatch(fetchAllQuestionIds()))
+      void (async function () {
+        root.style.display = 'block'
+        dispatch(fetchProblemRankData())
+        const res = await dispatch(fetchAllQuestions())
+        if (res) {
+          // 如果返回值为空，则说明当前没有更新新的题目，也就没有比较去更新 id 了
+          dispatch(fetchAllQuestionIds())
+        }
+      })()
     } else {
       root.style.display = 'none'
     }
