@@ -1,5 +1,6 @@
 import store from '@/app/store'
-import { findElementByXPath, LeetCodeApi, routerTo } from '@/utils'
+import { findElementByXPath, LeetCodeApi, routerTo, autoMount } from '@/utils'
+
 import { selectIsPremium } from '../global/globalSlice'
 
 const getCurrentId = () => {
@@ -8,7 +9,6 @@ const getCurrentId = () => {
   return ''
 }
 const api = new LeetCodeApi(location.origin)
-let _randomBtn: HTMLDivElement | null = null
 const handleRandom = async (e: MouseEvent) => {
   e.preventDefault()
   e.stopPropagation()
@@ -23,12 +23,22 @@ const handleRandom = async (e: MouseEvent) => {
   const url = `/problems/${questions[i].titleSlug}/?favorite=${id}`
   routerTo(url)
 }
+const randomXpath =
+  '//*[@id="__next"]/div/div[2]/div/div[2]/div/*//span[text()="随机开始"]'
 
-export async function fixRandom(): Promise<void> {
-  if (_randomBtn) _randomBtn.removeEventListener('click', handleRandom)
-  _randomBtn = (await findElementByXPath(
-    '//*[@id="__next"]/div/div[2]/div/div[2]/div/div[1]/div[2]/div/div[1]',
-    el => el?.textContent === '随机开始'
-  )) as HTMLDivElement
-  if (_randomBtn) _randomBtn.addEventListener('click', handleRandom)
+const fix = async () => {
+  const spans = await findElementByXPath({
+    xpath: randomXpath,
+    nodeType: 'UNORDERED_NODE_ITERATOR_TYPE',
+  })
+  for (const el of spans) {
+    el.parentElement?.removeEventListener('click', handleRandom) // 如果存在旧的监听器，先删除掉
+    el.parentElement?.addEventListener('click', handleRandom)
+  }
 }
+
+export const fixRandom = autoMount(
+  randomXpath,
+  fix,
+  els => els[0].parentElement?.parentElement?.parentElement?.parentElement
+)

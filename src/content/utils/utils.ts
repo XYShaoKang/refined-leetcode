@@ -1,5 +1,6 @@
 import { DefaultTheme } from 'styled-components/macro'
 import { darkTheme, lightTheme } from '@/theme'
+import { debounce } from 'src/utils'
 
 export function download(str: string, filename = 'contest.md'): void {
   const blob = new Blob([str], { type: 'text/plain' })
@@ -100,6 +101,19 @@ export async function findElement(
   return element
 }
 
+// https://developer.mozilla.org/en-US/docs/Web/API/Document/evaluate
+type NodeType =
+  | 'ANY_TYPE'
+  | 'NUMBER_TYPE'
+  | 'STRING_TYPE'
+  | 'BOOLEAN_TYPE'
+  | 'UNORDERED_NODE_ITERATOR_TYPE'
+  | 'ORDERED_NODE_ITERATOR_TYPE'
+  | 'UNORDERED_NODE_SNAPSHOT_TYPE'
+  | 'ORDERED_NODE_SNAPSHOT_TYPE'
+  | 'ANY_UNORDERED_NODE_TYPE'
+  | 'FIRST_ORDERED_NODE_TYPE'
+
 /** 通过 XPath 查找元素
  * 返回一个 Promise,当找与 XPath 匹配的元素时,返回找到的这个元素;如果在超时时间内未找到与选择器匹配的元素时,则 Promise 会被拒绝.
  * @param xpath 需要匹配的 XPath
@@ -107,20 +121,51 @@ export async function findElement(
  * @param timeout 超时设置,默认为 10000
  * @returns 返回找到的元素
  */
-export async function findElementByXPath(
-  xpath: string,
-  fn = (el: HTMLElement | null) => !!el,
+export function findElementByXPath<T = HTMLElement>(
+  evaluateParam: string,
+  fn?: (el: T | null) => boolean,
+  timeout?: number
+): Promise<T>
+export async function findElementByXPath<T = HTMLElement[]>(
+  evaluateParam: { xpath: string; nodeType: NodeType },
+  fn?: (el: T) => boolean,
+  timeout?: number
+): Promise<T>
+export async function findElementByXPath<T = HTMLElement | HTMLElement[]>(
+  evaluateParam: string | { xpath: string; nodeType: NodeType },
+  fn = (el: T | null) => !!el,
   timeout = 10000
-): Promise<HTMLElement> {
-  const element = await findBase<HTMLElement>(
-    () =>
-      document.evaluate(
+): Promise<T> {
+  let xpath: string, nodeType: NodeType
+  if (typeof evaluateParam === 'string') {
+    xpath = evaluateParam
+    nodeType = 'FIRST_ORDERED_NODE_TYPE'
+  } else {
+    xpath = evaluateParam.xpath
+    nodeType = evaluateParam.nodeType
+    fn = el => !!(Array.isArray(el) && el.length)
+  }
+  const element = await findBase<T>(
+    () => {
+      const result = document.evaluate(
         xpath,
         document,
         null,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        XPathResult[nodeType],
         null
-      ).singleNodeValue,
+      )
+      if (typeof evaluateParam === 'string') {
+        return result.singleNodeValue
+      }
+
+      const res: any[] = []
+      let it = result.iterateNext()
+      while (it) {
+        res.push(it)
+        it = result.iterateNext()
+      }
+      return res
+    },
     fn,
     timeout
   )
@@ -268,5 +313,35 @@ export function setRef<T>(el: T, ref?: React.Ref<T>): void {
     } else if ('current' in ref) {
       ;(ref as React.MutableRefObject<T>).current = el
     }
+  }
+}
+
+export function autoMount(
+  xpath: string,
+  mount: (...args: any) => void | Promise<void>,
+  findAncestor: (el: HTMLElement[]) => HTMLElement | null | undefined,
+  unmount?: (...args: any) => void | Promise<void>,
+  defaultAncestor: HTMLElement = document.body
+): () => Promise<void> {
+  let _observer: MutationObserver | null = null
+  return async function run(): Promise<void> {
+    const els = await findElementByXPath({
+      xpath,
+      nodeType: 'UNORDERED_NODE_ITERATOR_TYPE',
+    })
+    let ancestor = findAncestor(els)
+    if (!ancestor) ancestor = defaultAncestor
+
+    const mountFn = debounce(async () => {
+      if (unmount) await unmount()
+      mount()
+    }, 100)
+    mountFn()
+    if (_observer) {
+      _observer.disconnect()
+    }
+    _observer = new MutationObserver(mountFn)
+    if (ancestor)
+      _observer.observe(ancestor, { childList: true, subtree: true })
   }
 }
