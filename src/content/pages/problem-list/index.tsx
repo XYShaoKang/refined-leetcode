@@ -101,7 +101,6 @@ window.addEventListener('urlchange', async function () {
     ])
     // 等待跳转到题单页，通过判断「导航栏的题单按钮是否取消高亮」
     await awaitFn(async () => !(await pageIsLoad('题库')))
-    console.log('isProblemList')
     mount()
     fixRandom()
   } else {

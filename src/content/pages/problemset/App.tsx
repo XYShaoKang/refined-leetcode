@@ -7,7 +7,7 @@ import { withRoot } from '@/hoc'
 import { useAppDispatch, useAppSelector, useHover } from '@/hooks'
 import { routerTo } from '@/utils'
 import { debounce } from 'src/utils'
-import { fetchProblemRankData } from '../global/globalSlice'
+import { fetchProblemRankData, selectIsSignedIn } from '../global/globalSlice'
 import {
   disableProblemRating,
   enableProblemRating,
@@ -70,6 +70,7 @@ const App: FC<AppProps> = ({ root, tableEl, width }) => {
   const [pos, setPos] = useState<Pos>()
   const [bindPopperRef, hoverPopper, popperRef] = useHover(100)
   const [bindRanRangeRef, hoverRankRange, rankRangeRef] = useHover(100)
+  const isSignedIn = useAppSelector(selectIsSignedIn)
 
   const handleDisable = () => {
     const { right, bottom } = popperRef.current!.getBoundingClientRect()
@@ -196,7 +197,7 @@ const App: FC<AppProps> = ({ root, tableEl, width }) => {
               border-bottom-right-radius: 0;
             `}
           >
-            <AddQuestion />
+            {isSignedIn && <AddQuestion />}
             <RankRange />
           </div>
         </Portal>

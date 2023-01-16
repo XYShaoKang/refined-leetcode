@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react'
 
 import { withRoot } from '@/hoc'
-import { useAppDispatch } from '@/hooks'
+import { useAppDispatch, useAppSelector } from '@/hooks'
 
 import FavoriteList from './FavoriteList'
 import {
@@ -9,15 +9,21 @@ import {
   fetchFavoriteMyFavorites,
   fetchFavorites,
 } from './favoriteSlice'
-import { fetchProblemsetPageProps } from '../global/globalSlice'
+import {
+  fetchProblemsetPageProps,
+  selectIsSignedIn,
+} from '../global/globalSlice'
 
 const App: FC = () => {
   const dispatch = useAppDispatch()
+  const isSignedIn = useAppSelector(selectIsSignedIn)
   useEffect(() => {
     void (async function () {
       dispatch(fetchProblemsetPageProps())
       const res = await dispatch(fetchFavorites()).unwrap()
-      const data = await dispatch(fetchFavoriteMyFavorites()).unwrap()
+      const data = isSignedIn
+        ? await dispatch(fetchFavoriteMyFavorites()).unwrap()
+        : []
       const ids = [
         ...new Set(
           res.allFavorites
@@ -28,12 +34,12 @@ const App: FC = () => {
       ]
       dispatch(fetchFavoriteDetails(ids))
     })()
-  }, [])
+  }, [isSignedIn])
 
   return (
     <>
-      <FavoriteList category="custom" />
-      <FavoriteList category="third" />
+      {isSignedIn && <FavoriteList category="custom" />}
+      {isSignedIn && <FavoriteList category="third" />}
       <FavoriteList category="official" />
     </>
   )
