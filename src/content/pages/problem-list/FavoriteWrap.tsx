@@ -66,7 +66,7 @@ const FavoriteWrap: FC<FavoriteListProps> = ({
         background-color: ${props => props.theme.palette.primary.main};
         border-radius: 8px;
         padding: ${open ? '8px 0' : ''};
-        margin-top: 16px;
+        margin: 16px 0;
       `}
     >
       {title && (
