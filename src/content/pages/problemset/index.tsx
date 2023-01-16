@@ -1,11 +1,5 @@
 import { render, unmountComponentAtNode } from 'react-dom'
-import {
-  autoMount,
-  awaitFn,
-  findElementByXPath,
-  pageIsLoad,
-  sleep,
-} from '@/utils'
+import { autoMount, awaitFn, findElementByXPath, pageIsLoad } from '@/utils'
 import ProblemListApp from '../problem-list/App'
 import App from './App'
 import './intercept'
@@ -16,6 +10,7 @@ const [mountProblemList, unmountProblemList] = autoMount(
   problemListXPath,
   async () => {
     const el = await findElementByXPath(problemListXPath)
+    if (!isProblemset()) return
     if (_root) {
       if (_root?.nextElementSibling === el) return
       // 可能因为加载比较慢之类的原因，导致自定义题单的侧边栏已经加载而其他的一些元素还没加载，
@@ -104,7 +99,6 @@ void (async function main() {
 
 window.addEventListener('urlchange', async function () {
   if (isProblemset()) {
-    await sleep(500)
     await awaitFn(() => pageIsLoad('题库'))
     mount()
   } else {

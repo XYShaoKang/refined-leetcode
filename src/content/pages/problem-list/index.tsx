@@ -1,12 +1,6 @@
 import { render, unmountComponentAtNode } from 'react-dom'
 
-import {
-  autoMount,
-  awaitFn,
-  findElementByXPath,
-  pageIsLoad,
-  sleep,
-} from '@/utils'
+import { autoMount, findElementByXPath, sleep } from '@/utils'
 
 import App from './App'
 import { fixRandom, removeFixRandom } from './fixRandom'
@@ -14,17 +8,17 @@ import RankApp from '../problemset/App'
 
 let _root: HTMLDivElement | null = null,
   rankTitle: HTMLDivElement | null = null
-
+const xpath =
+  '//*[@id="__next"]/div/div[2]/div/div[2]/div/*//span[text()="精选题单"]/../..'
 function getListEl() {
-  return findElementByXPath(
-    '//*[@id="__next"]/*//span[text()="精选题单"]/../..'
-  )
+  return findElementByXPath(xpath)
 }
 
 const [mountProblemList, unmountProblemList] = autoMount(
-  '//*[@id="__next"]/*//span[text()="精选题单"]/../..',
+  xpath,
   async () => {
     const el = await getListEl()
+    if (!isProblemList()) return
     if (_root) {
       if (_root?.nextElementSibling === el) return
       // 可能因为加载比较慢之类的原因，导致自定义题单的侧边栏已经加载而其他的一些元素还没加载，
@@ -97,10 +91,10 @@ window.addEventListener('urlchange', async function () {
     await getListEl()
     await Promise.race([
       sleep(500),
-      findElementByXPath('//span[text()="分享"]'),
+      findElementByXPath(
+        '//*[@id="__next"]/div/div[2]/div/div[2]/div/*//span[text()="分享"]'
+      ),
     ])
-    // 等待跳转到题单页，通过判断「导航栏的题单按钮是否取消高亮」
-    await awaitFn(async () => !(await pageIsLoad('题库')))
     mount()
     fixRandom()
   } else {

@@ -143,7 +143,7 @@ export async function findElementByXPath<T = HTMLElement | HTMLElement[]>(
   } else {
     xpath = evaluateParam.xpath
     nodeType = evaluateParam.nodeType
-    fn = el => !!(Array.isArray(el) && el.length)
+    if (!fn) fn = el => !!(Array.isArray(el) && el.length)
   }
   const element = await findBase<T>(
     () => {
@@ -334,6 +334,7 @@ export function autoMount(
 
       const mountFn = debounce(async () => {
         await unmount?.()
+        if (!_observer) return
         mount()
       }, 100)
       mountFn()
@@ -344,6 +345,7 @@ export function autoMount(
     },
     () => {
       _observer?.disconnect()
+      _observer = null
       unmount?.()
     },
   ]
