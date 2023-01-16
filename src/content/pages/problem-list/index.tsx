@@ -1,9 +1,15 @@
 import { render, unmountComponentAtNode } from 'react-dom'
 
-import { awaitFn, findElementByXPath, pageIsLoad, sleep } from '@/utils'
+import {
+  autoMount,
+  awaitFn,
+  findElementByXPath,
+  pageIsLoad,
+  sleep,
+} from '@/utils'
 
 import App from './App'
-import { fixRandom } from './fixRandom'
+import { fixRandom, removeFixRandom } from './fixRandom'
 import RankApp from '../problemset/App'
 
 let _root: HTMLDivElement | null = null,
@@ -15,15 +21,28 @@ function getListEl() {
   )
 }
 
+const [mountProblemList, unmountProblemList] = autoMount(
+  '//*[@id="__next"]/*//span[text()="精选题单"]/../..',
+  async () => {
+    const el = await getListEl()
+    if (_root) {
+      if (_root?.nextElementSibling === el) return
+      // 可能因为加载比较慢之类的原因，导致自定义题单的侧边栏已经加载而其他的一些元素还没加载，
+      // 而等之后其他元素加载完成之后，可能会导致自定义题单的位置出现在很奇怪的位置，就需要重新去加载一下。
+      unmountComponentAtNode(_root)
+      _root.remove()
+      _root = null
+    }
+
+    _root = document.createElement('div')
+    el.parentNode?.insertBefore(_root, el)
+    render(<App />, _root)
+  },
+  els => els[0].parentElement
+)
+
 async function mount() {
-  const el = await getListEl()
-  if (_root) return
-
-  _root = document.createElement('div')
-  el.parentNode?.insertBefore(_root, el)
-
-  render(<App />, _root)
-
+  mountProblemList()
   const tableEl = await findElementByXPath('//div[@role="table"]')
 
   const titleRow = tableEl.children[0]?.children[0]?.children[0]
@@ -49,11 +68,9 @@ async function mount() {
 }
 
 function unmount() {
-  if (_root) {
-    unmountComponentAtNode(_root)
-    _root.remove()
-    _root = null
-  }
+  removeFixRandom()
+  unmountProblemList()
+
   if (rankTitle) {
     unmountComponentAtNode(rankTitle)
     rankTitle.remove()
@@ -84,6 +101,7 @@ window.addEventListener('urlchange', async function () {
     ])
     // 等待跳转到题单页，通过判断「导航栏的题单按钮是否取消高亮」
     await awaitFn(async () => !(await pageIsLoad('题库')))
+    console.log('isProblemList')
     mount()
     fixRandom()
   } else {

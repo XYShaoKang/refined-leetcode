@@ -1,30 +1,36 @@
 import { render, unmountComponentAtNode } from 'react-dom'
-import { awaitFn, findElementByXPath, pageIsLoad, sleep } from '@/utils'
+import {
+  autoMount,
+  awaitFn,
+  findElementByXPath,
+  pageIsLoad,
+  sleep,
+} from '@/utils'
 import ProblemListApp from '../problem-list/App'
 import App from './App'
 import './intercept'
 
 let _root: HTMLDivElement | null = null
+const problemListXPath = '//*[@id="__next"]/*//span[text()="精选题单"]/../../..'
+const [mountProblemList, unmountProblemList] = autoMount(
+  problemListXPath,
+  async () => {
+    const el = await findElementByXPath(problemListXPath)
+    if (_root) {
+      if (_root?.nextElementSibling === el) return
+      // 可能因为加载比较慢之类的原因，导致自定义题单的侧边栏已经加载而其他的一些元素还没加载，
+      // 而等之后其他元素加载完成之后，可能会导致自定义题单的位置出现在很奇怪的位置，就需要重新去加载一下。
+      unmountComponentAtNode(_root)
+      _root.remove()
+      _root = null
+    }
 
-async function mountProblemList() {
-  const xpath = '//*[@id="__next"]/*//span[text()="精选题单"]/../../..'
-  const el = await findElementByXPath(xpath)
-
-  if (!_root) {
     _root = document.createElement('div')
     el.parentNode?.insertBefore(_root, el)
-
     render(<ProblemListApp />, _root)
-  }
-}
-
-function unmountProblemList() {
-  if (_root) {
-    unmountComponentAtNode(_root)
-    _root.remove()
-    _root = null
-  }
-}
+  },
+  els => els[0].parentElement
+)
 
 let rankTitle: HTMLDivElement | null = null
 

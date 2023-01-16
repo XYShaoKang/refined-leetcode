@@ -37,7 +37,7 @@ const fix = async () => {
   }
 }
 
-export const fixRandom = autoMount(
+export const [fixRandom, removeFixRandom] = autoMount(
   randomXpath,
   fix,
   els => els[0].parentElement?.parentElement?.parentElement?.parentElement

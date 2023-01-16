@@ -322,26 +322,29 @@ export function autoMount(
   findAncestor: (el: HTMLElement[]) => HTMLElement | null | undefined,
   unmount?: (...args: any) => void | Promise<void>,
   defaultAncestor: HTMLElement = document.body
-): () => Promise<void> {
+): [mount: () => Promise<void>, unmount: () => void] {
   let _observer: MutationObserver | null = null
-  return async function run(): Promise<void> {
-    const els = await findElementByXPath({
-      xpath,
-      nodeType: 'UNORDERED_NODE_ITERATOR_TYPE',
-    })
-    let ancestor = findAncestor(els)
-    if (!ancestor) ancestor = defaultAncestor
+  return [
+    async function run(): Promise<void> {
+      const els = await findElementByXPath({
+        xpath,
+        nodeType: 'UNORDERED_NODE_ITERATOR_TYPE',
+      })
+      const ancestor = findAncestor(els) ?? defaultAncestor
 
-    const mountFn = debounce(async () => {
-      if (unmount) await unmount()
-      mount()
-    }, 100)
-    mountFn()
-    if (_observer) {
-      _observer.disconnect()
-    }
-    _observer = new MutationObserver(mountFn)
-    if (ancestor)
-      _observer.observe(ancestor, { childList: true, subtree: true })
-  }
+      const mountFn = debounce(async () => {
+        await unmount?.()
+        mount()
+      }, 100)
+      mountFn()
+      _observer?.disconnect()
+      _observer = new MutationObserver(mountFn)
+      if (ancestor)
+        _observer.observe(ancestor, { childList: true, subtree: true })
+    },
+    () => {
+      _observer?.disconnect()
+      unmount?.()
+    },
+  ]
 }
