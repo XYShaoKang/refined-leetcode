@@ -19,6 +19,9 @@ interface OptionState {
   problemRating: {
     enable: boolean
   }
+  contestProblem: {
+    disableShortcutKey: boolean
+  }
 }
 
 const initialState: OptionState = {
@@ -27,6 +30,9 @@ const initialState: OptionState = {
   },
   problemRating: {
     enable: true,
+  },
+  contestProblem: {
+    disableShortcutKey: false,
   },
 }
 
@@ -48,11 +54,19 @@ export const optionSlice = createSlice({
     enableProblemRating(state) {
       state.problemRating.enable = true
     },
+    toggleContestProblemShortcutKeyOption(state) {
+      state.contestProblem.disableShortcutKey =
+        !state.contestProblem.disableShortcutKey
+    },
   },
 })
 
-export const { setRandomOption, disableProblemRating, enableProblemRating } =
-  optionSlice.actions
+export const {
+  setRandomOption,
+  disableProblemRating,
+  enableProblemRating,
+  toggleContestProblemShortcutKeyOption,
+} = optionSlice.actions
 
 export const selectRandomOption = (
   state: RootState,
@@ -62,5 +76,9 @@ export const selectRandomOption = (
 export const selectProblemRatingOption = (
   state: RootState
 ): OptionState['problemRating'] => state.option.problemRating
+
+export const selectContestProblemShortcutKeyOption = (
+  state: RootState
+): OptionState['contestProblem'] => state.option.contestProblem
 
 export default optionSlice.reducer

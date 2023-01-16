@@ -1,30 +1,17 @@
 import ReactDOM, { render } from 'react-dom'
 
-import { IS_MAC, findElement, isBetaUI } from '@/utils'
+import { findElement, isBetaUI } from '@/utils'
 
 import Clock from './Clock'
 import Random from './Random'
 import { getRoot } from './utils'
 import { fixBack } from './fixBack'
+import ShortcutKeyOption from './ShortcutKeyOption'
 
 let root: HTMLDivElement | null = null,
   randomRoot: HTMLDivElement | null = null,
   titleSlug = ''
 
-/** 阻止按 CMD(Win 中为 Ctrl) + s 键时，弹出浏览器自带的保存页面
- */
-const handlePreventSave = (e: KeyboardEvent) => {
-  if (e.altKey || e.shiftKey) return
-  if (IS_MAC) {
-    if (!e.ctrlKey && e.metaKey && e.code === 'KeyS') {
-      e.preventDefault()
-    }
-  } else {
-    if (!e.metaKey && e.ctrlKey && e.code === 'KeyS') {
-      e.preventDefault()
-    }
-  }
-}
 async function load() {
   titleSlug = location.pathname.split('/').filter(Boolean)[1]
   const beta = await isBetaUI()
@@ -115,10 +102,9 @@ void (async function main() {
     load()
   }
   if (isContestProblemPage()) {
-    const monacoEditor = await findElement('.CodeMirror')
-    if (monacoEditor) {
-      monacoEditor.addEventListener('keydown', handlePreventSave)
-    }
+    const root = document.createElement('div')
+    render(<ShortcutKeyOption />, root)
+    document.body.append(root)
   }
 })()
 
