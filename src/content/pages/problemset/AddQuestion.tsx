@@ -131,7 +131,7 @@ const AddQuestion: React.FC = () => {
                   justify-content: center;
                 `}
               >
-                将当前筛选出的
+                当前选中题目：
                 <span
                   css={css`
                     color: red;
@@ -141,7 +141,7 @@ const AddQuestion: React.FC = () => {
                 >
                   {questions.length}
                 </span>
-                道题目添加到题单中
+                道
               </div>
               <ul
                 css={css`
