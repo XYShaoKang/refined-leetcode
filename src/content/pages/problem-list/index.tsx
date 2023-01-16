@@ -50,9 +50,14 @@ async function mount() {
 
 function unmount() {
   if (_root) {
-    if (_root) unmountComponentAtNode(_root)
+    unmountComponentAtNode(_root)
     _root.remove()
     _root = null
+  }
+  if (rankTitle) {
+    unmountComponentAtNode(rankTitle)
+    rankTitle.remove()
+    rankTitle = null
   }
 }
 
