@@ -1,3 +1,12 @@
+## [0.10.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.10.0...v0.10.1) (2023-01-16)
+
+
+### Bug Fixes
+
+* **problem-list:** 在审核中的题单可以删除 ([df0aec9](https://github.com/XYShaoKang/refined-leetcode/commit/df0aec942dc55d213d909105a57241e1c3a44451))
+* **problemset:** 修复显示文本 ([cbc82f8](https://github.com/XYShaoKang/refined-leetcode/commit/cbc82f89401eaacf9d337d586cba4123a5307f10))
+* 修复跳转逻辑 ([6f97f4e](https://github.com/XYShaoKang/refined-leetcode/commit/6f97f4e102ef35ce752bb266db04358ade8a3763))
+
 # [0.10.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.9.3...v0.10.0) (2023-01-16)
 
 
