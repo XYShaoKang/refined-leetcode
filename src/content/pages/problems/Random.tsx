@@ -1,7 +1,12 @@
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components/macro'
 
-import { LeetCodeApi, ProblemsetQuestion, QuestionType } from '@/utils'
+import {
+  LeetCodeApi,
+  ProblemsetQuestion,
+  QuestionType,
+  routerTo,
+} from '@/utils'
 import { withRoot } from '@/hoc'
 import { useAppSelector, useHover } from '@/hooks'
 
@@ -56,8 +61,10 @@ const Random: FC = () => {
     // 过滤当前题目
     predicates.push(({ titleSlug }) => titleSlug === currentTitleSlug)
     if (favorite !== 'all') {
-      allQuestions = await api.getProblemsetQuestionList(favorite)
-      type Question = ProblemsetQuestion['questions']['0']
+      allQuestions = await api.getProblemsetQuestionListAll({
+        filters: { listId: favorite },
+      })
+      type Question = ProblemsetQuestion
       // 过滤会员题
       predicates.push(({ paidOnly }: Question) => !isPremium && paidOnly)
       // 过滤已  AC 的题目
@@ -84,7 +91,7 @@ const Random: FC = () => {
 
     let nextUrl = `/problems/${allQuestions[i].titleSlug}/`
     if (favorite !== 'all') nextUrl += `?favorite=${favorite}`
-    ;(window as any).next.router.push(nextUrl)
+    routerTo(nextUrl)
   }
 
   return (

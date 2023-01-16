@@ -1,5 +1,5 @@
 import store from '@/app/store'
-import { findElementByXPath, LeetCodeApi } from '@/utils'
+import { findElementByXPath, LeetCodeApi, routerTo } from '@/utils'
 import { selectIsPremium } from '../global/globalSlice'
 
 const getCurrentId = () => {
@@ -21,7 +21,7 @@ const handleRandom = async (e: MouseEvent) => {
 
   const i = Math.floor(Math.random() * (questions.length - 1))
   const url = `/problems/${questions[i].titleSlug}/?favorite=${id}`
-  ;(window as any).next?.router.push(url)
+  routerTo(url)
 }
 
 export async function fixRandom(): Promise<void> {
