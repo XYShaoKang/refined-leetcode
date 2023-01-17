@@ -15,7 +15,7 @@ const ShortcutKeyOption: FC = () => {
     selectContestProblemShortcutKeyOption
   )
   const dispatch = useAppDispatch()
-
+  console.log(optionEl)
   const toggle = () => {
     dispatch(toggleContestProblemShortcutKeyOption())
   }
@@ -27,7 +27,6 @@ const ShortcutKeyOption: FC = () => {
       )
       setOptionEl(content)
     }
-    handleClick()
 
     void (async function () {
       settingBtn = await findElement('.setting-btn')
