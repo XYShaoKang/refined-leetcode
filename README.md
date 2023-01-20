@@ -61,3 +61,4 @@
 - https://github.com/baoliay2008/lccn_predictor 力扣竞赛评分预测项目，也是扩展目前使用的预测数据源
 - https://github.com/zerotrac/leetcode_problem_rating 力扣题目评分项目，也是扩展中题目评分的数据源
 - https://github.com/SysSn13/leetcode-rating-predictor 力扣竞赛评分预测预测，是之前使用的预测数据源
+- 评分功能中，对应评分的颜色参考 https://clist.by/problems/ 和 https://codeforces.com/ 中对应等级的颜色
