@@ -274,14 +274,21 @@ export interface ProblemRankData {
 }
 
 export const getProblemRankData = async (): Promise<ProblemRankData[]> => {
-  const data = await Promise.race([
-    fetch(
-      'https://cdn.jsdelivr.net/gh/zerotrac/leetcode_problem_rating/data.json'
-    ).then(res => res.json()),
-    fetch(
-      'https://raw.githubusercontent.com/zerotrac/leetcode_problem_rating/main/data.json'
-    ).then(res => res.json()),
-  ])
+  const dataUrls = [
+    'https://raw.githubusercontent.com/zerotrac/leetcode_problem_rating/main/data.json',
+    'https://cdn.jsdelivr.net/gh/zerotrac/leetcode_problem_rating/data.json',
+    'https://testingcf.jsdelivr.net/gh/zerotrac/leetcode_problem_rating/data.json',
+    'https://fastly.jsdelivr.net/gh/zerotrac/leetcode_problem_rating/data.json',
+    'https://gcore.jsdelivr.net/gh/zerotrac/leetcode_problem_rating/data.json',
+  ]
+  const data = await Promise.race(
+    dataUrls.map(url =>
+      fetch(url, { headers: {} })
+        .then(res => res.json())
+        .catch(() => new Promise((res, rej) => setTimeout(rej, 10000)))
+    )
+  )
+
   return data
 }
 
