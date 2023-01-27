@@ -1,3 +1,12 @@
+## [0.10.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.10.1...v0.10.2) (2023-01-27)
+
+
+### Bug Fixes
+
+* **problems:** 只有在打开设置对话框之后才能获取到设置的元素 ([bfed3e7](https://github.com/XYShaoKang/refined-leetcode/commit/bfed3e707ed4f31b341ff4dfbdb35c561e678881))
+* 修复 cdn 在某些地区无法使用的问题 ([af13784](https://github.com/XYShaoKang/refined-leetcode/commit/af1378478dbc36fd5113e33701ded3af7843fe9c))
+* 添加 homepage_url ([29dc087](https://github.com/XYShaoKang/refined-leetcode/commit/29dc087e4cda41763a02ab4d4d3c05d6a20b4d7a))
+
 ## [0.10.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.10.0...v0.10.1) (2023-01-16)
 
 
