@@ -7,7 +7,6 @@ import {
   SuccessCheckReturnType,
   findElement,
 } from '@/utils'
-import { withRoot } from '@/hoc'
 import { useEvent, useHover } from '@/hooks'
 import { ToolTip } from '@/components/ToolTip'
 
@@ -401,4 +400,4 @@ const Clock: FC<{ beta?: boolean }> = ({ beta }) => {
   )
 }
 
-export default withRoot(Clock)
+export default Clock

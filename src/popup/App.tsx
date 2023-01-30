@@ -1,13 +1,8 @@
 import React, { FC } from 'react'
-import styled from 'styled-components/macro'
-
-const Container = styled.div`
-  width: 250px;
-  height: 300px;
-`
+import Option from '../options/Option'
 
 const App: FC = () => {
-  return <Container>Popup</Container>
+  return <Option />
 }
 
 export default App

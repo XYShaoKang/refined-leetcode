@@ -4,18 +4,19 @@ import { findElement } from '@/utils'
 import { css } from 'styled-components/macro'
 import { useAppDispatch, useAppSelector } from '@/hooks'
 import {
-  selectContestProblemShortcutKeyOption,
+  selectOptions,
   toggleContestProblemShortcutKeyOption,
-} from '../global/optionSlice'
-import { withRoot } from '@/hoc'
+} from '../global/optionsSlice'
+import { withPage } from '@/hoc'
 
 const ShortcutKeyOption: FC = () => {
+  const options = useAppSelector(selectOptions)
   const [optionEl, setOptionEl] = useState<HTMLElement>()
-  const { disableShortcutKey } = useAppSelector(
-    selectContestProblemShortcutKeyOption
-  )
+
+  const disableShortcutKey =
+    options && options.contestProblemsPage.disableShortcutkey
   const dispatch = useAppDispatch()
-  console.log(optionEl)
+
   const toggle = () => {
     dispatch(toggleContestProblemShortcutKeyOption())
   }
@@ -41,19 +42,18 @@ const ShortcutKeyOption: FC = () => {
     if (!disableShortcutKey) return
     let editor: HTMLElement | null = null
     const handleClick = (e: KeyboardEvent) => {
-      e.preventDefault()
       e.stopPropagation()
     }
     void (async function () {
       editor = await findElement('.editor-base')
-      editor.addEventListener('keydown', handleClick)
+      editor?.addEventListener('keydown', handleClick)
     })()
     return () => {
       editor && editor.removeEventListener('keydown', handleClick)
     }
   }, [disableShortcutKey])
 
-  if (!optionEl) return <div />
+  if (!optionEl) return <></>
   return (
     <Portal container={optionEl}>
       <hr className="base-line__Agul line dotted" />
@@ -91,4 +91,4 @@ const ShortcutKeyOption: FC = () => {
   )
 }
 
-export default withRoot(ShortcutKeyOption)
+export default withPage('contestProblemsPage')(ShortcutKeyOption)

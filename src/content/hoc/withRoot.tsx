@@ -16,7 +16,7 @@ import { getTheme, isBetaUI } from '@/utils'
 const Loading = () => <></>
 
 export const withRoot = <T extends ComponentType<any>>(Component: T): T => {
-  const Root = forwardRef(function App(props: any, ref: any) {
+  const Root = forwardRef(function Root(props: any, ref: any) {
     const [theme, setTheme] = useState(getTheme())
     useEffect(() => {
       // 跟随力扣的明暗主题进行切换

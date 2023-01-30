@@ -9,6 +9,7 @@ const CopyPlugin = require('copy-webpack-plugin')
 const common = {
   entry: {
     popup: path.join(__dirname, '../src/popup/index.tsx'),
+    options: path.join(__dirname, '../src/options/index.tsx'),
     content: path.join(__dirname, '../src/content/index.tsx'),
     'content-load': path.join(__dirname, '../src/content/load.ts'),
     background: path.join(__dirname, '../src/background/index.ts'),
@@ -45,6 +46,12 @@ const common = {
     ],
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, '../public', 'options.html'),
+      chunks: ['options'],
+      filename: 'options.html',
+      publicPath: '/',
+    }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, '../public', 'popup.html'),
       chunks: ['popup'],

@@ -11,7 +11,7 @@ import { apiSlice } from '@/pages/ranking/rankSlice'
 import postsReducer from '@/pages/home/postsSlice'
 import blockUsersReducer from '@/pages/home/blockUsersSlice'
 import globalDataReducer, { fetchGlobalData } from '@/pages/global/globalSlice'
-import optionReducer from '@/pages/global/optionSlice'
+import optionsReducer from '@/pages/global/optionsSlice'
 import favoritesReducer from '@/pages/problem-list/favoriteSlice'
 import questionsReducer from '@/pages/problemset/questionsSlice'
 
@@ -36,6 +36,7 @@ const config = {
     'blockUsers/unSetBlockUser',
     'blockUsers/toggleBlockUser',
     'global/fetchGlobalData/fulfilled',
+    'options/toggleContestProblemShortcutKeyOption',
   ],
 }
 
@@ -82,12 +83,12 @@ const persistedQuestionsReducer = persistReducer(
   },
   questionsReducer
 )
-const persistedOptionReducer = persistReducer(
+const persistedOptionsReducer = persistReducer(
   {
     key: 'refined-leetcode-option',
     storage: localforage,
   },
-  optionReducer
+  optionsReducer
 )
 
 const store = configureStore({
@@ -96,7 +97,7 @@ const store = configureStore({
     posts: postsReducer,
     blockUsers: persistedUsersReducer,
     global: globalDataReducer,
-    option: persistedOptionReducer,
+    options: persistedOptionsReducer,
     favorites: favoritesReducer,
     questions: persistedQuestionsReducer,
   },

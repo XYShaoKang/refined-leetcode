@@ -1,7 +1,10 @@
 import { findElement, routerTo } from '@/utils'
+import store from '@/app/store'
+import { selectOptions } from '../global/optionsSlice'
 const handleBack = (e: MouseEvent) => {
   const favoriteIdHash = new URL(location.href).searchParams.get('favorite')
-  if (favoriteIdHash) {
+  const options = selectOptions(store.getState())
+  if (favoriteIdHash && options?.problemsPage.fixBackNav) {
     e.stopPropagation()
     e.preventDefault()
     routerTo(`https://leetcode.cn/problem-list/${favoriteIdHash}/`)

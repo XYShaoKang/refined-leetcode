@@ -1,3 +1,5 @@
+import { customEventDispatch } from './utils'
+
 __webpack_public_path__ = chrome.runtime.getURL('.') + '/'
 
 if (module.hot) {
@@ -32,5 +34,25 @@ if (!isLoad) {
   isLoad = true
   loadScript(chrome.runtime.getURL('content.bundle.js'))
 }
+
+window.addEventListener('refinedLeetcodeGetOptions', () => {
+  chrome.storage.local.get('options', ({ options }) => {
+    customEventDispatch('refinedLeetcodeOptionsChange', { options })
+  })
+})
+
+chrome.storage.onChanged.addListener(e => {
+  if ('options' in e) {
+    const options = e.options.newValue
+    customEventDispatch('refinedLeetcodeOptionsChange', { options })
+  }
+})
+
+window.addEventListener(
+  'refinedLeetcodeSaveOptions',
+  ({ detail: { options } }) => {
+    chrome.storage.local.set({ options })
+  }
+)
 
 export {}

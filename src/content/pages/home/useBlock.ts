@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector, useEvent } from '@/hooks'
 import { selectAllPosts, fetchPosts } from './postsSlice'
 import { selectAllBlockUsers } from './blockUsersSlice'
 
+// TODO: 分离获取列表和处理隐藏
 export const useBlock = (): void => {
   const posts = useAppSelector(selectAllPosts)
   const users = useAppSelector(selectAllBlockUsers)

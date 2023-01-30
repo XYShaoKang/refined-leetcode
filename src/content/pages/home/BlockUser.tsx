@@ -2,7 +2,6 @@ import React, { FC, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components/macro'
 
 import BlockUserList from './BlockUserList'
-import { useBlock } from './useBlock'
 import DragAndDrop from './DragAndDrop'
 
 const Container = styled.div`
@@ -22,7 +21,6 @@ const Container = styled.div`
 `
 
 const BlockUser: FC = () => {
-  useBlock()
   const ref = useRef<HTMLDivElement>(null)
   const [showEdit, setShowEdit] = useState(false)
   const handleClick = () => {

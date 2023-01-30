@@ -1,7 +1,5 @@
 import { FC, useEffect, useState } from 'react'
 
-import { withRoot } from '@/hoc'
-
 import { debounce } from '../../../utils'
 
 import { ParamType, useGetPredictionQuery } from './rankSlice'
@@ -79,4 +77,4 @@ const Item: FC<ItmeType> = ({ row, hasMyRank }) => {
   )
 }
 
-export default withRoot(Item)
+export default Item

@@ -1,6 +1,7 @@
 import { DefaultTheme } from 'styled-components/macro'
 import { darkTheme, lightTheme } from '@/theme'
 import { debounce } from 'src/utils'
+import { PageName } from 'src/options/options'
 
 export function download(str: string, filename = 'contest.md'): void {
   const blob = new Blob([str], { type: 'text/plain' })
@@ -68,12 +69,12 @@ async function findBase<T>(
  * @param timeout 超时设置,默认为 10000
  * @returns 返回找到的所有元素
  */
-export async function findAllElement(
+export async function findAllElement<T = HTMLElement>(
   selectors: string,
-  fn = (e: Element[]) => e.length > 0,
+  fn = (e: T[]) => e.length > 0,
   timeout = 10000
-): Promise<Element[]> {
-  const elements = await findBase<Element[]>(
+): Promise<T[]> {
+  const elements = await findBase<T[]>(
     () => Array.from(document.querySelectorAll(selectors)),
     fn,
     timeout
@@ -88,12 +89,12 @@ export async function findAllElement(
  * @param timeout 超时设置,默认为 10000
  * @returns 返回找到的元素
  */
-export async function findElement(
+export async function findElement<T = HTMLElement>(
   selectors: string,
-  fn = (el: HTMLElement | null) => !!el,
+  fn = (el: T | null) => !!el,
   timeout = 10000
-): Promise<HTMLElement> {
-  const element = await findBase<HTMLElement>(
+): Promise<T> {
+  const element = await findBase<T>(
     () => document.querySelector(selectors),
     fn,
     timeout
@@ -356,4 +357,40 @@ export function autoMount(
       unmount?.()
     },
   ]
+}
+
+export const customEventDispatch: CustomEventDispatch = (eventName, data?) => {
+  const event = new CustomEvent(eventName, { detail: data })
+  window.dispatchEvent(event)
+}
+
+export function getPageName(): PageName | undefined {
+  if (location.pathname === '/') {
+    // 首页
+    return 'homePage'
+  }
+  const paths = location.pathname.split('/').filter(Boolean)
+  if (paths[0] === 'problem-list') {
+    // 题单页
+    return 'problemListPage'
+  } else if (paths[0] === 'problems') {
+    if (paths[2] === 'solutions' && paths[3]) {
+      // 新版题解 solutions
+      // 旧版题解 solution
+      return 'solutionsPage'
+    }
+    // 答题页
+    return 'problemsPage'
+  } else if (paths[0] === 'contest') {
+    if (paths[2] === 'problems') {
+      // 比赛答题页
+      return 'contestProblemsPage'
+    } else if (paths[2] === 'ranking') {
+      // 比赛排名页
+      return 'contestRankingPage'
+    }
+  } else if (paths[0] === 'problemset') {
+    // 题库页
+    return 'problemsetPage'
+  }
 }

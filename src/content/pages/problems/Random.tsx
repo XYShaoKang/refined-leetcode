@@ -7,11 +7,11 @@ import {
   QuestionType,
   routerTo,
 } from '@/utils'
-import { withRoot } from '@/hoc'
+import { withPage } from '@/hoc'
 import { useAppSelector, useHover } from '@/hooks'
 
 import { selectIsPremium } from '../global/globalSlice'
-import { selectRandomOption } from '../global/optionSlice'
+import { selectRandomOption } from '../global/optionsSlice'
 import RandomOption from './RandomOption'
 
 const StyledBtn = styled.button`
@@ -122,4 +122,4 @@ const Random: FC = () => {
   )
 }
 
-export default withRoot(Random)
+export default withPage('problemsPage')(Random)

@@ -1,48 +1,50 @@
-import { FC, useEffect } from 'react'
-
-import { withRoot } from '@/hoc'
-import { useAppDispatch, useAppSelector } from '@/hooks'
-
-import FavoriteList from './FavoriteList'
-import {
-  fetchFavoriteDetails,
-  fetchFavoriteMyFavorites,
-  fetchFavorites,
-} from './favoriteSlice'
-import {
-  fetchProblemsetPageProps,
-  selectIsSignedIn,
-} from '../global/globalSlice'
+import Rank from '../problemset/Rank'
+import { FC, useEffect, useState } from 'react'
+import { useAppSelector } from '@/hooks'
+import { selectOptions } from '../global/optionsSlice'
+import { findElementByXPath } from '@/utils'
+import { Portal } from '@/components/Portal'
+import ProblemList from './ProblemList'
+import { withPage } from '@/hoc'
+import { fixRandom } from './fixRandom'
 
 const App: FC = () => {
-  const dispatch = useAppDispatch()
-  const isSignedIn = useAppSelector(selectIsSignedIn)
+  const options = useAppSelector(selectOptions)
+  const [problemListRoot, setProblemListRoot] = useState<HTMLElement>()
   useEffect(() => {
+    fixRandom()
+    let isMount = true,
+      unmount: () => void
     void (async function () {
-      dispatch(fetchProblemsetPageProps())
-      const res = await dispatch(fetchFavorites()).unwrap()
-      const data = isSignedIn
-        ? await dispatch(fetchFavoriteMyFavorites()).unwrap()
-        : []
-      const ids = [
-        ...new Set(
-          res.allFavorites
-            .concat(res.officialFavorites)
-            .map(({ idHash }) => idHash)
-            .concat(data.map(a => a.idHash))
-        ),
-      ]
-      dispatch(fetchFavoriteDetails(ids))
-    })()
-  }, [isSignedIn])
+      const problemListXPath =
+        '//*[@id="__next"]/div/div[2]/div/div[2]/div/*//span[text()="精选题单"]/../..'
+      const el = await findElementByXPath(problemListXPath)
 
+      if (isMount) {
+        const root = document.createElement('div')
+        el.parentNode?.insertBefore(root, el)
+        setProblemListRoot(root)
+        unmount = () => root.remove()
+      }
+    })()
+    return () => {
+      isMount = false
+      unmount && unmount()
+    }
+  }, [])
+
+  const showProblemList = !!options?.problemListPage.problemList
+  const showRank = !!options?.problemListPage.problemRating
   return (
     <>
-      {isSignedIn && <FavoriteList category="custom" />}
-      {isSignedIn && <FavoriteList category="third" />}
-      <FavoriteList category="official" />
+      <Rank enable={showRank} />
+      {showProblemList && problemListRoot && (
+        <Portal container={problemListRoot}>
+          <ProblemList />
+        </Portal>
+      )}
     </>
   )
 }
 
-export default withRoot(App)
+export default withPage('problemListPage')(App)

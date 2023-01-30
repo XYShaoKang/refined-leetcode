@@ -14,6 +14,11 @@ const development = env => ({
     publicPath: 'http://localhost:9100/',
   },
   entry: {
+    options: [
+      'webpack/hot/dev-server.js',
+      'webpack-dev-server/client/index.js?hot=true&protocol=ws&hostname=localhost&port=9100',
+      path.join(__dirname, '../src/options/index.tsx'),
+    ],
     popup: [
       'webpack/hot/dev-server.js',
       'webpack-dev-server/client/index.js?hot=true&protocol=ws&hostname=localhost&port=9100',

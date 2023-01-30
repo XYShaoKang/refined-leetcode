@@ -8,7 +8,7 @@ import {
   RandomOptionType,
   setRandomOption,
   labelOfKey,
-} from '../global/optionSlice'
+} from '../global/optionsSlice'
 import { css } from 'styled-components/macro'
 
 interface RandomOptionProps {

@@ -1,16 +1,16 @@
 import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components/macro'
 
-import { withRoot } from '@/hoc'
-
 import { debounce } from '../../../utils'
 
 import { ParamType, useGetContestQuery } from './rankSlice'
+import { Portal } from '@/components/Portal'
 
 type ItmeType = {
   row: number
   col: number
   hasMyRank: boolean
+  parent: HTMLElement
 }
 
 function getParam(): ParamType {
@@ -32,20 +32,24 @@ function useUrlChange() {
     const handle = debounce(() => {
       setParam(getParam())
     }, 100)
-    window.addEventListener('afterurlchange', handle)
+    window.addEventListener('urlchange', handle)
     return () => {
-      window.removeEventListener('afterurlchange', handle)
+      handle.cancel()
+      window.removeEventListener('urlchange', handle)
     }
   }, [])
+  // 是否选中「显示全球」
   useEffect(() => {
     const checkbox = document.querySelector(
       '.checkbox>label>input'
     ) as HTMLInputElement
+    if (!checkbox) return
     const handle = debounce((_e: Event) => {
       setParam(getParam())
     }, 100)
     checkbox.addEventListener('change', handle)
     return () => {
+      handle.cancel()
       checkbox.removeEventListener('change', handle)
     }
   })
@@ -71,8 +75,15 @@ const StyleSvg = styled.svg<{ size?: number }>`
   ${({ size }) => (size ? `font-size: ${size}px;` : '')}
 `
 
-const FileIcon: FC<ItmeType> = ({ row, col, hasMyRank }) => {
+function setDisplay(el: Element | undefined, display: string) {
+  if (el instanceof HTMLElement) {
+    el.style.display = display
+  }
+}
+
+const LanguageIcon: FC<ItmeType> = ({ parent, row, col, hasMyRank }) => {
   const [param] = useUrlChange()
+  const [show, setShow] = useState(!!parent.childElementCount)
 
   const params: ParamType = { ...param }
   if (hasMyRank) {
@@ -83,15 +94,60 @@ const FileIcon: FC<ItmeType> = ({ row, col, hasMyRank }) => {
   const { data: items } = useGetContestQuery(params)
   const iconFile = items?.[row]?.[col]?.iconFile
 
-  if (!items || !iconFile) {
-    return <DefaultIcon className="fa fa-file-code-o" />
-  }
+  useEffect(() => {
+    setDisplay(parent.children[0]?.children[0], 'none')
+
+    return () => {
+      setDisplay(parent.children[0]?.children[0], '')
+    }
+  }, [])
+  useEffect(() => {
+    const handleChange = debounce(() => {
+      setShow(!!parent.childElementCount)
+      setDisplay(parent.children[0]?.children[0], 'none')
+    }, 10)
+    handleChange()
+    const observer = new MutationObserver(handleChange)
+    observer.observe(parent, { childList: true })
+    return () => {
+      handleChange.cancel()
+      observer.disconnect()
+    }
+  }, [])
+  if (!show) return null
 
   return (
-    <StyleSvg>
-      <image href={iconFile} />
-    </StyleSvg>
+    <Portal container={parent.children[0] as HTMLElement}>
+      {!items || !iconFile ? (
+        <DefaultIcon className="fa fa-file-code-o" />
+      ) : (
+        <StyleSvg>
+          <image href={iconFile} />
+        </StyleSvg>
+      )}
+    </Portal>
   )
 }
 
-export default withRoot(FileIcon)
+export const LanguageIconRow: FC<{
+  row: HTMLElement
+  i: number
+  hasMyRank: boolean
+}> = ({ row, i, hasMyRank }) => {
+  const tds = Array.prototype.slice.call(row.children, 4, 8)
+  return (
+    <>
+      {tds.map((td, j) => (
+        <LanguageIcon
+          key={j}
+          parent={td}
+          row={i}
+          col={j}
+          hasMyRank={hasMyRank}
+        />
+      ))}
+    </>
+  )
+}
+
+export default LanguageIcon
