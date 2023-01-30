@@ -32,11 +32,7 @@ const Option: FC = () => {
     useState<[[string, [string, boolean][]][], boolean, boolean]>()
   useEffect(() => {
     storage.get('options').then(({ options }) => {
-      if (options) {
-        setOptions(mergeOptions(options))
-      } else {
-        storage.set({ options: defaultOptions })
-      }
+      setOptions(mergeOptions(options))
     })
   }, [])
   useEffect(() => {
