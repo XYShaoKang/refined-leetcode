@@ -91,8 +91,16 @@ const Option: FC = () => {
             justify-content: flex-end;
           `}
         >
-          <span>{hasEnable ? '全部禁用' : '全部启用'}</span>
+          <label
+            htmlFor="selectAll"
+            css={css`
+              cursor: pointer;
+            `}
+          >
+            {hasEnable ? '全部禁用' : '全部启用'}
+          </label>
           <Checkbox
+            id="selectAll"
             checked={hasEnable}
             indeterminate={indeterminate}
             onChange={() =>

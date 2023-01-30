@@ -12,6 +12,7 @@ interface CheckboxProps {
   onChange?: ChangeEventHandler<HTMLInputElement>
   size?: number
   color?: string
+  id?: string
 }
 
 const Checkbox: FC<CheckboxProps> = ({
@@ -20,6 +21,7 @@ const Checkbox: FC<CheckboxProps> = ({
   onChange,
   size,
   color,
+  id,
 }) => {
   const Icon = indeterminate
     ? CheckBoxIndeterminateIcon
@@ -39,6 +41,7 @@ const Checkbox: FC<CheckboxProps> = ({
       `}
     >
       <input
+        id={id}
         type="checkbox"
         checked={checked}
         onChange={chandleChange}
