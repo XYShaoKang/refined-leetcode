@@ -1,3 +1,10 @@
+# [0.11.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.10.2...v0.11.0) (2023-01-30)
+
+
+### Features
+
+* 添加功能开关配置 ([7e4029f](https://github.com/XYShaoKang/refined-leetcode/commit/7e4029f6eda54263c75f62403eed68df7a38d91d))
+
 ## [0.10.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.10.1...v0.10.2) (2023-01-27)
 
 
