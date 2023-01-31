@@ -30,10 +30,8 @@ chrome.runtime.onInstalled.addListener(e => {
         }
       }
       chrome.storage.local.set({ options })
-      console.log(options)
     })
   }
-  console.log(e, new Date())
 })
 
 export {}
