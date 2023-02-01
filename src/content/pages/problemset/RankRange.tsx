@@ -16,7 +16,6 @@ import {
   getId,
   parseParams,
   serializationPrams,
-  OrderBy,
   ParamType,
   once,
 } from './utils'
@@ -58,14 +57,14 @@ const RankRange: FC = () => {
   }, [])
 
   const handleApply = async () => {
+    console.log('handleApply')
     const params: ParamType = parseParams()
-    let orderBy: OrderBy = 'FRONTEND_ID'
 
-    const sortOrder = params.sorting?.[0].sortOrder
     let id = getId(true)
-    if (sortOrder && sortOrder !== 'DESCENDING') {
-      orderBy = params.sorting![0].orderBy
-    } else {
+    if (
+      params.sorting?.[0].orderBy !== 'FRONTEND_ID' ||
+      params.sorting?.[0].sortOrder === 'DESCENDING'
+    ) {
       routerTo(
         location.pathname +
           '?' +
@@ -81,9 +80,8 @@ const RankRange: FC = () => {
       // 第二次是因为上面 sortOrder 使用 id，力扣会重新跳转到 sortOrder 为 ‘ASCENDING’ 的页面
       await once('routeChangeComplete')
     }
-
     id = getId(true)
-    params.sorting = [{ orderBy, sortOrder: id }]
+    params.sorting = [{ orderBy: 'FRONTEND_ID', sortOrder: id }]
     params.custom = { ...params.custom, min, max }
 
     const url = location.pathname + '?' + serializationPrams(params)

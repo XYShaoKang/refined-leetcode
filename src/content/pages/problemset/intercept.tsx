@@ -113,3 +113,21 @@ export function restore(): void {
 }
 
 intercept()
+
+if ((window as any).next) {
+  // 监听 Next.js 路由事件
+  const routerEventNames = [
+    'routeChangeStart',
+    'routeChangeComplete',
+    'beforeHistoryChange',
+  ]
+
+  // 转发 next 路由事件
+  const { router } = (window as any).next
+  for (const event of routerEventNames) {
+    const handle = (...args: any) => {
+      window.dispatchEvent(new CustomEvent(event, { detail: args }))
+    }
+    router.events.on(event, handle)
+  }
+}

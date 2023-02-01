@@ -58,7 +58,6 @@ const RankTitle: FC<RankTitleProps> = ({ otherRoots }) => {
   const handleCustomSort = (key?: OrderBy, isSwitch?: boolean) => async () => {
     if (!key) key = 'FRONTEND_ID'
     const tmp: ParamType = { ...params }
-    const orderBy: OrderBy = 'FRONTEND_ID'
 
     /** 判断当前 url 中的 sortOrder 是否为 ASCENDING，或者等于 id.current
      *
@@ -71,9 +70,12 @@ const RankTitle: FC<RankTitleProps> = ({ otherRoots }) => {
      *  但因为 id.current 每次会递增，所以每次我们跳转时，都会重新去获取新的结果，
      *  而不会被缓存。
      */
-    const sortOrder = params.sorting?.[0].sortOrder
+
     let id = getId(true)
-    if (orderBy !== 'FRONTEND_ID' || sortOrder === 'DESCENDING') {
+    if (
+      tmp.sorting?.[0].orderBy !== 'FRONTEND_ID' ||
+      tmp.sorting?.[0].sortOrder === 'DESCENDING'
+    ) {
       routerTo(
         location.pathname +
           '?' +
@@ -91,7 +93,7 @@ const RankTitle: FC<RankTitleProps> = ({ otherRoots }) => {
     }
 
     id = getId(true)
-    tmp.sorting = [{ orderBy, sortOrder: id }]
+    tmp.sorting = [{ orderBy: 'FRONTEND_ID', sortOrder: id }]
 
     /** 判断是页面第一次加载，还是点击排序按钮进行切换
      *
