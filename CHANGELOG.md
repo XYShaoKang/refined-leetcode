@@ -1,3 +1,11 @@
+## [0.11.4](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.3...v0.11.4) (2023-02-02)
+
+
+### Bug Fixes
+
+* **ranking:** 显示旧分数 ([dde0326](https://github.com/XYShaoKang/refined-leetcode/commit/dde0326bc0108938ff71a7f09705f31da90c7ced))
+* 修复默认语言 ([2fcd1a6](https://github.com/XYShaoKang/refined-leetcode/commit/2fcd1a6601f5a354e3ef0f6b716ca445866be7a1))
+
 ## [0.11.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.2...v0.11.3) (2023-02-02)
 
 
