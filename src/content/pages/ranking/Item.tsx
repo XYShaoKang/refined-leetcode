@@ -28,9 +28,9 @@ function useUrlChange() {
     const handle = debounce(() => {
       setParam(getParam())
     }, 100)
-    window.addEventListener('afterurlchange', handle)
+    window.addEventListener('urlchange', handle)
     return () => {
-      window.removeEventListener('afterurlchange', handle)
+      window.removeEventListener('urlchange', handle)
     }
   }, [])
   useEffect(() => {
