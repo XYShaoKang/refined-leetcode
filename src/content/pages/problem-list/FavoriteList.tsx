@@ -34,13 +34,15 @@ const FavoriteList: FC<FavoriteListProps> = ({ category }) => {
   const isCustom = category === 'custom'
 
   useEffect(() => {
-    if (
-      currentId &&
-      ids.includes(currentId) &&
-      featuredLists &&
-      featuredLists.every(favorite => favorite.idHash !== currentId)
-    ) {
-      setOpen(true)
+    if (currentId && ids.includes(currentId)) {
+      if (
+        featuredLists &&
+        featuredLists.every(favorite => favorite.idHash !== currentId)
+      ) {
+        setOpen(true)
+      }
+    } else {
+      setOpen(false)
     }
   }, [currentId, featuredLists, ids])
 
