@@ -62,6 +62,7 @@ const common = {
       patterns: [
         { from: 'icons/*.png', context: path.resolve('public') },
         { from: 'file-icons/*.svg', context: path.resolve('public') },
+        { from: '_locales', context: path.resolve('public'), to: '_locales' },
       ],
     }),
   ],
