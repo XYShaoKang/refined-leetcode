@@ -51,11 +51,16 @@ const Help = () => {
 }
 
 interface TitleProps {
-  showNewRating: boolean
+  showOldRating: boolean
   showPredictordelta: boolean
+  showNewRating: boolean
 }
 
-const Title: FC<TitleProps> = ({ showNewRating, showPredictordelta }) => {
+const Title: FC<TitleProps> = ({
+  showNewRating,
+  showPredictordelta,
+  showOldRating,
+}) => {
   return (
     <>
       <div
@@ -63,14 +68,29 @@ const Title: FC<TitleProps> = ({ showNewRating, showPredictordelta }) => {
           display: 'flex',
         }}
       >
+        {showOldRating && (
+          <div style={{ width: 60 }}>
+            旧分数{!showPredictordelta && !showNewRating && <Help />}
+          </div>
+        )}
         {showPredictordelta && (
-          <div style={{ width: 55 }}>
-            <span>预测</span>
-            <Help />
+          <div
+            style={{
+              width: 55,
+              paddingLeft: showNewRating ? 10 : 0,
+            }}
+          >
+            <span>{showNewRating ? 'Δ' : '预测'}</span>
+            {!showNewRating && <Help />}
           </div>
         )}
 
-        {showNewRating && <div>新分数{!showPredictordelta && <Help />}</div>}
+        {showNewRating && (
+          <div>
+            新分数
+            <Help />
+          </div>
+        )}
       </div>
     </>
   )

@@ -27,6 +27,7 @@ export const lbaoPredictorApi = (
       ) =>
         users.map((user, i) => ({
           ...user,
+          oldRating: data[i]?.old_rating,
           delta: data[i]?.delta_rating,
           newRating: data[i]?.new_rating,
         }))

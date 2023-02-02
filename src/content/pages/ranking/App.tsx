@@ -33,6 +33,7 @@ const App: FC = () => {
   const showPredictordelta = !!options?.contestRankingPage.ratingPredictor
   const showLanguageIcon = !!options?.contestRankingPage.languageIcon
   const showNewRating = !!options?.contestRankingPage.showNewRating
+  const showOldRating = !!options?.contestRankingPage.showOldRating
 
   return (
     <>
@@ -40,8 +41,9 @@ const App: FC = () => {
         <Portal container={titleRoot}>
           <th>
             <Title
-              showNewRating={showNewRating}
+              showOldRating={showOldRating}
               showPredictordelta={showPredictordelta}
+              showNewRating={showNewRating}
             />
           </th>
         </Portal>
@@ -53,8 +55,9 @@ const App: FC = () => {
               <Item
                 row={i}
                 hasMyRank={hasMyRank}
-                showNewRating={showNewRating}
+                showOldRating={showOldRating}
                 showPredictordelta={showPredictordelta}
+                showNewRating={showNewRating}
               />
             </td>
           </Portal>

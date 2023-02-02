@@ -21,8 +21,9 @@ export const defaultOptions = {
   },
   contestRankingPage: {
     languageIcon: true,
+    showOldRating: false,
     ratingPredictor: true,
-    showNewRating: false,
+    showNewRating: true,
   },
 }
 
@@ -50,6 +51,7 @@ export const labelMap: { [key: string]: string } = {
   fixBackNav: '修复返回导航',
   disableShortcutkey: '禁用快捷键',
   languageIcon: '语言图标',
-  ratingPredictor: '预测积分',
-  showNewRating: '预测新分数',
+  showOldRating: '显示旧分数',
+  ratingPredictor: '显示积分',
+  showNewRating: '显示新分数',
 }

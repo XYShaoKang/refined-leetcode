@@ -8,8 +8,9 @@ import { ParamType, useGetPredictionQuery } from './rankSlice'
 type ItmeType = {
   row: number
   hasMyRank: boolean
-  showNewRating: boolean
+  showOldRating: boolean
   showPredictordelta: boolean
+  showNewRating: boolean
 }
 
 function getParam(): ParamType {
@@ -54,8 +55,9 @@ function useUrlChange() {
 const Item: FC<ItmeType> = ({
   row,
   hasMyRank,
-  showNewRating,
+  showOldRating,
   showPredictordelta,
+  showNewRating,
 }) => {
   const [param] = useUrlChange()
   const params: ParamType = { ...param }
@@ -71,9 +73,10 @@ const Item: FC<ItmeType> = ({
   }
 
   const predictor: number | undefined = items?.[row]?.delta?.toFixed(1),
-    newRating = items?.[row]?.newRating?.toFixed(1)
+    newRating = items?.[row]?.newRating?.toFixed(1),
+    oldRating = items?.[row]?.oldRating?.toFixed(1)
 
-  if (!predictor || !newRating) {
+  if (predictor === undefined) {
     return <></>
   }
 
@@ -83,6 +86,7 @@ const Item: FC<ItmeType> = ({
         display: flex;
       `}
     >
+      {showOldRating && <div style={{ width: 60 }}>{oldRating}</div>}
       {showPredictordelta && (
         <div
           css={css`
