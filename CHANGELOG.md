@@ -1,3 +1,13 @@
+## [0.11.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.2...v0.11.3) (2023-02-02)
+
+
+### Bug Fixes
+
+* manifest 中添加默认语言 ([d987ccd](https://github.com/XYShaoKang/refined-leetcode/commit/d987ccdf634acd267848f0b53cdea03a0a62f7b1))
+* **problem-list:** 切换到新的题单列表 ([ff319a7](https://github.com/XYShaoKang/refined-leetcode/commit/ff319a772aae0ed7203c0f8efba41497b69caf18))
+* **raking:** 显示预测新分数 ([bd9ec93](https://github.com/XYShaoKang/refined-leetcode/commit/bd9ec939ded7e88bbce1e130cf9d018d4dab472d))
+* **ranking:** 切换页面时，预测分数不刷新 ([ecf82f5](https://github.com/XYShaoKang/refined-leetcode/commit/ecf82f55a27e3401658bcf73a9b90d4a96b87b85))
+
 ## [0.11.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.1...v0.11.2) (2023-02-01)
 
 
