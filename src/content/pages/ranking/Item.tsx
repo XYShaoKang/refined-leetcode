@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from 'react'
+import { css } from 'styled-components/macro'
 
 import { debounce } from '../../../utils'
 
@@ -7,6 +8,8 @@ import { ParamType, useGetPredictionQuery } from './rankSlice'
 type ItmeType = {
   row: number
   hasMyRank: boolean
+  showNewRating: boolean
+  showPredictordelta: boolean
 }
 
 function getParam(): ParamType {
@@ -48,7 +51,12 @@ function useUrlChange() {
   return [param] as const
 }
 
-const Item: FC<ItmeType> = ({ row, hasMyRank }) => {
+const Item: FC<ItmeType> = ({
+  row,
+  hasMyRank,
+  showNewRating,
+  showPredictordelta,
+}) => {
   const [param] = useUrlChange()
   const params: ParamType = { ...param }
   if (hasMyRank) {
@@ -62,17 +70,53 @@ const Item: FC<ItmeType> = ({ row, hasMyRank }) => {
     return <span> ...loading</span>
   }
 
-  let predictor: number | undefined = items?.[row]?.delta
+  const predictor: number | undefined = items?.[row]?.delta?.toFixed(1),
+    newRating = items?.[row]?.newRating?.toFixed(1)
 
-  if (!predictor) {
-    return <span>{''}</span>
+  if (!predictor || !newRating) {
+    return <></>
   }
 
-  predictor = Math.round(predictor * 100) / 100
-
   return (
-    <div style={{ color: predictor >= 0 ? 'green' : 'gray' }}>
-      {predictor > 0 ? `+${predictor}` : predictor}
+    <div
+      css={css`
+        display: flex;
+      `}
+    >
+      {showPredictordelta && (
+        <div
+          css={css`
+            color: ${predictor >= 0 ? 'green' : 'gray'};
+            width: 55px;
+          `}
+        >
+          {predictor > 0 ? `+${predictor}` : predictor}
+        </div>
+      )}
+      {showNewRating && (
+        <div
+          css={
+            showPredictordelta
+              ? // 如果有显示分数变化，则新分数只需要区分颜色
+                css`
+                  color: ${predictor >= 0 ? `green` : `gray`};
+                `
+              : // 如果没有显示分数变化，则需要将分数变化反应到颜色的深浅中
+                css`
+                  font-weight: bold;
+                  color: ${predictor >= 0
+                    ? `rgb(0 136 0 / ${
+                        Math.min(predictor / 100, 1) * 70 + 30
+                      }%)`
+                    : `rgb(64 64 64 / ${
+                        Math.min(-predictor / 100, 1) * 70 + 30
+                      }%)`};
+                `
+          }
+        >
+          {newRating}
+        </div>
+      )}
     </div>
   )
 }

@@ -1,9 +1,9 @@
 import { FC } from 'react'
 import styled from 'styled-components/macro'
 
-import { useHover } from '@/hooks'
+import { ToolTip } from '@/components/ToolTip'
 
-const StyleSpan = styled.span`
+const HelpIcon = styled.span`
   position: relative;
   cursor: pointer;
   font-family: 'Glyphicons Halflings';
@@ -20,56 +20,58 @@ const StyleSpan = styled.span`
   }
 `
 
-const ToolTip = styled.div`
-  position: absolute;
-  right: -20px;
-  z-index: 10;
-
-  &::before {
-    box-sizing: content-box;
-    content: '';
-    display: block;
-    height: 0;
-    width: 0;
-    margin-left: calc(100% - 33px);
-
-    border: 5px solid transparent;
-    border-bottom: 5px solid rgba(0, 0, 0, 0.8);
-  }
-`
 const Content = styled.div`
-  width: 200px;
-  padding: 8px 3px 10px;
-
+  width: 175px;
   color: #fff;
   text-align: center;
-  background-color: rgba(0, 0, 0, 0.8);
-  border-radius: 4px;
 `
 
-const Title: FC = () => {
-  const [ref, hover] = useHover<HTMLDivElement>(300)
+const Help = () => {
+  return (
+    <ToolTip
+      placement="bottom"
+      arrow={true}
+      title={
+        <Content>
+          预测数据来自
+          <a
+            href="https://lccn.lbao.site/"
+            target="_blank"
+            rel="noreferrer"
+            style={{ paddingLeft: 2 }}
+          >
+            lccn.lbao.site
+          </a>
+        </Content>
+      }
+    >
+      <HelpIcon />
+    </ToolTip>
+  )
+}
 
+interface TitleProps {
+  showNewRating: boolean
+  showPredictordelta: boolean
+}
+
+const Title: FC<TitleProps> = ({ showNewRating, showPredictordelta }) => {
   return (
     <>
-      <span>预测 </span>
-      <StyleSpan ref={ref}>
-        {hover && (
-          <ToolTip>
-            <Content>
-              预测数据来自
-              <a
-                href="https://lccn.lbao.site/"
-                target="_blank"
-                rel="noreferrer"
-                style={{ paddingLeft: 2 }}
-              >
-                lccn.lbao.site
-              </a>
-            </Content>
-          </ToolTip>
+      <div
+        style={{
+          display: 'flex',
+        }}
+      >
+        {showPredictordelta && (
+          <div style={{ width: 55 }}>
+            <span>预测</span>
+            <Help />
+          </div>
         )}
-      </StyleSpan>
+
+        {showNewRating && <div>新分数{!showPredictordelta && <Help />}</div>}
+      </div>
     </>
   )
 }

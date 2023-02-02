@@ -30,23 +30,32 @@ const App: FC = () => {
   }, [])
 
   const hasMyRank = rows?.[0]?.className === 'success' ? true : false
-  const showPredictor = !!options?.contestRankingPage.ratingPredictor
+  const showPredictordelta = !!options?.contestRankingPage.ratingPredictor
   const showLanguageIcon = !!options?.contestRankingPage.languageIcon
+  const showNewRating = !!options?.contestRankingPage.showNewRating
 
   return (
     <>
-      {showPredictor && titleRoot && (
+      {(showPredictordelta || showNewRating) && titleRoot && (
         <Portal container={titleRoot}>
           <th>
-            <Title />
+            <Title
+              showNewRating={showNewRating}
+              showPredictordelta={showPredictordelta}
+            />
           </th>
         </Portal>
       )}
-      {showPredictor &&
+      {(showPredictordelta || showNewRating) &&
         rows?.map((row, i) => (
           <Portal container={row} key={i}>
             <td>
-              <Item row={i} hasMyRank={hasMyRank} />
+              <Item
+                row={i}
+                hasMyRank={hasMyRank}
+                showNewRating={showNewRating}
+                showPredictordelta={showPredictordelta}
+              />
             </td>
           </Portal>
         ))}
