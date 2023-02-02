@@ -57,7 +57,6 @@ const RankRange: FC = () => {
   }, [])
 
   const handleApply = async () => {
-    console.log('handleApply')
     const params: ParamType = parseParams()
 
     let id = getId(true)
