@@ -7,8 +7,10 @@ import Timer from './pages/problems/App'
 import ShortcutKeyOption from './pages/problems/ShortcutKeyOption'
 import Problemset from './pages/problemset/App'
 import ProblemList from './pages/problem-list/App'
+import { customEventDispatch } from './utils'
 
 const App: FC = () => {
+  customEventDispatch('refinedLeetcodeGetOptions')
   return (
     <>
       <Ranking />
