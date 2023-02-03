@@ -1,3 +1,10 @@
+## [0.11.5](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.4...v0.11.5) (2023-02-03)
+
+
+### Bug Fixes
+
+* **options:** 触发 options 的获取 ([783969d](https://github.com/XYShaoKang/refined-leetcode/commit/783969d14263b6fe285427c9616c8bbf78741585))
+
 ## [0.11.4](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.3...v0.11.4) (2023-02-02)
 
 
