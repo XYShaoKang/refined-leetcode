@@ -184,16 +184,23 @@ export const initUrlChangeEvent = (() => {
 
     const oldPushState = history.pushState
     const oldReplaceState = history.replaceState
-
+    let preUrl: string | undefined = undefined
+    const onChange = debounce(() => {
+      const pathname = location.pathname
+      if (pathname !== preUrl) {
+        preUrl = pathname
+        window.dispatchEvent(new Event('urlchange'))
+      }
+    }, 100)
     history.pushState = function pushState(...args) {
       const res = oldPushState.apply(this, args)
-      window.dispatchEvent(new Event('urlchange'))
+      onChange()
       return res
     }
 
     history.replaceState = function replaceState(...args) {
       const res = oldReplaceState.apply(this, args)
-      window.dispatchEvent(new Event('urlchange'))
+      onChange()
       return res
     }
 
