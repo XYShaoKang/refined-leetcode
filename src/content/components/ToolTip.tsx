@@ -19,6 +19,7 @@ export interface TooltipOwnerProps {
   icon?: ReactElement
   delay?: number
   children: React.ReactElement<any, any>
+  keep?: boolean
 }
 
 export const ToolTip: StyledComponent<TooltipOwnerProps & PopperProps, 'span'> =
@@ -32,12 +33,16 @@ export const ToolTip: StyledComponent<TooltipOwnerProps & PopperProps, 'span'> =
       arrow: arrowProp,
       icon,
       delay,
+      keep,
       children,
       ...props
     }: SCProps<TooltipOwnerProps & PopperProps, AsC>,
     ref: ForwardedRef<AsC>
   ) {
     const [setHoverRef, hover] = useHover<HTMLElement>(delay ?? 100)
+    const [setPopperHoverRef, popperHover] = useHover(delay ?? 100, [
+      ref as any,
+    ])
 
     const childrenRef = useRef<HTMLElement>()
 
@@ -49,7 +54,7 @@ export const ToolTip: StyledComponent<TooltipOwnerProps & PopperProps, 'span'> =
 
     let open = openProp
     if (openProp === undefined) {
-      open = !!(title && hover)
+      open = !!title && (hover || (keep && popperHover))
     }
     let arrow = arrowProp
     if (arrowProp === undefined) {
@@ -64,11 +69,13 @@ export const ToolTip: StyledComponent<TooltipOwnerProps & PopperProps, 'span'> =
             placement={placement}
             anchorEl={childrenRef.current}
             {...props}
-            ref={ref}
+            ref={setPopperHoverRef}
             arrow={arrow}
           >
-            {icon}
-            {title}
+            <>
+              {icon}
+              {title}
+            </>
           </Popper>
         ) : null}
       </>

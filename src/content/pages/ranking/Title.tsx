@@ -31,6 +31,7 @@ const Help = () => {
     <ToolTip
       placement="bottom"
       arrow={true}
+      keep={true}
       title={
         <Content>
           预测数据来自
