@@ -1,3 +1,17 @@
+## [0.11.6](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.5...v0.11.6) (2023-02-08)
+
+
+### Bug Fixes
+
+* **problem-list:** 进行删除添加题单等操作时会导致收起题单列表 ([2bf33e1](https://github.com/XYShaoKang/refined-leetcode/commit/2bf33e12f5e25f145a243265b7d8611be1a201b4))
+* **problems:** 文字换行导致样式被破坏 ([0e4f052](https://github.com/XYShaoKang/refined-leetcode/commit/0e4f052947cd20eb9a47b45c95ec37e8a41a016a))
+* **problems:** 随机题目时测试样例不会跟着变化 ([6b40bbe](https://github.com/XYShaoKang/refined-leetcode/commit/6b40bbef4e1632502c71243089ea91a0bec64240))
+* **ranking:** 周赛时会去替换错误图标 ([80bdaee](https://github.com/XYShaoKang/refined-leetcode/commit/80bdaee61d9caf21f8b0318beb4440de427b2971))
+* **ranking:** 鼠标无法移动到提示 ([da04b0f](https://github.com/XYShaoKang/refined-leetcode/commit/da04b0f6bda679d57cb79e30adf6567eb5e571b3))
+* urlchange ([63c665b](https://github.com/XYShaoKang/refined-leetcode/commit/63c665b6b8ebbc07ff45d1ac63be0fbb05e39b94))
+* 修复题单页和题库页互相跳转问题 ([8278d6c](https://github.com/XYShaoKang/refined-leetcode/commit/8278d6c3aaf53eb47dd25d76197ed150abfb2f74))
+* 在题库页和题单页跳转的时候有时候题单列表会发生错位 ([e4d0025](https://github.com/XYShaoKang/refined-leetcode/commit/e4d002500aac0824ffd59f71c5ad106641ce657e))
+
 ## [0.11.5](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.4...v0.11.5) (2023-02-03)
 
 
