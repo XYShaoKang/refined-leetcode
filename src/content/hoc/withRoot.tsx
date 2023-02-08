@@ -11,7 +11,8 @@ import { ThemeProvider } from 'styled-components/macro'
 
 import store, { persistor } from '@/app/store'
 import { darkTheme, lightTheme } from '@/theme'
-import { getTheme, isBetaUI } from '@/utils'
+import { getPageName, getTheme, isBetaUI } from '@/utils'
+import { setCurrentPage } from '@/pages/global/globalSlice'
 
 const Loading = () => <></>
 
@@ -39,6 +40,16 @@ export const withRoot = <T extends ComponentType<any>>(Component: T): T => {
       })()
       return () => {
         if (observer) observer.disconnect()
+      }
+    }, [])
+    useEffect(() => {
+      const handleUrlChange = async () => {
+        const pageName = getPageName()
+        store.dispatch(setCurrentPage(pageName))
+      }
+      window.addEventListener('urlchange', handleUrlChange)
+      return () => {
+        window.removeEventListener('urlchange', handleUrlChange)
       }
     }, [])
 

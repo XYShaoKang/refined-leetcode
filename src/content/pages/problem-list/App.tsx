@@ -1,8 +1,8 @@
 import Rank from '../problemset/Rank'
 import { FC, useEffect, useState } from 'react'
-import { useAppSelector } from '@/hooks'
+import { useAppSelector, useEffectMount } from '@/hooks'
 import { selectOptions } from '../global/optionsSlice'
-import { findElementByXPath } from '@/utils'
+import { awaitFn, findElementByXPath, problemsetPageIsLoad } from '@/utils'
 import { Portal } from '@/components/Portal'
 import ProblemList from './ProblemList'
 import { withPage } from '@/hoc'
@@ -11,28 +11,38 @@ import { fixRandom } from './fixRandom'
 const App: FC = () => {
   const options = useAppSelector(selectOptions)
   const [problemListRoot, setProblemListRoot] = useState<HTMLElement>()
-  useEffect(() => {
-    fixRandom()
-    let isMount = true,
-      unmount: () => void
-    void (async function () {
+  const [isLoad, setIsLoad] = useState(false)
+  useEffectMount(async state => {
+    await awaitFn(async () => {
+      const res = await problemsetPageIsLoad()
+      return !res
+    })
+    if (state.isMount) setIsLoad(true)
+  })
+
+  useEffectMount(
+    async state => {
+      if (!isLoad) return
       const problemListXPath =
         '//*[@id="__next"]/div/div[2]/div/div[2]/div/*//span[text()="精选题单"]/../..'
       const el = await findElementByXPath(problemListXPath)
 
-      if (isMount) {
+      if (state.isMount) {
         const root = document.createElement('div')
         el.parentNode?.insertBefore(root, el)
         setProblemListRoot(root)
-        unmount = () => root.remove()
+        state.unmount.push(() => root.remove())
       }
-    })()
-    return () => {
-      isMount = false
-      unmount && unmount()
-    }
-  }, [])
+    },
+    [isLoad]
+  )
 
+  useEffect(() => {
+    if (!isLoad) return
+    fixRandom()
+  }, [isLoad])
+
+  if (!isLoad) return null
   const showProblemList = !!options?.problemListPage.problemList
   const showRank = !!options?.problemListPage.problemRating
   return (

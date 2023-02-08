@@ -300,16 +300,9 @@ export const getProblemRankData = async (): Promise<ProblemRankData[]> => {
   return data
 }
 
-/** 判断对应的页面是否加载
- *
- *  在使用前端路由跳转的时候，如果只使用 url 进行判断的话，
- *  有可能出现 url 已经变成对应的页面，但页面还停留在其他页面的情况，
- *  会导致结果出错，这里通过判断对应页面的导航按钮的样式来确定是否已经加载对应的页面
- *  @param name 对应页面在导航中的名称
- *
- */
-export const pageIsLoad = async (name: string): Promise<boolean> => {
-  const el = await findElementByXPath(`//li[text()="${name}"]`)
+// 通过页面包含的一些独特特征判断是否已经跳转到某个页面
+export const problemsetPageIsLoad = async (): Promise<boolean> => {
+  const el = await findElementByXPath(`//li[text()="题库"]`)
   const hr = el.parentElement?.nextElementSibling
   if (!hr) return false
   return getComputedStyle(hr)['visibility'] === 'visible'

@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { css } from 'styled-components/macro'
 import { Portal } from '@/components/Portal'
 import Popper from '@/components/PopperUnstyled'
@@ -6,7 +6,11 @@ import SvgIcon from '@/components/SvgIcon'
 import { useAppDispatch, useAppSelector, useHover } from '@/hooks'
 import { findElementByXPath, routerTo } from '@/utils'
 import { debounce } from 'src/utils'
-import { fetchProblemRankData, selectIsSignedIn } from '../global/globalSlice'
+import {
+  fetchProblemRankData,
+  selectCurrentPage,
+  selectIsSignedIn,
+} from '../global/globalSlice'
 import {
   disableProblemRating,
   enableProblemRating,
@@ -53,6 +57,7 @@ import AddQuestion from './AddQuestion'
 
 const Rank: FC<{ enable: boolean }> = ({ enable }) => {
   const width = 90
+  const currentPage = useAppSelector(selectCurrentPage)
   const [tableEl, setTableEl] = useState<HTMLElement>()
   const titleRow = tableEl?.children[0]?.children[0]?.children[0] as HTMLElement
 
@@ -65,6 +70,7 @@ const Rank: FC<{ enable: boolean }> = ({ enable }) => {
   const [bindPopperRef, hoverPopper, popperRef] = useHover(100)
   const [bindRanRangeRef, hoverRankRange, rankRangeRef] = useHover(100)
   const isSignedIn = useAppSelector(selectIsSignedIn)
+  const isMount = useRef(true)
 
   const handleDisable = () => {
     const { right, bottom } = popperRef.current!.getBoundingClientRect()
@@ -91,19 +97,56 @@ const Rank: FC<{ enable: boolean }> = ({ enable }) => {
   const handleEnable = () => {
     dispatch(enableProblemRating())
   }
+  async function handleSetTableEl() {
+    const tableEl = await findElementByXPath('//div[@role="table"]')
+    if (!isMount.current) return
+
+    setTableEl(tableEl)
+  }
 
   useEffect(() => {
-    let isMount = true
-    void (async function () {
-      const tableEl = await findElementByXPath('//div[@role="table"]')
-      if (!isMount) return
-
-      setTableEl(tableEl)
-    })()
+    handleSetTableEl()
     return () => {
-      isMount = false
+      isMount.current = false
     }
   }, [])
+  useEffect(() => {
+    if (currentPage !== 'problemListPage') return
+    // 当 url 发生变化的时候，重新去获取 tableEl
+    // 主要针对的场景是「不存在的题单」
+    // 如果是打开一个「不存在的题单」，那么就不会显示题目区域，也就没有 tableEl
+    // 而从一个「不存在的题单」跳转到一个存在的题单时，会重新加载题目区域
+    // 这时候需要重新去获取 tableEl
+    window.addEventListener('urlchange', handleSetTableEl)
+    return () => {
+      isMount.current = false
+      window.removeEventListener('urlchange', handleSetTableEl)
+    }
+  }, [currentPage])
+
+  useEffect(() => {
+    if (!tableEl || currentPage !== 'problemListPage') return
+    // 当 tableEl 被删除时，这时候应该将 tableEl 设置为空。
+    const observer = new MutationObserver(mutationList => {
+      for (const mutation of mutationList) {
+        if (mutation.type === 'childList') {
+          for (const node of mutation.removedNodes) {
+            if (node === tableEl) {
+              setTableEl(undefined)
+              observer.disconnect()
+              return
+            }
+          }
+        }
+      }
+    })
+
+    observer.observe(document.body, { childList: true, subtree: true })
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [tableEl, currentPage])
 
   useEffect(() => {
     // 管理原来的排序按钮
@@ -184,7 +227,7 @@ const Rank: FC<{ enable: boolean }> = ({ enable }) => {
     }
     return otherRoots
   }, [titleRow])
-
+  if (!tableEl) return null
   return (
     <>
       {enable && titleRow && (

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-import store, { RootState } from '@/app/store'
+import { RootState } from '@/app/store'
 import {
   LeetCodeApi,
   GlobalData,
@@ -10,7 +10,6 @@ import {
   getPageName,
 } from '@/utils'
 import { PageName } from 'src/options/options'
-import { debounce } from 'src/utils'
 
 const api = new LeetCodeApi(location.origin)
 
@@ -71,26 +70,8 @@ export const globalDataSlice = createSlice({
       })
   },
 })
-let cancelHandle: (() => void) | null
-window.addEventListener('urlchange', () => {
-  cancelHandle?.()
-  // 前端路由跳转时，url 变化时，页面本身还没有完成跳转
-  // 则有可能会获取到旧页面的元素
-  // 通过检测是否还有元素变化，判断当前是否跳转完成
 
-  const handleUrlChange = debounce(() => {
-    cancelHandle?.()
-    store.dispatch(globalDataSlice.actions.setCurrentPage(getPageName()))
-  }, 1000)
-  const obs = new MutationObserver(handleUrlChange)
-  obs.observe(document.body, { childList: true, subtree: true })
-
-  cancelHandle = () => {
-    cancelHandle = null
-    handleUrlChange.destroy()
-    obs.disconnect()
-  }
-})
+export const { setCurrentPage } = globalDataSlice.actions
 
 export const selectIsPremium = (state: RootState): boolean | undefined =>
   state.global.globalData?.userStatus?.isPremium
