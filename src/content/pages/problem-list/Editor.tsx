@@ -1,9 +1,10 @@
-import { ChangeEventHandler, FC, useEffect, useRef, useState } from 'react'
+import { ChangeEventHandler, FC, useEffect, useState } from 'react'
 
 import { Input } from '@/components/Input'
 import Button from '@/components/Button'
 import ErrorToolTip from '@/components/ErrorToolTip'
 import { css } from 'styled-components/macro'
+import { useUnMount } from '@/hooks'
 
 interface EditorProps {
   text?: string
@@ -16,14 +17,7 @@ const Editor: FC<EditorProps> = ({ text: initText = '', onSave, onCancel }) => {
   const [error, setError] = useState({ message: '', show: false })
   const [loading, setLoading] = useState(false)
   // 判断当前组件是否挂载，还是已被卸载
-  const isMount = useRef<boolean>()
-
-  useEffect(() => {
-    isMount.current = true
-    return () => {
-      isMount.current = false
-    }
-  }, [])
+  const mountState = useUnMount()
   useEffect(() => {
     if (error.show) {
       setTimeout(() => {
@@ -41,12 +35,12 @@ const Editor: FC<EditorProps> = ({ text: initText = '', onSave, onCancel }) => {
     if (typeof onSave === 'function') {
       try {
         await onSave(text)
-        if (isMount.current) setText('')
+        if (mountState.isMount) setText('')
       } catch (error: any) {
         setError({ message: error.message, show: true })
       }
     }
-    if (isMount.current) setLoading(false)
+    if (mountState.isMount) setLoading(false)
   }
   const handleCancel = () => {
     if (typeof onCancel === 'function') {

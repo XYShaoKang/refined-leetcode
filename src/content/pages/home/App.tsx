@@ -1,10 +1,10 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 
 import DistortSvg from '@/components/DistortSvg'
 import { withPage } from '@/hoc'
-import { useAppSelector } from '@/hooks'
+import { useAppSelector, useEffectMount } from '@/hooks'
 
 import GlobalStyle from './GlobalStyle'
 import BlockUser from './BlockUser'
@@ -18,24 +18,16 @@ const App: FC = () => {
   useBlock()
   const options = useAppSelector(selectOptions)
   const [root, setRoot] = useState<HTMLElement>()
-
-  useEffect(() => {
-    let isMount = true,
-      unmount: () => void
-    void (async function () {
-      const parent = await findElement('.css-kktm6n-RightContainer')
-      const root = document.createElement('div')
-      if (isMount) {
-        parent.prepend(root)
-        setRoot(root)
-        unmount = () => root.remove()
-      }
-    })()
-    return () => {
-      isMount = false
-      unmount && unmount()
+  useEffectMount(async state => {
+    const parent = await findElement('.css-kktm6n-RightContainer')
+    const root = document.createElement('div')
+    if (state.isMount) {
+      parent.prepend(root)
+      setRoot(root)
+      state.unmount.push(() => root.remove())
     }
   }, [])
+
   if (!root || !options?.homePage.block) return null
   return (
     <Portal container={root}>

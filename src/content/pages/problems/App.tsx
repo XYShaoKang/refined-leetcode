@@ -1,7 +1,7 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 
 import { withPage } from '@/hoc'
-import { useAppSelector } from '@/hooks'
+import { useAppSelector, useEffectMount } from '@/hooks'
 
 import { selectOptions } from '../global/optionsSlice'
 import Timer from './Timer'
@@ -16,32 +16,28 @@ const App: FC<{ beta?: boolean }> = () => {
   const [beta, setBeta] = useState<boolean>()
   const [timerRoot, setTimerRoot] = useState<HTMLElement>()
   const [randomRoot, setRandomRoot] = useState<HTMLElement>()
-  useEffect(() => {
-    let isMount = true
-    void (async function () {
-      const beta = await isBetaUI()
-      const parent = await getRoot()
-      if (!isMount) return
 
-      fixBack()
+  useEffectMount(async state => {
+    const beta = await isBetaUI()
+    const parent = await getRoot()
 
-      const root = document.createElement('div')
-      if (!beta) root.style.marginRight = '15px'
-      setBeta(beta)
-      setTimerRoot(root)
-      parent.prepend(root)
-      if (beta) {
-        const nav = await findElement(
-          '#__next > div > div > div > nav > div > div > div:nth-child(2)'
-        )
-        const randomRoot = document.createElement('div')
-        randomRoot.style.lineHeight = '0'
-        setRandomRoot(randomRoot)
-        nav.append(randomRoot)
-      }
-    })()
-    return () => {
-      isMount = false
+    if (!state.isMount) return
+
+    fixBack()
+
+    const root = document.createElement('div')
+    if (!beta) root.style.marginRight = '15px'
+    setBeta(beta)
+    setTimerRoot(root)
+    parent.prepend(root)
+    if (beta) {
+      const nav = await findElement(
+        '#__next > div > div > div > nav > div > div > div:nth-child(2)'
+      )
+      const randomRoot = document.createElement('div')
+      randomRoot.style.lineHeight = '0'
+      setRandomRoot(randomRoot)
+      nav.append(randomRoot)
     }
   }, [])
 

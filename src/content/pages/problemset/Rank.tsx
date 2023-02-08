@@ -1,9 +1,9 @@
-import { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { css } from 'styled-components/macro'
 import { Portal } from '@/components/Portal'
 import Popper from '@/components/PopperUnstyled'
 import SvgIcon from '@/components/SvgIcon'
-import { useAppDispatch, useAppSelector, useHover } from '@/hooks'
+import { useAppDispatch, useAppSelector, useHover, useUnMount } from '@/hooks'
 import { findElementByXPath, routerTo } from '@/utils'
 import { debounce } from 'src/utils'
 import {
@@ -70,7 +70,7 @@ const Rank: FC<{ enable: boolean }> = ({ enable }) => {
   const [bindPopperRef, hoverPopper, popperRef] = useHover(100)
   const [bindRanRangeRef, hoverRankRange, rankRangeRef] = useHover(100)
   const isSignedIn = useAppSelector(selectIsSignedIn)
-  const isMount = useRef(true)
+  const mountState = useUnMount()
 
   const handleDisable = () => {
     const { right, bottom } = popperRef.current!.getBoundingClientRect()
@@ -99,16 +99,13 @@ const Rank: FC<{ enable: boolean }> = ({ enable }) => {
   }
   async function handleSetTableEl() {
     const tableEl = await findElementByXPath('//div[@role="table"]')
-    if (!isMount.current) return
+    if (!mountState.isMount) return
 
     setTableEl(tableEl)
   }
 
   useEffect(() => {
     handleSetTableEl()
-    return () => {
-      isMount.current = false
-    }
   }, [])
   useEffect(() => {
     if (currentPage !== 'problemListPage') return
@@ -119,7 +116,6 @@ const Rank: FC<{ enable: boolean }> = ({ enable }) => {
     // 这时候需要重新去获取 tableEl
     window.addEventListener('urlchange', handleSetTableEl)
     return () => {
-      isMount.current = false
       window.removeEventListener('urlchange', handleSetTableEl)
     }
   }, [currentPage])

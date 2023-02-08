@@ -1,7 +1,7 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 
 import { withPage } from '@/hoc'
-import { useAppSelector } from '@/hooks'
+import { useAppSelector, useEffectMount } from '@/hooks'
 
 import { selectOptions } from '../global/optionsSlice'
 import { Portal } from '@/components/Portal'
@@ -14,18 +14,13 @@ const App: FC = () => {
   const options = useAppSelector(selectOptions)
   const [titleRoot, setTitleRoot] = useState<HTMLElement>()
   const [rows, setRows] = useState<HTMLElement[]>()
-  useEffect(() => {
-    let isMount = true
-    void (async function () {
-      const parent = await findElement('.table-responsive>table>thead>tr')
-      const trs = await findAllElement('.table-responsive>table>tbody>tr')
-      if (isMount) {
-        setTitleRoot(parent)
-        setRows([...trs])
-      }
-    })()
-    return () => {
-      isMount = false
+
+  useEffectMount(async state => {
+    const parent = await findElement('.table-responsive>table>thead>tr')
+    const trs = await findAllElement('.table-responsive>table>tbody>tr')
+    if (state.isMount) {
+      setTitleRoot(parent)
+      setRows([...trs])
     }
   }, [])
 
