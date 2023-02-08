@@ -34,6 +34,7 @@ const Content = styled.div`
   border-right-width: 0;
   /* margin-left: 15px; */
   padding: 6px 15px;
+  white-space: nowrap;
 `
 
 const Button = styled.button<{
@@ -64,7 +65,7 @@ const Button = styled.button<{
         `}
 `
 
-const Clock: FC<{ beta?: boolean }> = ({ beta }) => {
+const Timer: FC<{ beta?: boolean }> = ({ beta }) => {
   const pathnames = location.pathname.split('/').filter(Boolean)
   const slug = pathnames[1]
 
@@ -400,4 +401,4 @@ const Clock: FC<{ beta?: boolean }> = ({ beta }) => {
   )
 }
 
-export default Clock
+export default Timer
