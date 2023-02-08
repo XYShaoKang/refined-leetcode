@@ -308,10 +308,10 @@ export const problemsetPageIsLoad = async (): Promise<boolean> => {
   return getComputedStyle(hr)['visibility'] === 'visible'
 }
 
-export function routerTo(url: string): void {
+export function routerTo(url: string, shallow = true): void {
   const next = (window as any).next
   if (!next) return
-  next.router.push(url, undefined, { shallow: true })
+  next.router.push(url, undefined, { shallow })
 }
 
 export function setRef<T>(el: T, ref?: React.Ref<T>): void {

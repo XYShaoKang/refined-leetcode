@@ -91,7 +91,7 @@ const Random: FC = () => {
 
     let nextUrl = `/problems/${allQuestions[i].titleSlug}/`
     if (favorite !== 'all') nextUrl += `?favorite=${favorite}`
-    routerTo(nextUrl)
+    routerTo(nextUrl, false)
   }
 
   return (
