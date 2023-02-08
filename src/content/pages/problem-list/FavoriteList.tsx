@@ -44,7 +44,7 @@ const FavoriteList: FC<FavoriteListProps> = ({ category }) => {
     } else {
       setOpen(false)
     }
-  }, [currentId, featuredLists, ids])
+  }, [currentId])
 
   useEffect(() => {
     const handleUrlChange = () => {
