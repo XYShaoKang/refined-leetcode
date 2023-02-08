@@ -80,10 +80,17 @@ function setDisplay(el: Element | undefined, display: string) {
     el.style.display = display
   }
 }
-
+function isShow(parent: HTMLElement) {
+  if (!parent.childElementCount) return false
+  const [child] = parent.childNodes
+  return (
+    child instanceof HTMLAnchorElement &&
+    child.children[0] instanceof HTMLSpanElement
+  )
+}
 const LanguageIcon: FC<ItmeType> = ({ parent, row, col, hasMyRank }) => {
   const [param] = useUrlChange()
-  const [show, setShow] = useState(!!parent.childElementCount)
+  const [show, setShow] = useState(isShow(parent))
 
   const params: ParamType = { ...param }
   if (hasMyRank) {
@@ -95,16 +102,20 @@ const LanguageIcon: FC<ItmeType> = ({ parent, row, col, hasMyRank }) => {
   const iconFile = items?.[row]?.[col]?.iconFile
 
   useEffect(() => {
+    if (!show) return
     setDisplay(parent.children[0]?.children[0], 'none')
 
     return () => {
       setDisplay(parent.children[0]?.children[0], '')
     }
-  }, [])
+  }, [show])
   useEffect(() => {
     const handleChange = debounce(() => {
-      setShow(!!parent.childElementCount)
-      setDisplay(parent.children[0]?.children[0], 'none')
+      const show = isShow(parent)
+      setShow(show)
+      if (show) {
+        setDisplay(parent.children[0]?.children[0], 'none')
+      }
     }, 10)
     handleChange()
     const observer = new MutationObserver(handleChange)
