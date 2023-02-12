@@ -1,7 +1,7 @@
-import { createSlice, current } from '@reduxjs/toolkit'
+import { createSlice, current, PayloadAction } from '@reduxjs/toolkit'
 
 import store, { RootState } from '@/app/store'
-import { OptionsType } from 'src/options/options'
+import { OptionsType, PageName } from 'src/options/options'
 import { customEventDispatch } from '@/utils'
 
 export interface RandomOptionType {
@@ -27,6 +27,10 @@ const initialState: OptionsState = {
   },
 }
 
+function saveOption(options: OptionsType) {
+  customEventDispatch('refinedLeetcodeSaveOptions', { options })
+}
+
 export const optionsSlice = createSlice({
   name: 'options',
   initialState,
@@ -39,29 +43,31 @@ export const optionsSlice = createSlice({
         ...option,
       }
     },
-    disableProblemRating({ options }) {
+    disableProblemRating({ options }, { payload }: PayloadAction<PageName>) {
       if (options) {
-        options.problemsetPage.problemRating = false
-        customEventDispatch('refinedLeetcodeSaveOptions', {
-          options: current(options),
-        })
+        if (payload === 'problemsetPage') {
+          options.problemsetPage.problemRating = false
+        } else if (payload === 'problemListPage') {
+          options.problemListPage.problemRating = false
+        }
+        saveOption(current(options))
       }
     },
-    enableProblemRating({ options }) {
+    enableProblemRating({ options }, { payload }: PayloadAction<PageName>) {
       if (options) {
-        options.problemsetPage.problemRating = true
-        customEventDispatch('refinedLeetcodeSaveOptions', {
-          options: current(options),
-        })
+        if (payload === 'problemsetPage') {
+          options.problemsetPage.problemRating = true
+        } else if (payload === 'problemListPage') {
+          options.problemListPage.problemRating = true
+        }
+        saveOption(current(options))
       }
     },
     toggleContestProblemShortcutKeyOption({ options }) {
       if (options) {
         options.contestProblemsPage.disableShortcutkey =
           !options.contestProblemsPage.disableShortcutkey
-        customEventDispatch('refinedLeetcodeSaveOptions', {
-          options: current(options),
-        })
+        saveOption(current(options))
       }
     },
     setOptions: (state, action) => {

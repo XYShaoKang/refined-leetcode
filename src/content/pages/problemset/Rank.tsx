@@ -78,7 +78,7 @@ const Rank: FC<{ enable: boolean }> = ({ enable }) => {
       right: window.innerWidth - right,
       bottom: window.innerHeight - bottom,
     })
-    dispatch(disableProblemRating())
+    dispatch(disableProblemRating(currentPage!))
     setTimeout(() => {
       // 清理自定义相关的参数
       const params = parseParams()
@@ -95,7 +95,7 @@ const Rank: FC<{ enable: boolean }> = ({ enable }) => {
     }, 500)
   }
   const handleEnable = () => {
-    dispatch(enableProblemRating())
+    dispatch(enableProblemRating(currentPage!))
   }
   async function handleSetTableEl() {
     const tableEl = await findElementByXPath('//div[@role="table"]')
