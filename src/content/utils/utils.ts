@@ -186,9 +186,9 @@ export const initUrlChangeEvent = (() => {
     const oldReplaceState = history.replaceState
     let preUrl: string | undefined = undefined
     const onChange = debounce(() => {
-      const pathname = location.pathname
-      if (pathname !== preUrl) {
-        preUrl = pathname
+      const url = location.href
+      if (url !== preUrl) {
+        preUrl = url
         window.dispatchEvent(new Event('urlchange'))
       }
     }, 100)
