@@ -1,3 +1,13 @@
+## [0.11.7](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.6...v0.11.7) (2023-02-12)
+
+
+### Bug Fixes
+
+* **problem-list:** 题单页题目评分功能开关失效 ([89891e1](https://github.com/XYShaoKang/refined-leetcode/commit/89891e1c1383648ec2280b925ad3a4535f58f82b))
+* **problems:** 只有新版答题页需要修复导航 ([90b2f19](https://github.com/XYShaoKang/refined-leetcode/commit/90b2f1904ad28a81ab1e1259bd7462dc63fb1204))
+* 修复路由错误 ([ccefc85](https://github.com/XYShaoKang/refined-leetcode/commit/ccefc85a6a3496fd757cd5dbe7a8c24fffe6fdac))
+* 只有在启用相关功能的时候，才去拦截对应的请求 ([9a58510](https://github.com/XYShaoKang/refined-leetcode/commit/9a58510d2ba5380a4aae282d752211f2de38fc70))
+
 ## [0.11.6](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.5...v0.11.6) (2023-02-08)
 
 
