@@ -23,7 +23,7 @@ const App: FC<{ beta?: boolean }> = () => {
 
     if (!state.isMount) return
 
-    fixBack()
+    if (beta) fixBack()
 
     const root = document.createElement('div')
     if (!beta) root.style.marginRight = '15px'
