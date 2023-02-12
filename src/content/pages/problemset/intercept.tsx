@@ -27,79 +27,94 @@ export function intercept(): void {
       const originalSend = this.send
 
       this.send = async str => {
-        try {
-          if (typeof str === 'string') {
-            const body = JSON.parse(str)
-            if (
-              body.query &&
-              body.query.includes('query problemsetQuestionList')
-            ) {
-              const sortOrder = body.variables.filters?.sortOrder
+        const state = store.getState()
+        const { options } = state.options,
+          { currentPage } = state.global
+        // 只有在启用对应功能的时候，才去拦截相关请求
+        if (
+          (currentPage === 'problemsetPage' &&
+            options?.problemsetPage.problemRating) ||
+          (currentPage === 'problemListPage' &&
+            options?.problemListPage.problemRating)
+        ) {
+          try {
+            if (typeof str === 'string') {
+              const body = JSON.parse(str)
+              if (
+                body.query &&
+                body.query.includes('query problemsetQuestionList')
+              ) {
+                const sortOrder = body.variables.filters?.sortOrder
 
-              const params = parseParams()
+                const params = parseParams()
 
-              if (params.custom) {
-                const listId = body.variables.filters?.listId
-                // 如果参数中包含某个题单，当前有没有这个题单的数据，则需要去请求这个题单的数据
-                // 一般是在浏览第三方题单的时候
-                if (listId && !store.getState().favorites.entities[listId]) {
-                  store.dispatch(fetchFavoriteDetails([listId]))
-                }
-                // 如果当前页面处于自定义参数之下，则使用在本地缓存的数据进行操作
-                for (const key of ['response', 'responseText']) {
-                  Object.defineProperty(this, key, {
-                    get: () => {
-                      const state = store.getState()
-                      if (!body.variables.filters) body.variables.filters = {}
-                      body.variables.filters = {
-                        ...body.variables.filters,
-                        custom: params.custom,
-                      }
-                      const data = selectQuestonsByOption(state, body.variables)
-                      return JSON.stringify(data)
-                    },
-                    configurable: true,
-                  })
-                }
-
-                for (const key of ['onreadystatechange', 'onload'] as const) {
-                  const fn = this[key]
-                  this[key] = async (...args) => {
-                    if (key === 'onload') {
-                      // 等待所需数据都加载完成
-                      // TODO: 尝试设计一个更优雅的实现
-                      await awaitFn(() => {
+                if (params.custom) {
+                  const listId = body.variables.filters?.listId
+                  // 如果参数中包含某个题单，当前有没有这个题单的数据，则需要去请求这个题单的数据
+                  // 一般是在浏览第三方题单的时候
+                  if (listId && !store.getState().favorites.entities[listId]) {
+                    store.dispatch(fetchFavoriteDetails([listId]))
+                  }
+                  // 如果当前页面处于自定义参数之下，则使用在本地缓存的数据进行操作
+                  for (const key of ['response', 'responseText']) {
+                    Object.defineProperty(this, key, {
+                      get: () => {
                         const state = store.getState()
-                        if (!state.questions.ids.length) return false
-                        if (
-                          listId &&
-                          !state.favorites.entities[listId]?.questionIds
+                        if (!body.variables.filters) body.variables.filters = {}
+                        body.variables.filters = {
+                          ...body.variables.filters,
+                          custom: params.custom,
+                        }
+                        const data = selectQuestonsByOption(
+                          state,
+                          body.variables
                         )
-                          return false
-                        if (
-                          !Reflect.ownKeys(state.global.ProblemRankData).length
-                        )
-                          return false
-                        return true
-                      }, 20000)
+                        return JSON.stringify(data)
+                      },
+                      configurable: true,
+                    })
+                  }
+
+                  for (const key of ['onreadystatechange', 'onload'] as const) {
+                    const fn = this[key]
+                    this[key] = async (...args) => {
+                      if (key === 'onload') {
+                        // 等待所需数据都加载完成
+                        // TODO: 尝试设计一个更优雅的实现
+                        await awaitFn(() => {
+                          const state = store.getState()
+                          if (!state.questions.ids.length) return false
+                          if (
+                            listId &&
+                            !state.favorites.entities[listId]?.questionIds
+                          )
+                            return false
+                          if (
+                            !Reflect.ownKeys(state.global.ProblemRankData)
+                              .length
+                          )
+                            return false
+                          return true
+                        }, 20000)
+                      }
+                      fn?.apply(this, args as any)
                     }
-                    fn?.apply(this, args as any)
                   }
                 }
-              }
 
-              if (
-                sortOrder &&
-                sortOrder !== 'DESCENDING' &&
-                sortOrder !== 'ASCENDING'
-              ) {
-                body.variables.filters.sortOrder = 'ASCENDING'
-                str = JSON.stringify(body)
+                if (
+                  sortOrder &&
+                  sortOrder !== 'DESCENDING' &&
+                  sortOrder !== 'ASCENDING'
+                ) {
+                  body.variables.filters.sortOrder = 'ASCENDING'
+                  str = JSON.stringify(body)
+                }
               }
             }
+          } catch (error) {
+            //
           }
-        } catch (error) {
-          //
         }
         return originalSend.call(this, str)
       }
