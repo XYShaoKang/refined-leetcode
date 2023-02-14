@@ -184,6 +184,7 @@ export const selectQuestonsByOption = (
       if (difficulty && a.difficulty !== difficulty) return false
       if (status && a.status !== status) return false
       if (premiumOnly && !a.paidOnly) return false
+      if (custom?.includePremium === false && a.paidOnly) return false
       if (tags) {
         const set = new Set(a.topicTags.map(b => b.slug))
         if (tags.some(tag => !set.has(tag))) return false

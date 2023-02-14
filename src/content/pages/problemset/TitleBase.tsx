@@ -1,8 +1,7 @@
-import { FC, MouseEventHandler, ReactElement } from 'react'
+import { MouseEventHandler, ReactElement, forwardRef } from 'react'
 import { css } from 'styled-components/macro'
 
 import { ToolTip } from '@/components/ToolTip'
-import { useHover } from '@/hooks'
 
 interface TitleProps {
   title: string
@@ -13,17 +12,10 @@ interface TitleProps {
   onSort?: (...args: any) => void
 }
 
-const TitleBase: FC<TitleProps> = ({
-  title,
-  help,
-  isSort,
-  sortOrder,
-  onSort,
-  showHelpIcon,
-}) => {
-  const [helpHoverRef, helpHover] = useHover(100)
-  const [tooltipRef, tooltipHover] = useHover()
-
+const TitleBase = forwardRef<HTMLDivElement, TitleProps>(function TitleBase(
+  { title, help, isSort, sortOrder, onSort, showHelpIcon },
+  ref
+) {
   const handleClick: MouseEventHandler<HTMLDivElement> = e => {
     if (e.currentTarget.contains(e.target as any)) {
       e.nativeEvent.stopImmediatePropagation()
@@ -34,6 +26,7 @@ const TitleBase: FC<TitleProps> = ({
   }
   return (
     <div
+      ref={ref}
       data-refined-leetcode
       css={css`
         display: flex;
@@ -50,9 +43,8 @@ const TitleBase: FC<TitleProps> = ({
       onClick={handleClick}
     >
       <ToolTip
-        ref={tooltipRef}
-        open={!!help && (helpHover || tooltipHover)}
         placement="bottom"
+        keep={true}
         css={css`
           ${props =>
             props.theme.mode === 'dark'
@@ -80,7 +72,6 @@ const TitleBase: FC<TitleProps> = ({
         title={help ?? ''}
       >
         <div
-          ref={helpHoverRef}
           css={css`
             display: flex;
             align-items: center;
@@ -154,5 +145,5 @@ const TitleBase: FC<TitleProps> = ({
       )}
     </div>
   )
-}
+})
 export default TitleBase

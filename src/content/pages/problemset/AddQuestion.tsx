@@ -3,7 +3,14 @@ import { ToolTip } from '@/components/ToolTip'
 import { css } from 'styled-components/macro'
 import Popper from '@/components/PopperUnstyled'
 import { useHover, useAppSelector, useAppDispatch } from '@/hooks'
-import { useEffect, useMemo, useState } from 'react'
+import {
+  forwardRef,
+  MouseEventHandler,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import {
   fetchFavoriteDetails,
   selectFavoriteIdsByCategory,
@@ -20,6 +27,47 @@ const getCurrentId = () => {
   if (paths[0] === 'problem-list') return paths[1]
   return ''
 }
+
+interface BoxProps {
+  children: ReactNode
+  onClick?: MouseEventHandler<HTMLDivElement>
+}
+
+export const Box = forwardRef<HTMLDivElement, BoxProps>(function Box(
+  { children, onClick },
+  ref
+) {
+  const handleClicl: MouseEventHandler<HTMLDivElement> = e =>
+    onClick && onClick(e)
+  return (
+    <div
+      ref={ref}
+      css={css`
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+        padding: 0 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        background-color: ${props =>
+          props.theme.mode === 'dark' ? '#ffffff1a' : '#000a200d'};
+        box-shadow: ${props =>
+          props.theme.mode === 'dark'
+            ? css`rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+  rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.24) 0px 1px 3px 0px,
+  rgba(0, 0, 0, 0.16) 0px 2px 8px 0px`
+            : css`rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 1px 3px 0px, rgba(0, 0, 0, 0.08) 0px 2px 8px 0px`};
+        &:hover {
+          background-color: ${props =>
+            props.theme.mode === 'dark' ? '#ffffff24' : '#000a201a'};
+        }
+      `}
+      onClick={handleClicl}
+    >
+      {children}
+    </div>
+  )
+})
 
 const AddQuestion: React.FC = () => {
   const [bindRef, hover, ref] = useHover(100)
@@ -87,29 +135,11 @@ const AddQuestion: React.FC = () => {
         placement="top"
         open={hover}
       >
-        <div
-          ref={bindRef}
-          onClick={toggleOpen}
-          css={css`
-            display: flex;
-            align-items: center;
-            margin-right: 10px;
-            padding: 0 10px;
-            cursor: pointer;
-            background-color: ${props =>
-              props.theme.mode === 'dark' ? '#282828' : '#fff'};
-            box-shadow: ${props =>
-              props.theme.mode === 'dark'
-                ? css`rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-          rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.24) 0px 1px 3px 0px,
-          rgba(0, 0, 0, 0.16) 0px 2px 8px 0px`
-                : css`rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 1px 3px 0px, rgba(0, 0, 0, 0.08) 0px 2px 8px 0px`};
-          `}
-        >
+        <Box ref={bindRef} onClick={toggleOpen}>
           <SvgIcon>
             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
           </SvgIcon>
-        </div>
+        </Box>
       </ToolTip>
       {openPopper && (
         <Popper

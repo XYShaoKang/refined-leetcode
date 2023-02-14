@@ -19,8 +19,9 @@ export const SORT_KEY: { key: OrderBy; title: string }[] = [
 
 export type CustomFilter = {
   sort?: { sortOrder: 'DESCENDING' | 'ASCENDING'; orderBy: OrderBy }
-  min?: string
-  max?: string
+  min?: string // 评分最小值
+  max?: string // 评分最大值
+  includePremium?: boolean // 是否包含会员题，默认包含会员题
 }
 export interface ParamType {
   sorting?: [
@@ -34,7 +35,7 @@ export interface ParamType {
   status?: 'NOT_STARTED' | 'AC' | 'TRIED' // 状态：
   difficulty?: 'EASY' | 'MEDIUM' | 'HARD' // 难度
   listId?: string // 题单
-  custom?: CustomFilter
+  custom?: CustomFilter // 自定义参数
 }
 
 const map = {
@@ -122,6 +123,7 @@ export function serializationPrams(params: ParamType): string {
             'sort',
             'min',
             'max',
+            'includePremium',
           ])
         )
       )

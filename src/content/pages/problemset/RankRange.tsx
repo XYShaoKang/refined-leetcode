@@ -4,7 +4,6 @@ import {
   FC,
   KeyboardEventHandler,
   SetStateAction,
-  useEffect,
   useState,
 } from 'react'
 
@@ -20,6 +19,9 @@ import {
   once,
 } from './utils'
 import { routerTo } from '@/utils'
+import { ToolTip } from '@/components/ToolTip'
+import CrownIcon from '@/components/icons/CrownIcon'
+import { Box } from './AddQuestion'
 
 const StyledInput: FC<{
   value: string
@@ -47,16 +49,14 @@ const StyledInput: FC<{
 }
 
 const RankRange: FC = () => {
-  const [min, setMin] = useState('')
-  const [max, setMax] = useState('')
+  const params: ParamType = parseParams()
+  const [min, setMin] = useState(params.custom?.min ?? '')
+  const [max, setMax] = useState(params.custom?.max ?? '')
+  const [includePremium, setIncludePremium] = useState(
+    params.custom?.includePremium ?? true
+  )
 
-  useEffect(() => {
-    const params: ParamType = parseParams()
-    setMin(params.custom?.min ?? '')
-    setMax(params.custom?.max ?? '')
-  }, [])
-
-  const handleApply = async () => {
+  const handleApply = async (includePremium: boolean) => {
     const params: ParamType = parseParams()
 
     let id = getId(true)
@@ -81,21 +81,31 @@ const RankRange: FC = () => {
     }
     id = getId(true)
     params.sorting = [{ orderBy: 'FRONTEND_ID', sortOrder: id }]
-    params.custom = { ...params.custom, min, max }
-
+    params.custom = { ...params.custom, min, max, includePremium }
     const url = location.pathname + '?' + serializationPrams(params)
     routerTo(url)
   }
   const handleEnter: KeyboardEventHandler<HTMLInputElement> = e => {
-    if (e.code === 'Enter') handleApply()
+    if (e.code === 'Enter') handleApply(includePremium)
+  }
+  const handleChangeIncludePremium = () => {
+    setIncludePremium(!includePremium)
+    handleApply(!includePremium)
   }
   return (
     <>
+      <ToolTip title={includePremium ? '包含会员题' : '不含会员题'}>
+        <Box onClick={handleChangeIncludePremium}>
+          <CrownIcon
+            color={includePremium ? 'rgb(255, 161, 22)' : 'rgb(104, 104, 104)'}
+          />
+        </Box>
+      </ToolTip>
       <span>难度范围：</span>
       <StyledInput value={min} setValue={setMin} onKeyDown={handleEnter} />-
       <StyledInput value={max} setValue={setMax} onKeyDown={handleEnter} />
       <Button
-        onClick={handleApply}
+        onClick={() => handleApply(includePremium)}
         css={css`
           && {
             width: 60px;
