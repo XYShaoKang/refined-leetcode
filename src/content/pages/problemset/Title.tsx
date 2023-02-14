@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react'
 import { css } from 'styled-components/macro'
 
-import { useAppSelector } from '@/hooks'
+import { useAppSelector, useEffectMount } from '@/hooks'
 
 import {
   OrderBy,
@@ -44,23 +44,23 @@ const RankTitle: FC<RankTitleProps> = ({ otherRoots }) => {
     }
   }, [])
 
-  useEffect(() => {
+  useEffectMount(async state => {
     // 如果第一次访问的 url 中，包含 customSort，则需要进行特殊的处理。
-    void (async function () {
-      if (params.custom) {
-        /**
-         * 在题库页中，如果包含 custom，那么一定是包含 id 的 sroting，
-         * 则一定会重定向到 sroting 等于 `ASCENDING`，
-         * 需要等待重定向完成后，再通过路由跳转到到包含自定义参数的 url
-         *
-         * 而在题单页中，则不会进行重定向，就不用去等待
-         */
-        if (currentPage === 'problemsetPage') {
-          await once('routeChangeComplete')
-        }
+    if (params.custom) {
+      /**
+       * 在题库页中，如果包含 custom，那么一定是包含 id 的 sroting，
+       * 则一定会重定向到 sroting 等于 `ASCENDING`，
+       * 需要等待重定向完成后，再通过路由跳转到到包含自定义参数的 url
+       *
+       * 而在题单页中，则不会进行重定向，就不用去等待
+       */
+      if (currentPage === 'problemsetPage') {
+        await once('routeChangeComplete')
+      }
+      if (state.isMount) {
         handleCustomSort()()
       }
-    })()
+    }
   }, [])
 
   const handleCustomSort = (key?: OrderBy, isSwitch?: boolean) => async () => {
