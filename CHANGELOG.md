@@ -1,3 +1,12 @@
+## [0.11.8](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.7...v0.11.8) (2023-02-14)
+
+
+### Bug Fixes
+
+* **problem-list:** 题单页带custom参数的url刷新后不需要等待重定向 ([044f62e](https://github.com/XYShaoKang/refined-leetcode/commit/044f62eacc5ff9712c9934031adb2624d03c1b17))
+* **problemset:** 避免在组件被卸载后触发自定义排序 ([058d8c3](https://github.com/XYShaoKang/refined-leetcode/commit/058d8c3359f0f4f0397402b56df13cd70f81012e))
+* 自定义过滤中添加是否包含会员题目的选项 ([5b9a80a](https://github.com/XYShaoKang/refined-leetcode/commit/5b9a80a0adb339d199c186385084ae5b746182ae))
+
 ## [0.11.7](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.6...v0.11.7) (2023-02-12)
 
 
