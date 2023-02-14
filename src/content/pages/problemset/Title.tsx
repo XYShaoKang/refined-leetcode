@@ -15,7 +15,7 @@ import {
 import TitleBase from './TitleBase'
 import { Portal } from '@/components/Portal'
 import { routerTo } from '@/utils'
-import { selectIsPremium } from '../global/globalSlice'
+import { selectCurrentPage, selectIsPremium } from '../global/globalSlice'
 
 interface RankTitleProps {
   otherRoots: { [key in OrderBy]?: HTMLElement }
@@ -24,6 +24,7 @@ interface RankTitleProps {
 const RankTitle: FC<RankTitleProps> = ({ otherRoots }) => {
   const [params, setParams] = useState(parseParams())
   const isPremium = useAppSelector(selectIsPremium)
+  const currentPage = useAppSelector(selectCurrentPage)
 
   useEffect(() => {
     SORT_KEY.forEach(({ key }) => {
@@ -47,9 +48,16 @@ const RankTitle: FC<RankTitleProps> = ({ otherRoots }) => {
     // 如果第一次访问的 url 中，包含 customSort，则需要进行特殊的处理。
     void (async function () {
       if (params.custom) {
-        // 如果包含 customSort，那么一定是包含 id 的 sroting，则一定会重定向一次。
-        await once('routeChangeComplete')
-
+        /**
+         * 在题库页中，如果包含 custom，那么一定是包含 id 的 sroting，
+         * 则一定会重定向到 sroting 等于 `ASCENDING`，
+         * 需要等待重定向完成后，再通过路由跳转到到包含自定义参数的 url
+         *
+         * 而在题单页中，则不会进行重定向，就不用去等待
+         */
+        if (currentPage === 'problemsetPage') {
+          await once('routeChangeComplete')
+        }
         handleCustomSort()()
       }
     })()
