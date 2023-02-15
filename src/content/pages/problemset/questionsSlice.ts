@@ -160,7 +160,13 @@ export const selectQuestonsByOption = (
       const question = questions.entities[id]
       if (!question) continue
       if (option.categorySlug === 'algorithms') {
-        if (question.topicTags.every(a => !categorySlugs.has(a.slug))) {
+        // 力扣没有将 「剑指」和「面试题」 的题目归为 algorithms 这个分类，
+        // 为了保持跟力扣的一致，如果分类是 algorithms 也过滤掉这些题目
+        if (
+          !question.frontendQuestionId.startsWith('剑指') &&
+          !question.frontendQuestionId.startsWith('面试题') &&
+          question.topicTags.every(a => !categorySlugs.has(a.slug))
+        ) {
           res.push(question)
         }
       } else {
@@ -175,21 +181,27 @@ export const selectQuestonsByOption = (
 
   if (option.filters) {
     const { difficulty, status, tags, premiumOnly, custom } = option.filters
-    const useCustomFilter = custom && (custom.min || custom.max)
+    const ratingFilter = custom && (custom.min || custom.max)
 
-    const min = Number(custom?.min ? custom.min : '0'),
+    const min = Number(custom?.min ? custom.min : 0),
       max = Number(custom?.max ? custom.max : Infinity)
     const rankData = state.global.ProblemRankData
     res = res.filter(a => {
+      // 难度
       if (difficulty && a.difficulty !== difficulty) return false
+      // 状态
       if (status && a.status !== status) return false
+      // 只包含会员题
       if (premiumOnly && !a.paidOnly) return false
+      // 不包含会员题
       if (custom?.includePremium === false && a.paidOnly) return false
+      // 标签
       if (tags) {
         const set = new Set(a.topicTags.map(b => b.slug))
         if (tags.some(tag => !set.has(tag))) return false
       }
-      if (useCustomFilter) {
+      // 题目评分
+      if (ratingFilter) {
         if (!rankData[a.titleSlug]) return false
         const rating = rankData[a.titleSlug]?.Rating
         if (rating < min || rating > max) return false
