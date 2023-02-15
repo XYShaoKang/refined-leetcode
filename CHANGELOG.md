@@ -1,3 +1,10 @@
+## [0.11.9](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.8...v0.11.9) (2023-02-15)
+
+
+### Bug Fixes
+
+* **problemset:** 选择算法分类时题目数跟力扣原生不一致 ([c575c9b](https://github.com/XYShaoKang/refined-leetcode/commit/c575c9bae66542ee23a49f2a573d2433631190e2))
+
 ## [0.11.8](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.7...v0.11.8) (2023-02-14)
 
 
