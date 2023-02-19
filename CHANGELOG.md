@@ -1,3 +1,12 @@
+## [0.11.10](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.9...v0.11.10) (2023-02-19)
+
+
+### Bug Fixes
+
+* **problems:** 控制台左右切换时导致计时器失效 ([d3ef330](https://github.com/XYShaoKang/refined-leetcode/commit/d3ef3307f3d4848e9b4110d39d6a2842143ad2b9))
+* **ranking:** 优化性能 ([80baafd](https://github.com/XYShaoKang/refined-leetcode/commit/80baafd56e70f54d48bfdc5d4fdd9d6f9aa843c1))
+* **ranking:** 修复页面切换问题 ([13c29a7](https://github.com/XYShaoKang/refined-leetcode/commit/13c29a779854fe80cb2b20fc5c9c2e26de82a9ec))
+
 ## [0.11.9](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.8...v0.11.9) (2023-02-15)
 
 
