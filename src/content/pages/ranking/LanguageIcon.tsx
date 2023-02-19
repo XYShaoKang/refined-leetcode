@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, memo, useEffect, useState } from 'react'
 import styled from 'styled-components/macro'
 
 import { debounce } from '../../../utils'
@@ -144,7 +144,7 @@ export const LanguageIconRow: FC<{
   row: HTMLElement
   i: number
   hasMyRank: boolean
-}> = ({ row, i, hasMyRank }) => {
+}> = memo(function LanguageIconRow({ row, i, hasMyRank }) {
   const tds = Array.prototype.slice.call(row.children, 4, 8)
   return (
     <>
@@ -159,6 +159,6 @@ export const LanguageIconRow: FC<{
       ))}
     </>
   )
-}
+})
 
 export default LanguageIcon

@@ -50,17 +50,15 @@ const App: FC = () => {
       )}
       {(showPredictordelta || showNewRating) &&
         rows?.map((row, i) => (
-          <Portal container={row} key={i}>
-            <td>
-              <Item
-                row={i}
-                hasMyRank={hasMyRank}
-                showOldRating={showOldRating}
-                showPredictordelta={showPredictordelta}
-                showNewRating={showNewRating}
-              />
-            </td>
-          </Portal>
+          <Item
+            key={i}
+            row={row}
+            index={i}
+            hasMyRank={hasMyRank}
+            showOldRating={showOldRating}
+            showPredictordelta={showPredictordelta}
+            showNewRating={showNewRating}
+          />
         ))}
       {showLanguageIcon &&
         rows?.map((row, i) => (

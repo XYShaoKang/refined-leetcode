@@ -1,4 +1,5 @@
-import { FC, useEffect, useState } from 'react'
+import { Portal } from '@/components/Portal'
+import { FC, memo, useEffect, useState } from 'react'
 import { css } from 'styled-components/macro'
 
 import { debounce } from '../../../utils'
@@ -6,7 +7,7 @@ import { debounce } from '../../../utils'
 import { ParamType, useGetPredictionQuery } from './rankSlice'
 
 type ItmeType = {
-  row: number
+  index: number
   hasMyRank: boolean
   showOldRating: boolean
   showPredictordelta: boolean
@@ -52,13 +53,13 @@ function useUrlChange() {
   return [param] as const
 }
 
-const Item: FC<ItmeType> = ({
-  row,
+const Item: FC<ItmeType> = memo(function Item({
+  index,
   hasMyRank,
   showOldRating,
   showPredictordelta,
   showNewRating,
-}) => {
+}) {
   const [param] = useUrlChange()
   const params: ParamType = { ...param }
   if (hasMyRank) {
@@ -72,9 +73,9 @@ const Item: FC<ItmeType> = ({
     return <span> ...loading</span>
   }
 
-  const predictor: number | undefined = items?.[row]?.delta?.toFixed(1),
-    newRating = items?.[row]?.newRating?.toFixed(1),
-    oldRating = items?.[row]?.oldRating?.toFixed(1)
+  const predictor: number | undefined = items?.[index]?.delta?.toFixed(1),
+    newRating = items?.[index]?.newRating?.toFixed(1),
+    oldRating = items?.[index]?.oldRating?.toFixed(1)
 
   if (predictor === undefined) {
     return <></>
@@ -123,6 +124,27 @@ const Item: FC<ItmeType> = ({
       )}
     </div>
   )
+})
+interface PredictItemProps {
+  row: HTMLElement
+  index: number
+  hasMyRank: boolean
+  showOldRating: boolean
+  showPredictordelta: boolean
+  showNewRating: boolean
 }
 
-export default Item
+const PredictItem = memo(function PredictItem({
+  row,
+  ...props
+}: PredictItemProps) {
+  return (
+    <Portal container={row}>
+      <td>
+        <Item {...props} />
+      </td>
+    </Portal>
+  )
+})
+
+export default PredictItem
