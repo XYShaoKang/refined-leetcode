@@ -11,7 +11,9 @@ type CustomMap = {
 type CustomEventMap<T> = { [K in keyof T]: CustomEvent<T[K]> }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface WindowEventMap extends CustomEventMap<CustomMap> {}
+interface WindowEventMap extends CustomEventMap<CustomMap> {
+  urlchange: {}
+}
 
 type Args<T> = CustomMap[T] extends undefined
   ? [name: T]

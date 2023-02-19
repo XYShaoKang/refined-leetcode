@@ -9,6 +9,7 @@ import { findElement, findAllElement } from '@/utils'
 import Item from './Item'
 import Title from './Title'
 import { LanguageIconRow } from './LanguageIcon'
+import { debounce } from 'src/utils'
 
 const App: FC = () => {
   const options = useAppSelector(selectOptions)
@@ -16,12 +17,16 @@ const App: FC = () => {
   const [rows, setRows] = useState<HTMLElement[]>()
 
   useEffectMount(async state => {
-    const parent = await findElement('.table-responsive>table>thead>tr')
-    const trs = await findAllElement('.table-responsive>table>tbody>tr')
-    if (state.isMount) {
-      setTitleRoot(parent)
-      setRows([...trs])
-    }
+    const handleChange = debounce(async () => {
+      const parent = await findElement('.table-responsive>table>thead>tr')
+      const trs = await findAllElement('.table-responsive>table>tbody>tr')
+      if (state.isMount) {
+        setTitleRoot(parent)
+        setRows([...trs])
+      }
+    }, 100)
+    handleChange()
+    window.addEventListener('urlchange', handleChange)
   }, [])
 
   const hasMyRank = rows?.[0]?.className === 'success' ? true : false
