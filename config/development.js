@@ -37,7 +37,8 @@ const development = env => ({
   },
   devServer: {
     static: {
-      directory: path.join(__dirname, '../public'),
+      directory: path.join(__dirname, '../dist'),
+      watch: false,
     },
     host: 'localhost',
     port: 9100,
