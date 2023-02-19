@@ -1,5 +1,6 @@
 import { Portal } from '@/components/Portal'
-import { FC, memo, useEffect, useState } from 'react'
+import { useEffectMount } from '@/hooks'
+import { FC, memo, useState } from 'react'
 import { css } from 'styled-components/macro'
 
 import { debounce } from '../../../utils'
@@ -27,30 +28,34 @@ function getParam(): ParamType {
   return { contestId, page, region }
 }
 
-function useUrlChange() {
+export function useUrlChange(): [ParamType] {
   const [param, setParam] = useState(getParam())
-  useEffect(() => {
+  useEffectMount(state => {
     const handle = debounce(() => {
-      setParam(getParam())
+      if (state.isMount) setParam(getParam())
     }, 100)
     window.addEventListener('urlchange', handle)
-    return () => {
+    state.unmount.push(() => {
+      handle.cancel()
       window.removeEventListener('urlchange', handle)
-    }
+    })
   }, [])
-  useEffect(() => {
+  // 是否选中「显示全球」
+  useEffectMount(state => {
     const checkbox = document.querySelector(
       '.checkbox>label>input'
     ) as HTMLInputElement
+    if (!checkbox) return
     const handle = debounce((_e: Event) => {
-      setParam(getParam())
+      if (state.isMount) setParam(getParam())
     }, 100)
     checkbox.addEventListener('change', handle)
-    return () => {
+    state.unmount.push(() => {
+      handle.cancel()
       checkbox.removeEventListener('change', handle)
-    }
+    })
   })
-  return [param] as const
+  return [param]
 }
 
 const Item: FC<ItmeType> = memo(function Item({

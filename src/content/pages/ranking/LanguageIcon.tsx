@@ -5,55 +5,13 @@ import { debounce } from '../../../utils'
 
 import { ParamType, useGetContestQuery } from './rankSlice'
 import { Portal } from '@/components/Portal'
+import { useUrlChange } from './Item'
 
 type ItmeType = {
   row: number
   col: number
   hasMyRank: boolean
   parent: HTMLElement
-}
-
-function getParam(): ParamType {
-  const [, contestId, , pageStr = '1'] = location.pathname
-    .split('/')
-    .filter(Boolean)
-  const page = Number(pageStr)
-  const checkbox = document.querySelector(
-    '.checkbox>label>input'
-  ) as HTMLInputElement
-  const region = checkbox?.checked ? 'global' : 'local'
-
-  return { contestId, page, region }
-}
-
-function useUrlChange() {
-  const [param, setParam] = useState(getParam())
-  useEffect(() => {
-    const handle = debounce(() => {
-      setParam(getParam())
-    }, 100)
-    window.addEventListener('urlchange', handle)
-    return () => {
-      handle.cancel()
-      window.removeEventListener('urlchange', handle)
-    }
-  }, [])
-  // 是否选中「显示全球」
-  useEffect(() => {
-    const checkbox = document.querySelector(
-      '.checkbox>label>input'
-    ) as HTMLInputElement
-    if (!checkbox) return
-    const handle = debounce((_e: Event) => {
-      setParam(getParam())
-    }, 100)
-    checkbox.addEventListener('change', handle)
-    return () => {
-      handle.cancel()
-      checkbox.removeEventListener('change', handle)
-    }
-  })
-  return [param] as const
 }
 
 const DefaultIcon = styled.span`
