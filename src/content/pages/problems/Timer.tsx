@@ -18,6 +18,7 @@ import {
 } from './utils'
 import { useTimer } from './useTimer'
 import { logger } from '../../../utils'
+import { Portal } from '@/components/Portal'
 
 const log = logger.child({ prefix: 'Clock' })
 
@@ -65,7 +66,12 @@ const Button = styled.button<{
         `}
 `
 
-const Timer: FC<{ beta?: boolean }> = ({ beta }) => {
+interface TimerProps {
+  beta?: boolean
+  root?: HTMLElement
+}
+
+const Timer: FC<TimerProps> = ({ beta, root }) => {
   const pathnames = location.pathname.split('/').filter(Boolean)
   const slug = pathnames[1]
 
@@ -284,7 +290,9 @@ const Timer: FC<{ beta?: boolean }> = ({ beta }) => {
     return editEl
   }
 
+  // TODO: 使用 useEffectMount 重构
   useEffect(() => {
+    if (!root) return
     log.info('加载 Clock 组件')
     const cancel: { current: (() => void) | null | 'unmount' } = {
       current: null,
@@ -357,47 +365,51 @@ const Timer: FC<{ beta?: boolean }> = ({ beta }) => {
         cancel.current = 'unmount'
       }
     }
-  }, [])
+  }, [root])
+
+  if (!root) return null
 
   return (
-    <Container>
-      {!hidden && (
-        <Content>
-          {`${isDone ? '本次耗时: ' : ''}${time
-            .map(t => t.toString().padStart(2, '0'))
-            .join(' : ')}`}
-        </Content>
-      )}
-      {!isDone ? (
-        <div ref={hoverRef} style={{ display: 'flex' }}>
-          {!hidden && hover && (
-            <ToolTip title="点击重置按钮,可重置计时">
-              <Button onClick={restart} center={true} width={20}>
-                重置
+    <Portal container={root}>
+      <Container>
+        {!hidden && (
+          <Content>
+            {`${isDone ? '本次耗时: ' : ''}${time
+              .map(t => t.toString().padStart(2, '0'))
+              .join(' : ')}`}
+          </Content>
+        )}
+        {!isDone ? (
+          <div ref={hoverRef} style={{ display: 'flex' }}>
+            {!hidden && hover && (
+              <ToolTip title="点击重置按钮,可重置计时">
+                <Button onClick={restart} center={true} width={20}>
+                  重置
+                </Button>
+              </ToolTip>
+            )}
+            <ToolTip title={!hidden ? '点击隐藏实时计时' : '点击显示实时计时'}>
+              <Button
+                onClick={handleHidden}
+                center={false}
+                width={!hidden && hover ? 80 : 100}
+                style={
+                  hidden
+                    ? { borderTopLeftRadius: 3, borderBottomLeftRadius: 3 }
+                    : {}
+                }
+              >
+                {hidden ? '显示计时' : '隐藏'}
               </Button>
             </ToolTip>
-          )}
-          <ToolTip title={!hidden ? '点击隐藏实时计时' : '点击显示实时计时'}>
-            <Button
-              onClick={handleHidden}
-              center={false}
-              width={!hidden && hover ? 80 : 100}
-              style={
-                hidden
-                  ? { borderTopLeftRadius: 3, borderBottomLeftRadius: 3 }
-                  : {}
-              }
-            >
-              {hidden ? '显示计时' : '隐藏'}
-            </Button>
-          </ToolTip>
-        </div>
-      ) : (
-        <Button onClick={restart} center={false} width={100}>
-          重新开始
-        </Button>
-      )}
-    </Container>
+          </div>
+        ) : (
+          <Button onClick={restart} center={false} width={100}>
+            重新开始
+          </Button>
+        )}
+      </Container>
+    </Portal>
   )
 }
 

@@ -127,6 +127,46 @@ export function findElementByXPath<T = HTMLElement>(
   fn?: (el: T | null) => boolean,
   timeout?: number
 ): Promise<T>
+export async function findElementByXPath<T = HTMLElement>(
+  evaluateParam: {
+    xpath: string
+    nodeType: 'ANY_UNORDERED_NODE_TYPE' | 'FIRST_ORDERED_NODE_TYPE'
+  },
+  fn?: (el: T) => boolean,
+  timeout?: number
+): Promise<T>
+export async function findElementByXPath<T = XPathResult>(
+  evaluateParam: {
+    xpath: string
+    nodeType: 'ANY_TYPE'
+  },
+  fn?: (el: T) => boolean,
+  timeout?: number
+): Promise<T>
+export async function findElementByXPath<T = number>(
+  evaluateParam: {
+    xpath: string
+    nodeType: 'NUMBER_TYPE'
+  },
+  fn?: (el: T) => boolean,
+  timeout?: number
+): Promise<T>
+export async function findElementByXPath<T = string>(
+  evaluateParam: {
+    xpath: string
+    nodeType: 'STRING_TYPE'
+  },
+  fn?: (el: T) => boolean,
+  timeout?: number
+): Promise<T>
+export async function findElementByXPath<T = boolean>(
+  evaluateParam: {
+    xpath: string
+    nodeType: 'BOOLEAN_TYPE'
+  },
+  fn?: (el: T) => boolean,
+  timeout?: number
+): Promise<T>
 export async function findElementByXPath<T = HTMLElement[]>(
   evaluateParam: { xpath: string; nodeType: NodeType },
   fn?: (el: T) => boolean,
@@ -134,17 +174,28 @@ export async function findElementByXPath<T = HTMLElement[]>(
 ): Promise<T>
 export async function findElementByXPath<T = HTMLElement | HTMLElement[]>(
   evaluateParam: string | { xpath: string; nodeType: NodeType },
-  fn = (el: T | null) => !!el,
+  fn?: (el: T) => boolean,
   timeout = 10000
 ): Promise<T> {
-  let xpath: string, nodeType: NodeType
+  let xpath: string,
+    nodeType: NodeType = 'FIRST_ORDERED_NODE_TYPE'
   if (typeof evaluateParam === 'string') {
     xpath = evaluateParam
-    nodeType = 'FIRST_ORDERED_NODE_TYPE'
   } else {
     xpath = evaluateParam.xpath
-    nodeType = evaluateParam.nodeType
-    if (!fn) fn = el => !!(Array.isArray(el) && el.length)
+    nodeType = evaluateParam.nodeType ?? 'ANY_TYPE'
+  }
+  if (!fn) {
+    if (
+      nodeType === 'UNORDERED_NODE_ITERATOR_TYPE' ||
+      nodeType === 'ORDERED_NODE_ITERATOR_TYPE' ||
+      nodeType === 'ORDERED_NODE_SNAPSHOT_TYPE' ||
+      nodeType === 'UNORDERED_NODE_SNAPSHOT_TYPE'
+    ) {
+      fn = el => !!(Array.isArray(el) && el.length)
+    } else {
+      fn = (el: T | null) => el !== null && el !== undefined
+    }
   }
   const element = await findBase<T>(
     () => {
@@ -155,16 +206,44 @@ export async function findElementByXPath<T = HTMLElement | HTMLElement[]>(
         XPathResult[nodeType],
         null
       )
-      if (typeof evaluateParam === 'string') {
+      if (
+        nodeType === 'FIRST_ORDERED_NODE_TYPE' ||
+        nodeType === 'ANY_UNORDERED_NODE_TYPE'
+      ) {
         return result.singleNodeValue
+      }
+      if (nodeType === 'ANY_TYPE') {
+        return result
+      }
+      if (nodeType === 'NUMBER_TYPE') {
+        return result.numberValue
+      }
+      if (nodeType === 'STRING_TYPE') {
+        return result.stringValue
+      }
+      if (nodeType === 'BOOLEAN_TYPE') {
+        return result.booleanValue
       }
 
       const res: any[] = []
-      let it = result.iterateNext()
-      while (it) {
-        res.push(it)
-        it = result.iterateNext()
+      if (
+        nodeType === 'UNORDERED_NODE_ITERATOR_TYPE' ||
+        nodeType === 'ORDERED_NODE_ITERATOR_TYPE'
+      ) {
+        let it = result.iterateNext()
+        while (it) {
+          res.push(it)
+          it = result.iterateNext()
+        }
+      } else if (
+        nodeType === 'ORDERED_NODE_SNAPSHOT_TYPE' ||
+        nodeType === 'UNORDERED_NODE_SNAPSHOT_TYPE'
+      ) {
+        for (let i = 0; i < result.snapshotLength; i++) {
+          res.push(result.snapshotItem(i))
+        }
       }
+
       return res
     },
     fn,
