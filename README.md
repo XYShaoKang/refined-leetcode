@@ -1,18 +1,23 @@
+[![semantic-release][semantic-release-image]][semantic-release-url] [![GitHub Action][actions-release-image]][actions-release-url] [![](https://img.shields.io/chrome-web-store/v/kmpinnjkedaidpojenkiooddkeplniel.svg)][chrome-store-url] [![](https://img.shields.io/badge/dynamic/json?label=edge%20add-on&prefix=v&query=%24.version&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Figmccckalbaoifpohffkgfdagpgdangl)][edge-store-url]
+
 # Refined LeetCode
 
-[![chrome-store-image][chrome-store-image]][chrome-store-url]
-[![semantic-release][semantic-release-image]][semantic-release-url] [![GitHub Action][actions-release-image]][actions-release-url]
+> 添加一些有用和有意思的功能,增强 LeetCode-cn 刷题体验
+
+[![chrome-store-badge][chrome-store-badge]][chrome-store-url] [![edge-store-badge][edge-store-badge]][edge-store-url]
 
 [semantic-release-image]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
 [semantic-release-url]: https://github.com/semantic-release/semantic-release
 [actions-release-image]: https://github.com/XYShaoKang/refined-leetcode/actions/workflows/release.yml/badge.svg?branch=master
 [actions-release-url]: https://github.com/XYShaoKang/refined-leetcode/actions/workflows/release.yml?query=branch%3Amaster
-[chrome-store-image]: ./docs/assets/trynow.png
+[chrome-store-badge]: ./docs/assets/trynow.png
 [chrome-store-url]: https://chrome.google.com/webstore/detail/refined-leetcode/kmpinnjkedaidpojenkiooddkeplniel
+[edge-store-badge]: ./docs/assets/get_it_from_edge.png
+[edge-store-url]: https://microsoftedge.microsoft.com/addons/detail/refined-leetcode/igmccckalbaoifpohffkgfdagpgdangl
 
-> 添加一些有用和有意思的功能,增强 LeetCode-cn 刷题体验
+Refined LeetCode 是一个 Chrome 浏览器。理论上来说大多数基于 Chromium 开发浏览器都能支持，比如像 Microsoft Edge、Opera、Yanda 等浏览器。
 
-我建了个内测群：250316825，有兴趣可以加这个群，在群里进行反馈和交流。
+> 我建了个 QQ 群：250316825，有兴趣可以加这个群，在群里进行反馈和交流。
 
 ## 功能
 
@@ -35,11 +40,15 @@
 
 ## 安装
 
-有两种安装方式，可以选择从 [Chrome Web Store][chrome-store-url] 安装，或者 [离线安装](#离线安装)
+有两种安装方式，通过在线商店安装，或者通过离线安装。
 
-> 推荐直接通过 [Chrome Web Store][chrome-store-url] 来安装，比较方便，并且当扩展有更新的时候，会自动更新到最新版本。
+### 在线安装
+
+可以通过从 [Chrome Web Store][chrome-store-url] 安装。另外我也在 [Microsoft Edge Addons][edge-store-url] 发布了这款扩展，如果使用 Microsoft Edge 浏览器，并且无法访问谷歌的话，可以从这里安装。但微软的审核会长一些，有可能会比谷歌商店慢上一些版本，所以即使使用 Microsoft Edge 浏览器，也比较推荐从[Chrome Web Store][chrome-store-url]安装，可以获得更及时的更新
+
+> 推荐直接通过在线安装的方式来安装，比较方便，并且当扩展有更新的时候，会自动更新到最新版本。
 >
-> 因为提交到商店需要进行审核，有时需要进行一些时间的等待，这时如果想要尝鲜，或者是因为某些原因无法连接到商店，可以尝试进行按照下面的方式进行「离线安装」，不过这样如果想要获取更新就需要每次手动来下载一下了。
+> 但因为提交到商店需要进行审核，有时需要进行一些时间的等待，这时如果想要尝鲜，或者是因为某些原因无法连接到商店，可以尝试进行按照下面的方式进行「离线安装」，不过这样如果想要获取更新就需要每次手动来下载一下了。
 
 ### 离线安装
 
