@@ -14,7 +14,6 @@ export const defaultOptions = {
   problemsPage: {
     timer: true,
     randomQuestion: true,
-    fixBackNav: true,
   },
   contestProblemsPage: {
     disableShortcutkey: false,
@@ -48,7 +47,6 @@ export const labelMap: { [key: string]: string } = {
   fixRandomQuestion: '修复随机一题按钮',
   timer: '计时器',
   randomQuestion: '随机一题',
-  fixBackNav: '修复返回导航',
   disableShortcutkey: '禁用快捷键',
   languageIcon: '语言图标',
   showOldRating: '显示旧分数',

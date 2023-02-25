@@ -9,7 +9,6 @@ import { findElement, findElementByXPath, isBetaUI } from '@/utils'
 import { getRoot } from './utils'
 import { Portal } from '@/components/Portal'
 import Random from './Random'
-import { fixBack } from './fixBack'
 
 const App: FC<{ beta?: boolean }> = () => {
   const options = useAppSelector(selectOptions)
@@ -20,7 +19,6 @@ const App: FC<{ beta?: boolean }> = () => {
   useEffectMount(async state => {
     const beta = await isBetaUI()
     if (!state.isMount) return
-    if (beta) fixBack()
     setBeta(beta)
 
     //#region 设置「随机一题」
