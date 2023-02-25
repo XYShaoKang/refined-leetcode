@@ -99,6 +99,11 @@ const BlockUserList: FC<BlockUserListProps> = props => {
   const [errorMessage, setErrorMessage] = useState('')
   const timer = useRef<ReturnType<typeof setTimeout>>()
   const dispatch = useAppDispatch()
+  const [top, setTop] = useState(0)
+
+  const listRef = (ref: HTMLUListElement) => {
+    setTop(ref?.getBoundingClientRect().top ?? 0)
+  }
 
   const showMessage = (error: string) => {
     hideMessage()
@@ -221,7 +226,14 @@ const BlockUserList: FC<BlockUserListProps> = props => {
           </div>
         </ToolTip>
       </div>
-      <List style={{ marginTop: users.length ? 10 : 0 }}>
+      <List
+        ref={listRef}
+        style={{
+          marginTop: users.length ? 10 : 0,
+          maxHeight: `calc(100vh - ${top + 10}px)`,
+          overflowY: 'auto',
+        }}
+      >
         {users.map(({ slug, name, block }) => (
           <Item key={slug}>
             <div
