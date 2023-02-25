@@ -10,6 +10,7 @@
     "start": "webpack serve --node-env development",
     "dev": "webpack serve --node-env development",
     "build": "webpack --node-env production",
+    "build:debug": "webpack --node-env production --env LOG_LEVEL=debug",
     "packcrx": "node packcrx.js",
     "lint": "pnpm lint:prettier && pnpm lint:eslint",
     "lint:prettier": "prettier --check src",
