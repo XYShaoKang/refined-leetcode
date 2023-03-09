@@ -7,7 +7,7 @@ import {
   SuccessCheckReturnType,
   findElement,
 } from '@/utils'
-import { useEvent, useHover } from '@/hooks'
+import { useEvent, useHover, useObserverAncestor } from '@/hooks'
 import { ToolTip } from '@/components/ToolTip'
 
 import {
@@ -77,6 +77,7 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
 
   const [leetCodeApi] = useState(new LeetCodeApi(location.origin))
   const [hidden, setHidden] = useState(false)
+  const [editEl, setEditEl] = useState<HTMLElement>()
 
   const { time, isDone, done, restart } = useTimer()
 
@@ -255,15 +256,6 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
     }
   })
 
-  /** 使用快捷键提交的事件
-   */
-  const handleKeydown = (e: KeyboardEvent) => {
-    if (checkIfSubmitKey(e) && !checkIfGlobalSubmitIsDisabled()) {
-      log.debug('使用快捷键提交')
-      handleClick()
-    }
-  }
-
   const getSubMitBtn = async () => {
     let submitBtn: HTMLElement
     if (beta) {
@@ -279,17 +271,6 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
     return submitBtn
   }
 
-  const getEditEl = async () => {
-    let editEl: HTMLElement
-
-    if (beta) {
-      editEl = await findElement('.monaco-editor')
-    } else {
-      editEl = await findElement('.euyvu2f0')
-    }
-    return editEl
-  }
-
   // TODO: 使用 useEffectMount 重构
   useEffect(() => {
     if (!root) return
@@ -301,7 +282,6 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
     void (async function () {
       // 当前组件已经被卸载,就不需要挂载事件
       let submitBtn: HTMLElement = await getSubMitBtn()
-      const editEl: HTMLElement = await getEditEl()
 
       const mount = async () => {
         submitBtn = await getSubMitBtn()
@@ -347,12 +327,10 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
       if (cancel.current === 'unmount') return
 
       mount()
-      editEl.addEventListener('keydown', handleKeydown, { capture: true })
       observer.observe(submitBtn.parentElement!, { childList: true })
 
       cancel.current = () => {
         unmount()
-        editEl.removeEventListener('keydown', handleKeydown, { capture: true })
         observer.disconnect()
       }
     })()
@@ -366,6 +344,38 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
       }
     }
   }, [root])
+
+  //#region 快捷键提交
+  /** 使用快捷键提交的事件
+   */
+  const handleKeydown = (e: KeyboardEvent) => {
+    if (checkIfSubmitKey(e) && !checkIfGlobalSubmitIsDisabled()) {
+      log.debug('使用快捷键提交')
+      handleClick()
+    }
+  }
+
+  const getEditEl = async () => {
+    let editEl: HTMLElement
+
+    if (beta) {
+      editEl = await findElement('.monaco-editor')
+    } else {
+      editEl = await findElement('.euyvu2f0')
+    }
+    return editEl
+  }
+  useObserverAncestor(async () => {
+    const editEl: HTMLElement = await getEditEl()
+    setEditEl(editEl)
+    return editEl
+  })
+  useEffect(() => {
+    if (!editEl) return
+    editEl.addEventListener('keydown', handleKeydown)
+    return () => editEl.removeEventListener('keydown', handleKeydown)
+  }, [editEl])
+  //#endregion
 
   if (!root) return null
 
