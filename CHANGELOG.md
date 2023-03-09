@@ -1,3 +1,10 @@
+## [0.11.12](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.11...v0.11.12) (2023-03-09)
+
+
+### Bug Fixes
+
+* 修复重新加载的逻辑 ([b2a9b7c](https://github.com/XYShaoKang/refined-leetcode/commit/b2a9b7cfdcf5517543ed3ba4ae00cb172d40ebfa))
+
 ## [0.11.11](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.10...v0.11.11) (2023-03-09)
 
 
