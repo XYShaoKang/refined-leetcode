@@ -7,7 +7,6 @@ import {
   QuestionType,
   routerTo,
 } from '@/utils'
-import { withPage } from '@/hoc'
 import { useAppSelector, useHover } from '@/hooks'
 
 import { selectIsPremium } from '../global/globalSlice'
@@ -122,4 +121,4 @@ const Random: FC = () => {
   )
 }
 
-export default withPage('problemsPage')(Random)
+export default Random

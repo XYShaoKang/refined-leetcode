@@ -5,6 +5,7 @@ export * from './useEvent'
 export * from './useHover'
 export * from './useEffectMount'
 export * from './useIsMount'
+export * from './useObserverAncestor'
 
 export const useAppDispatch: () => AppDispatch = useDispatch
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
