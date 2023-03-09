@@ -17,7 +17,7 @@ const getKey = () => {
   }
 }
 
-const prepare = (pluginConfig = {}, context) => {
+const prepare = async (pluginConfig = {}, context) => {
   let { dist = 'dist', name = 'extension' } = pluginConfig
 
   dist = path.resolve(dist)
@@ -62,7 +62,7 @@ const prepare = (pluginConfig = {}, context) => {
 
   // 打包为 crx
   logger.log('打包 crx')
-  new ChromeExtension({ privateKey: getKey() })
+  await new ChromeExtension({ privateKey: getKey() })
     .load(dist)
     .then(crx => crx.pack())
     .then(crxBuffer => {
