@@ -50,13 +50,14 @@ export const useObserverAncestor = (
     // 要判断当前结点是否被删除，必须要将 MutationObserver 挂载到父元素上
     while (els.length) {
       const el = els.pop()!
-      ancestors.push(el)
-      ancestorSet.add(el)
-      const observer = new MutationObserver(mutations =>
-        mutations.some(({ removedNodes }) =>
+      const observer = new MutationObserver(mutations => {
+        const checked = mutations.some(({ removedNodes }) =>
           Array.prototype.some.call(removedNodes, node => node === el)
         )
-      )
+        if (checked) mount()
+      })
+      ancestors.push(el)
+      ancestorSet.add(el)
       observers.push(observer)
       observer.observe(el.parentElement!, { childList: true })
       state.unmount.push(() => observer.disconnect())
