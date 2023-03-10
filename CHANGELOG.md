@@ -1,3 +1,10 @@
+## [0.11.13](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.12...v0.11.13) (2023-03-10)
+
+
+### Bug Fixes
+
+* 测试 crx.zip 打包 ([c8d7117](https://github.com/XYShaoKang/refined-leetcode/commit/c8d7117a8bf32236604f423d903589103ab2b9f1))
+
 ## [0.11.12](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.11...v0.11.12) (2023-03-09)
 
 
