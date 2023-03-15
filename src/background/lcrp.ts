@@ -1,37 +1,37 @@
 // Leetcode Rating Predictor
+import { gkey, graphqlApi } from '@/utils'
 import {
-  getContest,
   fileIconData,
-  getMyRanking,
   lbaoPredictorApi as predictorApi,
+  LbaoPredictorType,
 } from './utils'
-
-type GetContestMessage = {
-  type: 'get-contest'
-  contestId: string
-  page: number
-  username?: string
-  region: 'local' | 'global'
-}
 
 type GetPredictionMessage = {
   type: 'get-prediction'
-  contestId: string
-  page: number
-  username?: string
-  region: 'local' | 'global'
+  contestSlug: string
+  users: { username: string; region: string }[]
+}
+type GetFileIcons = {
+  type: 'get-file-icons'
+}
+type GetUserRanking = {
+  type: 'get-user-ranking'
+  username: string
 }
 
 const messageHandle = (
-  message: GetPredictionMessage | GetContestMessage,
+  message: GetPredictionMessage | GetFileIcons | GetUserRanking,
   sender: chrome.runtime.MessageSender,
   sendResponse: (response?: any) => void
 ) => {
   if (message.type === 'get-prediction') {
     getPredictionHandle(message, sender, sendResponse)
     return true
-  } else if (message.type === 'get-contest') {
-    getContestHandle(message, sender, sendResponse)
+  } else if (message.type === 'get-file-icons') {
+    getFileIcons(message, sender, sendResponse)
+    return true
+  } else if (message.type === 'get-user-ranking') {
+    getUserRanking(message, sender, sendResponse)
     return true
   }
 
@@ -42,62 +42,82 @@ const messageHandle = (
 chrome.runtime.onMessage.addListener(messageHandle)
 chrome.runtime.onMessageExternal.addListener(messageHandle)
 
-async function getContestHandle(
-  message: GetContestMessage,
+async function getFileIcons(
+  message: GetFileIcons,
   sender: chrome.runtime.MessageSender,
   sendResponse: (response?: any) => void
 ) {
-  const { contestId, region, page, username } = message
-
-  let { questions, submissions } = await getContest(contestId, page, region)
-
-  if (username) {
-    const myRankCache = await getMyRanking(contestId)
-    submissions = [myRankCache.my_submission, ...submissions]
-  }
-
-  const iconMap = new Map<string, string>()
+  const res: { [key: string]: string } = {}
   for (const { slug, file } of fileIconData) {
-    iconMap.set(slug, `chrome-extension://${chrome.runtime.id}${file}`)
+    res[slug] = `chrome-extension://${chrome.runtime.id}${file}`
   }
-
-  const res = submissions.map(submission => {
-    return questions.map(({ question_id }) => {
-      const item = submission[question_id]
-
-      return {
-        ...item,
-        iconFile: iconMap.get(item?.lang ?? ''),
-      }
-    })
-  })
-
   sendResponse(res)
 }
 
+const cache = new Map<string, LbaoPredictorType>()
 async function getPredictionHandle(
   message: GetPredictionMessage,
   sender: chrome.runtime.MessageSender,
   sendResponse: (response?: any) => void
 ) {
-  const { contestId, region, page, username } = message
-
-  const { total_rank } = await getContest(contestId, page, region)
-  let users = total_rank.map(({ username, data_region }) => ({
-    username,
-    data_region,
-  }))
-
-  if (username) {
-    users = [{ username, data_region: 'CN' }, ...users]
-  }
+  const { contestSlug, users } = message
 
   try {
-    const data = await predictorApi(contestId, users)
+    const tmp = users
+      .filter(a => !cache.has(gkey(a.region, a.username)))
+      .map(a => ({ data_region: a.region, username: a.username }))
+    if (tmp.length) {
+      const data = await predictorApi(contestSlug, tmp)
+      for (const item of data) {
+        const key = gkey(item.data_region, item.username)
+        cache.set(key, item)
+      }
+    }
 
-    const itemMap = new Map(data.map(item => [item.username, item]))
+    sendResponse(users.map(user => cache.get(gkey(user.region, user.username))))
+  } catch (error) {
+    // TODO
+  }
+}
+async function getUserRanking(
+  message: GetUserRanking,
+  sender: chrome.runtime.MessageSender,
+  sendResponse: (response?: any) => void
+) {
+  const { username } = message
+  try {
+    const { data } = await graphqlApi<{ data: any }>('https://leetcode.com', {
+      body: {
+        variables: { username: username },
+        query: /* GraphQL */ `
+          query userContestRankingInfo($username: String!) {
+            userContestRanking(username: $username) {
+              attendedContestsCount
+              rating
+              globalRanking
+              totalParticipants
+              topPercentage
+            }
+            userContestRankingHistory(username: $username) {
+              attended
+              trendDirection
+              problemsSolved
+              totalProblems
+              finishTimeInSeconds
+              rating
+              ranking
+              contest {
+                titleSlug
+                title
+                startTime
+              }
+            }
+          }
+        `,
+      },
+    })
 
-    sendResponse(users.map(user => itemMap.get(user.username)))
+    sendResponse(data)
   } catch (error) {
     // TODO
   }

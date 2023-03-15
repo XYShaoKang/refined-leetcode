@@ -2,6 +2,8 @@ export type LbaoPredictorType = {
   data_region: string
   username: string
   delta?: number
+  oldRating?: number
+  newRating?: number
 }
 
 export const lbaoPredictorApi = (

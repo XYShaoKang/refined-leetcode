@@ -32,7 +32,7 @@ export function globalGetStatusText(e: number): string {
   }
 }
 
-export function graphqlApi(
+export function graphqlApi<T>(
   REGION_URL: string,
   {
     endpoint,
@@ -40,7 +40,7 @@ export function graphqlApi(
     body,
   }: { endpoint?: string; method?: string; body?: unknown },
   retry = 1
-): Promise<unknown> {
+): Promise<T> {
   method = method || 'POST'
   const RETRY_TIME = 3000,
     RETRY_COUNT = 5
@@ -566,6 +566,127 @@ export type userProfileQuestion = {
 
 export type QuestionStatus = 'ACCEPTED' | 'FAILED' | 'UNTOUCHED'
 
+export type ContestInfo = {
+  contest: {
+    id: number
+    title: string
+    title_slug: string
+    duration: number
+    start_time: number
+    is_virtual: boolean
+    origin_start_time: number
+    is_private: boolean
+  }
+  questions: Question[]
+}
+
+export type MyRanking = {
+  my_submission: {
+    [solvedId: string]: {
+      contest_id: number
+      data_region: string
+      date: number
+      fail_count: number
+      id: number
+      lang: string
+      question_id: number
+      status: number
+      submission_id: number
+    }
+  }
+  my_rank: {
+    contest_id: number
+    username: string
+    user_slug: string
+    real_name: string
+    country_code: string
+    country_name: string
+    rank: number
+    score: number
+    finish_time: number
+    global_ranking: number
+    data_region: string
+    avatar_url: string
+    rank_v2: number
+  }
+  my_solved: number[]
+  registered: boolean
+}
+
+export type ContestRanking = {
+  attendedContestsCount: number
+  globalRanking: number
+  globalTotalParticipants: number
+  localRanking: number
+  localTotalParticipants: number
+  rating: number
+  topPercentage: number
+}
+
+export type Rating = {
+  userContestRanking: ContestRanking
+  userContestRankingHistory: {
+    finishTimeInSeconds: number
+    ranking: number
+    rating: number
+    score: number
+    totalProblems: number
+    trendingDirection: null
+    attended: boolean
+    contest: {
+      startTime: number
+      title: string
+      titleCn: string
+    }
+  }[]
+}
+
+export type SubmissionType = {
+  id: number
+  date: number
+  question_id: number
+  submission_id: number
+  status: number
+  contest_id: number
+  data_region: string
+  fail_count: number
+  lang: string
+}
+
+export type RankType = {
+  contest_id: number
+  username: string
+  user_slug: string
+  real_name: string
+  country_code: string
+  country_name: string
+  rank: number
+  score: number
+  finish_time: number
+  global_ranking: number
+  data_region: string
+  avatar_url: string
+  rank_v2: number
+}
+export type Question = {
+  id: number
+  question_id: number
+  credit: number
+  title: string
+  english_title: string
+  title_slug: string
+  category_slug: string
+}
+export type RankingDataType = {
+  is_past: boolean
+  submissions: {
+    [key: number]: SubmissionType
+  }[]
+  questions: Question[]
+  total_rank: RankType[]
+  user_num: number
+}
+
 class LeetCodeApi {
   public graphqlApi: (
     { method, body }: { endpoint?: string; method?: string; body?: unknown },
@@ -589,6 +710,8 @@ class LeetCodeApi {
    *
    *  @param useCache 是否使用缓存，使用缓存的话，会将查询结果缓存到 LocalStorage 中，更新间隔为每个礼拜一，如果发现上次缓存是在礼拜一之前的话，就重新获取
    * TODO: 重新设计使用缓存时机
+   * 通过判断当前官网拥有的题目总数量，来决定要不要更新
+   * 通过判断官网最小的一题是否在缓存中，来决定是否要更新
    */
   public async getAllQuestions(useCache = true): Promise<QuestionType[]> {
     if (useCache) {
@@ -2091,6 +2214,72 @@ class LeetCodeApi {
     }
     return questions.concat(
       await this.queryACQuestions(last, status, skip + limit, limit)
+    )
+  }
+
+  public async getContestInfo(contestSlug: string): Promise<ContestInfo> {
+    return this.baseApi(`/contest/api/info/${contestSlug}/`).then(res =>
+      res.json()
+    )
+  }
+  public async getGlobalyRanking(contestSlug: string): Promise<MyRanking> {
+    return this.baseApi(
+      `/contest/api/myranking/${contestSlug}/?region=global`
+    ).then(res => res.json())
+  }
+  public async getContest(
+    contestSlug: string,
+    page: number,
+    region: 'local' | 'global' = 'local'
+  ): Promise<RankingDataType> {
+    return this.baseApi(
+      `/contest/api/ranking/${contestSlug}/?pagination=${page}&region=${region}`
+    ).then(res => res.json())
+  }
+
+  public getRating(
+    userSlug: string,
+    hasHistory?: false
+  ): Promise<{ userContestRanking: ContestRanking }>
+  public getRating(userSlug: string, hasHistory: true): Promise<Rating>
+  public getRating(userSlug: string, hasHistory?: boolean): Promise<Rating> {
+    const body = {
+      variables: { userSlug },
+      query: /* GraphQL */ `
+        query userContestRankingInfo($userSlug: String!) {
+          userContestRanking(userSlug: $userSlug) {
+            attendedContestsCount
+            rating
+            globalRanking
+            localRanking
+            globalTotalParticipants
+            localTotalParticipants
+            topPercentage
+          }
+          ${
+            hasHistory
+              ? /* GraphQL */ `
+          userContestRankingHistory(userSlug: $userSlug) {
+            attended
+            totalProblems
+            trendingDirection
+            finishTimeInSeconds
+            rating
+            score
+            ranking
+            contest {
+              title
+              titleCn
+              startTime
+            }
+          }`
+              : ''
+          }
+        }
+      `,
+    }
+    return this.graphqlApi({ endpoint: 'graphql/noj-go/', body }).then(
+      ({ data }) => data
     )
   }
 }

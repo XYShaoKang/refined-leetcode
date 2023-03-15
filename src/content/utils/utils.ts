@@ -370,13 +370,178 @@ export const getProblemRankData = async (): Promise<ProblemRankData[]> => {
   ]
   const data = await Promise.race(
     dataUrls.map(url =>
-      fetch(url, { headers: {} })
+      fetch(url)
         .then(res => res.json())
         .catch(() => new Promise((res, rej) => setTimeout(rej, 10000)))
     )
   )
 
   return data
+}
+
+export type PreviousRatingDataType = {
+  info: {}
+  totalRank: {
+    username: string
+    data_region: string
+    rating: number
+    acc: number
+    score: number
+    finish_time: number
+  }[]
+  rankUpdate: number
+}
+
+export const getPreviousRatingData = async (
+  contestSlug: string
+): Promise<PreviousRatingDataType> => {
+  const dataUrls = [
+    `https://leetcode-predictor.oss-cn-beijing.aliyuncs.com/data/${contestSlug}.json`,
+  ]
+  try {
+    const { sha } = await getGitHubCommit(
+      'XYShaoKang',
+      'leetcode-predictor',
+      'master'
+    )
+    dataUrls.push(
+      `https://raw.githubusercontent.com/XYShaoKang/leetcode-predictor/${sha}/data/${contestSlug}.json`,
+      `https://cdn.jsdelivr.net/gh/XYShaoKang/leetcode-predictor@${sha}/data/${contestSlug}.json`
+    )
+  } catch (error) {
+    //
+  }
+
+  try {
+    const data = await Promise.race(
+      dataUrls.map(url =>
+        fetch(url)
+          .then(res => res.json())
+          .catch(() => new Promise((res, rej) => setTimeout(rej, 10000)))
+      )
+    )
+    if (data) return data
+    throw new Error('获取数据错误')
+  } catch (error) {
+    //
+  }
+  throw new Error('获取数据错误')
+}
+
+type GitHubCommit = {
+  url: string
+  sha: string
+  node_id: string
+  html_url: string
+  comments_url: string
+  commit: {
+    url: string
+    author: {
+      name: string
+      email: string
+      date: string
+    }
+    committer: {
+      name: string
+      email: string
+      date: string
+    }
+    message: string
+    tree: {
+      url: string
+      sha: string
+    }
+    comment_count: number
+    verification: {
+      verified: boolean
+      reason: string
+      signature: null
+      payload: null
+    }
+  }
+  author: {
+    login: string
+    id: number
+    node_id: string
+    avatar_url: string
+    gravatar_id: string
+    url: string
+    html_url: string
+    followers_url: string
+    following_url: string
+    gists_url: string
+    starred_url: string
+    subscriptions_url: string
+    organizations_url: string
+    repos_url: string
+    events_url: string
+    received_events_url: string
+    type: string
+    site_admin: boolean
+  }
+  committer: {
+    login: string
+    id: number
+    node_id: string
+    avatar_url: string
+    gravatar_id: string
+    url: string
+    html_url: string
+    followers_url: string
+    following_url: string
+    gists_url: string
+    starred_url: string
+    subscriptions_url: string
+    organizations_url: string
+    repos_url: string
+    events_url: string
+    received_events_url: string
+    type: string
+    site_admin: false
+  }
+  parents: [
+    {
+      url: string
+      sha: string
+    }
+  ]
+  stats: {
+    additions: number
+    deletions: number
+    total: number
+  }
+  files: [
+    {
+      filename: string
+      additions: number
+      deletions: number
+      changes: number
+      status: string
+      raw_url: string
+      blob_url: string
+      patch: string
+    }
+  ]
+}
+
+export const getGitHubCommit = async (
+  owner: string,
+  repo: string,
+  ref: string
+): Promise<GitHubCommit> => {
+  const res: any = await Promise.race([
+    fetch(`https://api.github.com/repos/${owner}/${repo}/commits/${ref}`, {
+      cache: 'no-cache',
+      credentials: 'omit',
+    }),
+    new Promise((res, rej) => setTimeout(rej, 1000)),
+  ])
+  const result = await res.json()
+  if (res.status === 403) {
+    throw new Error(result.message)
+  }
+
+  return result
 }
 
 // 通过页面包含的一些独特特征判断是否已经跳转到某个页面
@@ -472,4 +637,8 @@ export function getPageName(): PageName | undefined {
     // 题库页
     return 'problemsetPage'
   }
+}
+
+export function gkey(region: string, username: string): string {
+  return `${region.toLocaleLowerCase()}:${username.toLocaleLowerCase()}`
 }

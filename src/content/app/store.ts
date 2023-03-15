@@ -7,7 +7,7 @@ import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import localforage from 'localforage'
 
-import { apiSlice } from '@/pages/ranking/rankSlice'
+import { apiSlice, contestInfosSlice } from '@/pages/ranking/rankSlice'
 import postsReducer from '@/pages/home/postsSlice'
 import blockUsersReducer from '@/pages/home/blockUsersSlice'
 import globalDataReducer, { fetchGlobalData } from '@/pages/global/globalSlice'
@@ -100,6 +100,7 @@ const store = configureStore({
     options: persistedOptionsReducer,
     favorites: favoritesReducer,
     questions: persistedQuestionsReducer,
+    contestInfos: contestInfosSlice.reducer,
   },
   devTools: false,
   middleware: getDefaultMiddleware =>

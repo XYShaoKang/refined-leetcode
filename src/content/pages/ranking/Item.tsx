@@ -1,21 +1,29 @@
-import { Portal } from '@/components/Portal'
-import { useEffectMount } from '@/hooks'
+import { useAppSelector, useEffectMount } from '@/hooks'
 import { FC, memo, useState } from 'react'
 import { css } from 'styled-components/macro'
 
-import { debounce } from '../../../utils'
+import { debounce } from 'src/utils'
 
-import { ParamType, useGetPredictionQuery } from './rankSlice'
+import { selectUserPredict } from './rankSlice'
 
 type ItmeType = {
-  index: number
-  hasMyRank: boolean
+  contestSlug: string
+  region: string
+  username: string
   showOldRating: boolean
   showPredictordelta: boolean
   showNewRating: boolean
+  realTime: boolean
 }
 
-function getParam(): ParamType {
+export type PageParamType = {
+  contestId: string
+  page: number
+  username?: string
+  region: 'local' | 'global'
+}
+
+function getParam(): PageParamType {
   const [, contestId, , pageStr = '1'] = location.pathname
     .split('/')
     .filter(Boolean)
@@ -28,7 +36,7 @@ function getParam(): ParamType {
   return { contestId, page, region }
 }
 
-export function useUrlChange(): [ParamType] {
+export function useUrlChange(): [PageParamType] {
   const [param, setParam] = useState(getParam())
   useEffectMount(state => {
     const handle = debounce(() => {
@@ -58,33 +66,62 @@ export function useUrlChange(): [ParamType] {
   return [param]
 }
 
-const Item: FC<ItmeType> = memo(function Item({
-  index,
-  hasMyRank,
+export const Item: FC<ItmeType> = memo(function Item({
+  contestSlug,
+  region,
+  username,
   showOldRating,
   showPredictordelta,
   showNewRating,
+  realTime,
 }) {
-  const [param] = useUrlChange()
-  const params: ParamType = { ...param }
-  if (hasMyRank) {
-    const username = (window as any).LeetCodeData.userStatus.username
-    params.username = username
+  let { delta, oldRating } =
+    useAppSelector(state =>
+      selectUserPredict(state, contestSlug, region, username, !!realTime)
+    ) ?? {}
+
+  if (!oldRating) return <></>
+
+  let deltaEl, oldRatingEl
+  if (delta === undefined) {
+    deltaEl = <></>
+    oldRatingEl = <></>
+  } else {
+    const deltaNum = Number((delta ?? 0).toFixed(1))
+    deltaEl = (
+      <div
+        css={css`
+          color: ${deltaNum >= 0 ? 'green' : 'gray'};
+          width: 55px;
+        `}
+      >
+        {deltaNum > 0 ? `+${deltaNum}` : deltaNum}
+      </div>
+    )
+    const newRating = Number(((delta ?? 0) + oldRating).toFixed(1))
+    oldRatingEl = (
+      <div
+        css={
+          showPredictordelta
+            ? // 如果有显示分数变化，则新分数只需要区分颜色
+              css`
+                color: ${delta >= 0 ? `green` : `gray`};
+              `
+            : // 如果没有显示分数变化，则需要将分数变化反应到颜色的深浅中
+              css`
+                font-weight: bold;
+                color: ${delta >= 0
+                  ? `rgb(0 136 0 / ${Math.min(delta / 100, 1) * 70 + 30}%)`
+                  : `rgb(64 64 64 / ${Math.min(-delta / 100, 1) * 70 + 30}%)`};
+              `
+        }
+      >
+        {newRating}
+      </div>
+    )
   }
 
-  const { data: items } = useGetPredictionQuery(params)
-
-  if (!items) {
-    return <span> ...loading</span>
-  }
-
-  const predictor: number | undefined = items?.[index]?.delta?.toFixed(1),
-    newRating = items?.[index]?.newRating?.toFixed(1),
-    oldRating = items?.[index]?.oldRating?.toFixed(1)
-
-  if (predictor === undefined) {
-    return <></>
-  }
+  oldRating = Number(oldRating.toFixed(1))
 
   return (
     <div
@@ -93,63 +130,8 @@ const Item: FC<ItmeType> = memo(function Item({
       `}
     >
       {showOldRating && <div style={{ width: 60 }}>{oldRating}</div>}
-      {showPredictordelta && (
-        <div
-          css={css`
-            color: ${predictor >= 0 ? 'green' : 'gray'};
-            width: 55px;
-          `}
-        >
-          {predictor > 0 ? `+${predictor}` : predictor}
-        </div>
-      )}
-      {showNewRating && (
-        <div
-          css={
-            showPredictordelta
-              ? // 如果有显示分数变化，则新分数只需要区分颜色
-                css`
-                  color: ${predictor >= 0 ? `green` : `gray`};
-                `
-              : // 如果没有显示分数变化，则需要将分数变化反应到颜色的深浅中
-                css`
-                  font-weight: bold;
-                  color: ${predictor >= 0
-                    ? `rgb(0 136 0 / ${
-                        Math.min(predictor / 100, 1) * 70 + 30
-                      }%)`
-                    : `rgb(64 64 64 / ${
-                        Math.min(-predictor / 100, 1) * 70 + 30
-                      }%)`};
-                `
-          }
-        >
-          {newRating}
-        </div>
-      )}
+      {showPredictordelta && deltaEl}
+      {showNewRating && oldRatingEl}
     </div>
   )
 })
-interface PredictItemProps {
-  row: HTMLElement
-  index: number
-  hasMyRank: boolean
-  showOldRating: boolean
-  showPredictordelta: boolean
-  showNewRating: boolean
-}
-
-const PredictItem = memo(function PredictItem({
-  row,
-  ...props
-}: PredictItemProps) {
-  return (
-    <Portal container={row}>
-      <td>
-        <Item {...props} />
-      </td>
-    </Portal>
-  )
-})
-
-export default PredictItem

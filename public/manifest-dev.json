@@ -44,7 +44,7 @@
     "default_popup": "popup.html"
   },
   "content_security_policy": {
-    "extension_pages": "default-src 'self' http://localhost:9100; script-src 'self' http://localhost:9100; script-src-elem 'self' http://localhost:9100; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:9100 http://localhost:9100 https://leetcode-rating-predictor.herokuapp.com https://leetcode-predictor.herokuapp.com https://leetcode-cn.com https://leetcode.cn https://lccn.lbao.site"
+    "extension_pages": "default-src 'self' http://localhost:9100; script-src 'self' http://localhost:9100; script-src-elem 'self' http://localhost:9100; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:9100 http://localhost:9100 https://leetcode-rating-predictor.herokuapp.com https://leetcode-predictor.herokuapp.com https://leetcode-cn.com https://leetcode.cn https://lccn.lbao.site https://leetcode.com"
   },
   "permissions": [
     "scripting",
@@ -56,7 +56,8 @@
     "http://localhost:9100/*",
     "https://leetcode-rating-predictor.herokuapp.com/*",
     "https://leetcode-predictor.herokuapp.com/*",
-    "https://lccn.lbao.site/*"
+    "https://lccn.lbao.site/*",
+    "https://leetcode.com/*"
   ],
   "externally_connectable": {
     "matches": [

@@ -3,15 +3,18 @@ import styled from 'styled-components/macro'
 
 import { debounce } from '../../../utils'
 
-import { ParamType, useGetContestQuery } from './rankSlice'
+import {
+  selectUserRanking,
+  selectContestInfo,
+  useGetFileIconsQuery,
+} from './rankSlice'
 import { Portal } from '@/components/Portal'
-import { useUrlChange } from './Item'
+import { useAppSelector } from '@/hooks'
+import { useUser } from './utils'
 
 type ItmeType = {
-  row: number
-  col: number
-  hasMyRank: boolean
   parent: HTMLElement
+  lang?: string
 }
 
 const DefaultIcon = styled.span`
@@ -39,40 +42,21 @@ function setDisplay(el: Element | undefined, display: string) {
   }
 }
 function isShow(parent: HTMLElement) {
-  if (!parent.childElementCount) return false
-  const [child] = parent.childNodes
-  return (
-    child instanceof HTMLAnchorElement &&
-    child.children[0] instanceof HTMLSpanElement
-  )
+  return parent.textContent && !!parent.textContent.trim()
 }
-const LanguageIcon: FC<ItmeType> = ({ parent, row, col, hasMyRank }) => {
-  const [param] = useUrlChange()
+
+const LanguageIcon: FC<ItmeType> = ({ parent, lang }) => {
   const [show, setShow] = useState(isShow(parent))
+  const { data: iconFiles } = useGetFileIconsQuery()
 
-  const params: ParamType = { ...param }
-  if (hasMyRank) {
-    const username = (window as any).LeetCodeData.userStatus.username
-    params.username = username
-  }
-
-  const { data: items } = useGetContestQuery(params)
-  const iconFile = items?.[row]?.[col]?.iconFile
-
-  useEffect(() => {
-    if (!show) return
-    setDisplay(parent.children[0]?.children[0], 'none')
-
-    return () => {
-      setDisplay(parent.children[0]?.children[0], '')
-    }
-  }, [show])
   useEffect(() => {
     const handleChange = debounce(() => {
       const show = isShow(parent)
       setShow(show)
       if (show) {
-        setDisplay(parent.children[0]?.children[0], 'none')
+        if (parent.childNodes[0].nodeName === 'A') {
+          setDisplay(parent.children[0]?.children[0], 'none')
+        }
       }
     }, 10)
     handleChange()
@@ -81,13 +65,22 @@ const LanguageIcon: FC<ItmeType> = ({ parent, row, col, hasMyRank }) => {
     return () => {
       handleChange.cancel()
       observer.disconnect()
+      setDisplay(parent.children[0]?.children[0], '')
     }
   }, [])
-  if (!show) return null
 
+  if (!show || !lang || !iconFiles) return null
+
+  if (parent.childNodes[0]?.nodeName === '#text') {
+    // 当前处于比赛中，则需要手动创建一个元素用于图标的渲染
+    const span = document.createElement('span')
+    parent.insertBefore(span, parent.childNodes[0])
+  }
+
+  const iconFile = iconFiles[lang]
   return (
     <Portal container={parent.children[0] as HTMLElement}>
-      {!items || !iconFile ? (
+      {!iconFile ? (
         <DefaultIcon className="fa fa-file-code-o" />
       ) : (
         <StyleSvg>
@@ -99,10 +92,22 @@ const LanguageIcon: FC<ItmeType> = ({ parent, row, col, hasMyRank }) => {
 }
 
 export const LanguageIconRow: FC<{
+  contestSlug: string
   row: HTMLElement
   i: number
   hasMyRank: boolean
-}> = memo(function LanguageIconRow({ row, i, hasMyRank }) {
+}> = memo(function LanguageIconRow({ contestSlug, row, i, hasMyRank }) {
+  const { username, region } = useUser(hasMyRank, i, row)
+
+  const user = useAppSelector(state =>
+    selectUserRanking(state, contestSlug, region, username)
+  )
+  const contestInfo = useAppSelector(state =>
+    selectContestInfo(state, contestSlug)
+  )
+
+  if (!user || !contestInfo) return null
+  const { questions } = contestInfo
   const tds = Array.prototype.slice.call(row.children, 4, 8)
   return (
     <>
@@ -110,9 +115,7 @@ export const LanguageIconRow: FC<{
         <LanguageIcon
           key={j}
           parent={td}
-          row={i}
-          col={j}
-          hasMyRank={hasMyRank}
+          lang={user.submission[questions[j].question_id]?.lang}
         />
       ))}
     </>

@@ -1,50 +1,5 @@
+import { RankingDataType, RankType, SubmissionType } from '@/utils'
 import { cache } from '.'
-
-export type SubmissionType = {
-  id: number
-  date: number
-  question_id: number
-  submission_id: number
-  status: number
-  contest_id: number
-  data_region: string
-  fail_count: number
-  lang: string
-}
-export type QuestionType = {
-  id: number
-  question_id: number
-  credit: number
-  title: string
-  english_title: string
-  title_slug: string
-  category_slug: string
-}
-export type RankType = {
-  contest_id: number
-  username: string
-  user_slug: string
-  real_name: string
-  country_code: string
-  country_name: string
-  rank: number
-  score: number
-  finish_time: number
-  global_ranking: number
-  data_region: string
-  avatar_url: string
-  rank_v2: number
-}
-
-export type RankingDataType = {
-  is_past: boolean
-  submissions: {
-    [key: number]: SubmissionType
-  }[]
-  questions: QuestionType[]
-  total_rank: RankType[]
-  user_num: number
-}
 
 export const getContest = cache(
   (contestId: string, page: number, region: 'local' | 'global' = 'local') =>
