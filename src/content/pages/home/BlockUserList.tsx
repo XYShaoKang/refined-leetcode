@@ -1,10 +1,11 @@
 import React, {
-  FC,
   useState,
   ChangeEventHandler,
   KeyboardEventHandler,
   useContext,
   useRef,
+  forwardRef,
+  ForwardedRef,
 } from 'react'
 import styled, { ThemeContext } from 'styled-components/macro'
 
@@ -91,7 +92,10 @@ const Clear = styled.div`
   }
 `
 
-const BlockUserList: FC<BlockUserListProps> = props => {
+const BlockUserList = forwardRef(function BlockUserList(
+  props: BlockUserListProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   const [slug, setData] = useState<string>('')
   const users = useAppSelector(selectAllBlockUsers)
   const [status, setStatus] = useState('idle')
@@ -169,6 +173,7 @@ const BlockUserList: FC<BlockUserListProps> = props => {
   return (
     <Popper
       {...props}
+      ref={ref}
       style={{
         width,
         borderRadius: 8,
@@ -289,6 +294,6 @@ const BlockUserList: FC<BlockUserListProps> = props => {
       </List>
     </Popper>
   )
-}
+})
 
 export default BlockUserList

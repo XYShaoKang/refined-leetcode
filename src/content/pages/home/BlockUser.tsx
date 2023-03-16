@@ -22,6 +22,7 @@ const Container = styled.div`
 
 const BlockUser: FC = () => {
   const ref = useRef<HTMLDivElement>(null)
+  const listRef = useRef<HTMLDivElement>(null)
   const [showEdit, setShowEdit] = useState(false)
   const handleClick = () => {
     setShowEdit(state => !state)
@@ -35,6 +36,20 @@ const BlockUser: FC = () => {
       document.body.removeEventListener('scroll', handleScroll, option)
     }
   }, [])
+
+  useEffect(() => {
+    if (!showEdit) return
+    const handleClick = (e: MouseEvent) => {
+      const el = e.target as Node
+      if (!el) return
+      if (ref.current?.contains(el) || listRef.current?.contains(el)) return
+      setShowEdit(false)
+    }
+    document.addEventListener('click', handleClick)
+    return () => {
+      document.removeEventListener('click', handleClick)
+    }
+  }, [showEdit])
 
   return (
     <>
@@ -51,7 +66,13 @@ const BlockUser: FC = () => {
           <path d="M7 10l5 5 5-5z" />
         </svg>
       </Container>
-      {showEdit && <BlockUserList placement="bottom" anchorEl={ref.current} />}
+      {showEdit && (
+        <BlockUserList
+          placement="bottom"
+          anchorEl={ref.current}
+          ref={listRef}
+        />
+      )}
 
       <DragAndDrop />
     </>
