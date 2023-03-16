@@ -38,23 +38,25 @@ export const useObserverAncestor = (
       el = el.parentElement!
       els.push(el)
     }
-    while (ancestors.length) {
-      const ancestor = ancestors.pop()!
-      ancestorSet.delete(ancestor)
-      observers.pop()!.disconnect()
-      if (ancestor === els[els.length - 1]) break
-    }
     //#endregion
 
     // 添加新元素变化的部分祖先结点，并添加对应的 MutationObserver
     // 要判断当前结点是否被删除，必须要将 MutationObserver 挂载到父元素上
-    while (els.length) {
-      const el = els.pop()!
+
+    while ((el = els.pop())) {
       const observer = new MutationObserver(mutations => {
         const checked = mutations.some(({ removedNodes }) =>
           Array.prototype.some.call(removedNodes, node => node === el)
         )
-        if (checked) mount()
+        if (checked) {
+          while (els.length) {
+            const ancestor = ancestors.pop()!
+            ancestorSet.delete(ancestor)
+            observers.pop()!.disconnect()
+            if (ancestor === el) break
+          }
+          mount()
+        }
       })
       ancestors.push(el)
       ancestorSet.add(el)
@@ -66,6 +68,11 @@ export const useObserverAncestor = (
 
   useEffect(() => {
     mount()
-    return () => ancestorRef.current.observers.forEach(o => o.disconnect())
+    return () => {
+      let observer
+      while ((observer = ancestorRef.current.observers.pop())) {
+        observer.disconnect()
+      }
+    }
   }, [])
 }

@@ -365,8 +365,9 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
     }
     return editEl
   }
-  useObserverAncestor(async () => {
+  useObserverAncestor(async state => {
     const editEl: HTMLElement = await getEditEl()
+    if (!state.isMount) return
     setEditEl(editEl)
     return editEl
   })
