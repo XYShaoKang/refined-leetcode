@@ -42,7 +42,7 @@ const Item = styled.li`
   justify-content: space-between;
   font-size: 14px;
   border-radius: 5px;
-  padding: 0px 12px;
+  padding: 0px 8px;
   font-weight: 400;
   transition: all 0.2s ease 0s;
   cursor: pointer;
@@ -173,6 +173,7 @@ const BlockUserList: FC<BlockUserListProps> = props => {
         width,
         borderRadius: 8,
         background: themeContext.palette.primary.light,
+        padding: '16px 12px',
       }}
       as="div"
     >
