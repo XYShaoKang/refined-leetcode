@@ -99,7 +99,7 @@ const FavoriteItem: FC<FavoriteItemProps> = ({
     return () => {
       if (timer !== null) clearTimeout(timer)
     }
-  }, [favorite?.isInAudit])
+  }, [dispatch, favorite?.isInAudit, idHash])
 
   if (!favorite) return null
 
@@ -193,6 +193,7 @@ const FavoriteItem: FC<FavoriteItemProps> = ({
           column-gap: 8px;
           color: ${props => props.theme.palette.text.light};
           align-items: center;
+          border-radius: 5px;
           &:hover {
             background-color: ${props => props.theme.palette.secondary.hover};
           }
