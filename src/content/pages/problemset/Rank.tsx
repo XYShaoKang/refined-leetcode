@@ -206,6 +206,7 @@ const Rank: FC<{ enable: boolean }> = ({ enable }) => {
   }, [enable, tableEl?.parentElement])
 
   const otherRoots = useMemo(() => {
+    if (!enable) return {}
     // 获取其他排序选项的结点，用以控制排序
     const otherRoots: { [key in OrderBy]?: HTMLElement } = {}
     if (titleRow) {
@@ -222,7 +223,7 @@ const Rank: FC<{ enable: boolean }> = ({ enable }) => {
       }
     }
     return otherRoots
-  }, [titleRow])
+  }, [enable, titleRow])
   if (!tableEl) return null
   return (
     <>
