@@ -44,6 +44,7 @@ export const Box = forwardRef<HTMLDivElement, BoxProps>(function Box(
       ref={ref}
       css={css`
         display: flex;
+        height: 32px;
         align-items: center;
         margin-right: 10px;
         padding: 0 10px;

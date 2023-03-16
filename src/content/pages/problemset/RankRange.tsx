@@ -40,7 +40,7 @@ const StyledInput: FC<{
       css={css`
         && {
           width: 80px;
-          height: 20px;
+          height: 32px;
           margin: 0 5px;
         }
       `}
@@ -109,7 +109,7 @@ const RankRange: FC = () => {
         css={css`
           && {
             width: 60px;
-            height: 20px;
+            height: 32px;
           }
         `}
       >

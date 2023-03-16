@@ -62,7 +62,7 @@ const Editor: FC<EditorProps> = ({ text: initText = '', onSave, onCancel }) => {
           value={text}
           onChange={handleChange}
           style={{
-            height: 24,
+            height: 32,
             padding: '2px 11px',
           }}
         />
@@ -71,13 +71,13 @@ const Editor: FC<EditorProps> = ({ text: initText = '', onSave, onCancel }) => {
         css={css`
           display: flex;
           justify-content: space-around;
-          margin-top: 6px;
+          margin-top: 12px;
         `}
       >
         <Button
           css={css`
             && {
-              height: 24px;
+              height: 32px;
               background-color: #555;
               &:hover {
                 background-color: #444;
@@ -89,7 +89,7 @@ const Editor: FC<EditorProps> = ({ text: initText = '', onSave, onCancel }) => {
           取消
         </Button>
         <Button
-          style={{ height: 24 }}
+          style={{ height: 32 }}
           disabled={!text}
           loading={loading}
           onClick={handleSave}

@@ -30,6 +30,7 @@ const AddFavorite: React.FC<AddFavoriteProps> = ({
         <div
           css={css`
             width: 100%;
+            height: 32px;
             padding: 1px 0;
             text-align: center;
             cursor: pointer;
@@ -44,7 +45,7 @@ const AddFavorite: React.FC<AddFavoriteProps> = ({
           `}
           onClick={toggleEnableEdit}
         >
-          <AddIcon height={14} />
+          <AddIcon height={18} />
           <span>创建新题单</span>
         </div>
       )}

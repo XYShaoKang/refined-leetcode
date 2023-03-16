@@ -251,7 +251,7 @@ const Rank: FC<{ enable: boolean }> = ({ enable }) => {
             css={css`
               display: flex;
               align-items: center;
-              padding: 10px;
+              padding: 12px 10px;
               background-color: ${props =>
                 props.theme.mode === 'dark' ? '#303030' : '#f7f8fa'};
               color: ${props =>
@@ -276,12 +276,12 @@ const Rank: FC<{ enable: boolean }> = ({ enable }) => {
               background-color: ${props =>
                 props.theme.mode === 'dark' ? '#303030' : '#f7f8fa'};
 
-              height: 44px;
+              height: 56px;
               display: flex;
               align-items: center;
               padding: 10px 10px 10px 16px;
               margin-left: -6px;
-              margin-top: 1px;
+              margin-top: 0px;
               cursor: pointer;
               border-top-right-radius: 6px;
               border-bottom-right-radius: 6px;
