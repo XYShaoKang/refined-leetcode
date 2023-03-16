@@ -177,27 +177,28 @@ function caclPopperPos(
   position: 'absolute' | 'fixed',
   offset?: { left: number; top: number }
 ) {
-  const rect = el.getClientRects()
+  const rect = el.getBoundingClientRect()
+  const { height, width } = rect
   let left = 0,
     top = 0
-  if (!rect.length) return { left, top }
-  if (position === 'fixed') [{ left, top }] = rect
 
-  const { offsetHeight, offsetWidth } = el
+  if (position === 'fixed') ({ left, top } = rect)
+
+  // const { offsetHeight: height, offsetWidth: width } = el
   switch (placement) {
     case 'top':
-      left += offsetWidth / 2
+      left += width / 2
       break
     case 'bottom':
-      left += offsetWidth / 2
-      top += offsetHeight
+      left += width / 2
+      top += height
       break
     case 'left':
-      top += offsetHeight / 2
+      top += height / 2
       break
     case 'right':
-      left += offsetWidth
-      top += offsetHeight / 2
+      left += width
+      top += height / 2
       break
     default:
       // eslint-disable-next-line no-case-declarations

@@ -24,11 +24,21 @@ export interface PopperProps {
    * 是否显示小箭头
    */
   arrow?: boolean
+  offset?: {
+    left?: number
+    top?: number
+  }
 }
 
 export const Popper: StyledComponent<PopperProps, 'span'> = forwardRef(
   function Popper<AsC extends React.ElementType = 'span'>(
-    { anchorEl, placement = 'top', arrow, ...props }: SCProps<PopperProps, AsC>,
+    {
+      anchorEl,
+      placement = 'top',
+      arrow,
+      offset,
+      ...props
+    }: SCProps<PopperProps, AsC>,
     ref: React.ForwardedRef<AsC>
   ) {
     const popperRef = useRef<HTMLSpanElement>()
@@ -50,8 +60,8 @@ export const Popper: StyledComponent<PopperProps, 'span'> = forwardRef(
     })
 
     useLayoutEffect(() => {
-      if (anchorEl) setPos(() => caclPopperPos(placement, anchorEl))
-    }, [anchorEl, placement])
+      if (anchorEl) setPos(() => caclPopperPos(placement, anchorEl, offset))
+    }, [anchorEl, offset, placement])
 
     const [arrowPos, setArrow] = useState<{ left: number; top: number }>()
 
@@ -123,27 +133,39 @@ function caclArrowPos(
  * @param el 定位元素
  * @returns 返回弹出窗口的定位信息
  */
-function caclPopperPos(placement: Placement, el: HTMLElement) {
-  const { height, width, left, top } = el.getBoundingClientRect()
+function caclPopperPos(
+  placement: Placement,
+  el: HTMLElement,
+  offset?: { left?: number; top?: number }
+) {
+  let { height, width, left, top } = el.getBoundingClientRect()
 
   switch (placement) {
     case 'top':
-      return { left: left + width / 2, top }
+      left += width / 2
+      break
 
     case 'bottom':
-      return { left: left + width / 2, top: top + height }
-
+      left += width / 2
+      top += height
+      break
     case 'left':
-      return { left, top: top + height / 2 }
-
+      top += height / 2
+      break
     case 'right':
-      return { left: left + width, top: top + height / 2 }
-
+      left += width
+      top += height / 2
+      break
     default:
       // eslint-disable-next-line no-case-declarations
       const _exhaustiveCheck: never = placement
       return _exhaustiveCheck
   }
+  if (offset) {
+    left += offset.left ?? 0
+    top += offset.top ?? 0
+  }
+  return { left, top }
 }
 
 export const PopperpStyled = styled.span<{

@@ -70,6 +70,7 @@ const TitleBase = forwardRef<HTMLDivElement, TitleProps>(function TitleBase(
                 `}
         `}
         title={help ?? ''}
+        offset={{ top: 2 }}
       >
         <div
           css={css`
