@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, ReactNode } from 'react'
 import styled from 'styled-components/macro'
 
 import { ToolTip } from '@/components/ToolTip'
@@ -21,30 +21,18 @@ const HelpIcon = styled.span`
 `
 
 const Content = styled.div`
-  width: 175px;
   color: #fff;
   text-align: center;
+  white-space: nowrap;
 `
 
-const Help = () => {
+const Help = ({ content }: { content: string | ReactNode }) => {
   return (
     <ToolTip
       placement="bottom"
       arrow={true}
       keep={true}
-      title={
-        <Content>
-          预测数据来自
-          <a
-            href="https://lccn.lbao.site/"
-            target="_blank"
-            rel="noreferrer"
-            style={{ paddingLeft: 2 }}
-          >
-            lccn.lbao.site
-          </a>
-        </Content>
-      }
+      title={<Content>{content}</Content>}
     >
       <HelpIcon />
     </ToolTip>
@@ -55,14 +43,14 @@ interface TitleProps {
   showOldRating: boolean
   showPredictordelta: boolean
   showNewRating: boolean
-  showHelp?: boolean
+  help?: string | ReactNode
 }
 
 const Title: FC<TitleProps> = ({
   showNewRating,
   showPredictordelta,
   showOldRating,
-  showHelp,
+  help,
 }) => {
   return (
     <>
@@ -74,7 +62,9 @@ const Title: FC<TitleProps> = ({
         {showOldRating && (
           <div style={{ width: 60 }}>
             旧分数
-            {!showPredictordelta && !showNewRating && showHelp && <Help />}
+            {!showPredictordelta && !showNewRating && help && (
+              <Help content={help} />
+            )}
           </div>
         )}
         {showPredictordelta && (
@@ -85,14 +75,14 @@ const Title: FC<TitleProps> = ({
             }}
           >
             <span>{showNewRating ? 'Δ' : '预测'}</span>
-            {!showNewRating && showHelp && <Help />}
+            {!showNewRating && help && <Help content={help} />}
           </div>
         )}
 
         {showNewRating && (
           <div>
             新分数
-            {showHelp && <Help />}
+            {help && <Help content={help} />}
           </div>
         )}
       </div>

@@ -125,7 +125,19 @@ const App: FC = () => {
                   showOldRating={showOldRating}
                   showPredictordelta={showPredictordelta}
                   showNewRating={showNewRating}
-                  showHelp={true}
+                  help={
+                    <>
+                      预测数据来自
+                      <a
+                        href="https://lccn.lbao.site/"
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ paddingLeft: 2 }}
+                      >
+                        lccn.lbao.site
+                      </a>
+                    </>
+                  }
                 />
               </th>
             )}
@@ -140,6 +152,7 @@ const App: FC = () => {
                   showOldRating={showOldRating}
                   showPredictordelta={showPredictordelta}
                   showNewRating={showNewRating}
+                  help={<>实时预测，仅供参考</>}
                 />
               </th>
             )}
