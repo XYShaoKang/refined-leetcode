@@ -1,3 +1,10 @@
+## [0.12.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.1...v0.12.2) (2023-03-17)
+
+
+### Bug Fixes
+
+* 修复生成脚本格式 ([d4d8d44](https://github.com/XYShaoKang/refined-leetcode/commit/d4d8d44b8cd300491d045f8ba243e117779f9263))
+
 ## [0.12.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.0...v0.12.1) (2023-03-17)
 
 
