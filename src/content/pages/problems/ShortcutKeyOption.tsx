@@ -2,12 +2,13 @@ import { useEffect, useState, FC } from 'react'
 import { Portal } from '@/components/Portal'
 import { findElement } from '@/utils'
 import { css } from 'styled-components/macro'
-import { useAppDispatch, useAppSelector } from '@/hooks'
+import { useAppDispatch, useAppSelector, useEffectMount } from '@/hooks'
 import {
   selectOptions,
   toggleContestProblemShortcutKeyOption,
 } from '../global/optionsSlice'
 import { withPage } from '@/hoc'
+import { useThrottle } from '@/hooks/useThrottle'
 
 const ShortcutKeyOption: FC = () => {
   const options = useAppSelector(selectOptions)
@@ -17,26 +18,30 @@ const ShortcutKeyOption: FC = () => {
     options && options.contestProblemsPage.disableShortcutkey
   const dispatch = useAppDispatch()
 
-  const toggle = () => {
+  const toggle = useThrottle(() => {
     dispatch(toggleContestProblemShortcutKeyOption())
-  }
-  useEffect(() => {
-    let settingBtn: HTMLElement
-    const handleClick = async () => {
-      const content = await findElement(
-        '.rc-dialog-body>.modal-body.description__21Ft'
-      )
-      setOptionEl(content)
-    }
+  }, 500)
 
-    void (async function () {
-      settingBtn = await findElement('.setting-btn')
-      settingBtn.addEventListener('click', handleClick)
-    })()
-    return () => {
-      settingBtn && settingBtn.removeEventListener('click', handleClick)
+  useEffectMount(async state => {
+    const handleClick = async () => {
+      try {
+        const content = await findElement(
+          '.rc-dialog-body>.modal-body.description__21Ft'
+        )
+        if (!state.isMount) return
+        setOptionEl(content)
+      } catch (error) {
+        //
+      }
     }
-  }, [])
+    handleClick()
+    const settingBtn = await findElement('.setting-btn')
+    if (!state.isMount) return
+    settingBtn.addEventListener('click', handleClick)
+    state.unmount.push(
+      () => settingBtn && settingBtn.removeEventListener('click', handleClick)
+    )
+  })
 
   useEffect(() => {
     if (!disableShortcutKey) return
