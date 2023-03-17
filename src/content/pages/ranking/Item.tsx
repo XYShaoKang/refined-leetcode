@@ -82,30 +82,36 @@ export const Item: FC<ItmeType> = memo(function Item({
 
   if (!oldRating) return <></>
 
-  let deltaEl, oldRatingEl
+  let deltaEl, newRatingEl
   if (delta === undefined) {
     deltaEl = <></>
-    oldRatingEl = <></>
+    newRatingEl = <></>
   } else {
     const deltaNum = Number((delta ?? 0).toFixed(1))
     deltaEl = (
       <div
         css={css`
-          color: ${deltaNum >= 0 ? 'green' : 'gray'};
-          width: 55px;
+          font-weight: bold;
+          color: ${delta >= 0
+            ? `rgb(0 136 0 / ${Math.min(delta / 100, 1) * 70 + 30}%)`
+            : `rgb(64 64 64 / ${Math.min(-delta / 100, 1) * 70 + 30}%)`};
+          width: 60px;
         `}
       >
         {deltaNum > 0 ? `+${deltaNum}` : deltaNum}
       </div>
     )
     const newRating = Number(((delta ?? 0) + oldRating).toFixed(1))
-    oldRatingEl = (
+    newRatingEl = (
       <div
         css={
           showPredictordelta
             ? // 如果有显示分数变化，则新分数只需要区分颜色
               css`
-                color: ${delta >= 0 ? `green` : `gray`};
+                font-weight: bold;
+                color: ${delta >= 0
+                  ? `rgb(0 136 0 / ${Math.min(delta / 100, 1) * 70 + 30}%)`
+                  : `rgb(64 64 64 / ${Math.min(-delta / 100, 1) * 70 + 30}%)`};
               `
             : // 如果没有显示分数变化，则需要将分数变化反应到颜色的深浅中
               css`
@@ -131,7 +137,7 @@ export const Item: FC<ItmeType> = memo(function Item({
     >
       {showOldRating && <div style={{ width: 60 }}>{oldRating}</div>}
       {showPredictordelta && deltaEl}
-      {showNewRating && oldRatingEl}
+      {showNewRating && newRatingEl}
     </div>
   )
 })
