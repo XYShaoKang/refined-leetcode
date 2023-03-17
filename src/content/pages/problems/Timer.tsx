@@ -87,6 +87,8 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
 
   const { time, isDone, done, restart } = useTimer()
 
+  useEffect(() => restart(), [slug])
+
   const [hoverRef, hover] = useHover<HTMLDivElement>()
 
   const handleHidden = () => {
