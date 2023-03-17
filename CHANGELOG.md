@@ -1,3 +1,31 @@
+# [0.12.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.13...v0.12.0) (2023-03-17)
+
+
+### Bug Fixes
+
+* **home:** 点击黑名单之外的区域时，关闭黑名单列表 ([f926a20](https://github.com/XYShaoKang/refined-leetcode/commit/f926a2030ec9e4f4779280d1ea5ace1628fe7274))
+* **home:** 调整列表样式 ([bb49837](https://github.com/XYShaoKang/refined-leetcode/commit/bb49837f35f6d1429340322f807803a78025ed3e))
+* **problem-list:** 调整鼠标悬浮时的样式 ([4fb1bb4](https://github.com/XYShaoKang/refined-leetcode/commit/4fb1bb4fde2a6b33b7e80a10cd471970cfe08495))
+* **problemset:** 修复当评分关闭时表头中的标题出现错位现象 ([f8069db](https://github.com/XYShaoKang/refined-leetcode/commit/f8069dbd994b8e26574cd90f679ee75e997830c0))
+* **problems:** 使用图标替代文字 ([4df66af](https://github.com/XYShaoKang/refined-leetcode/commit/4df66af983f4892c2b6cdc50f0545741ba8b691a))
+* **problems:** 修复禁用快捷键选项 ([c131073](https://github.com/XYShaoKang/refined-leetcode/commit/c13107319370cf235ecf92afef27dc956f62fdf9))
+* **problems:** 切换题目时重新计时 ([ea46c2a](https://github.com/XYShaoKang/refined-leetcode/commit/ea46c2a59467ba3d304c9936895c6a173a2fb5ea))
+* **problems:** 完善计时器卸载和加载的逻辑 ([dade54c](https://github.com/XYShaoKang/refined-leetcode/commit/dade54c6e8ac36bb919317427333b306767a7c0b))
+* **problems:** 调整计时器样式 ([0f077b3](https://github.com/XYShaoKang/refined-leetcode/commit/0f077b3e8db4559c9e212e4144560f6520c4b5e6))
+* **problems:** 随机一题按钮消失 ([0373563](https://github.com/XYShaoKang/refined-leetcode/commit/0373563815d59232616ee7d871d5e42009e73417))
+* **ranking:** 当显示预测积分时，增加榜单的宽度 ([b4b0dfe](https://github.com/XYShaoKang/refined-leetcode/commit/b4b0dfe42fc03f4b576227156cc9500820b346f4))
+* **ranking:** 添加提示文本 ([14a19cf](https://github.com/XYShaoKang/refined-leetcode/commit/14a19cfd4cfd84c799e37b30de0556263f7a93d2))
+* **ranking:** 调整预测积分样式 ([477939a](https://github.com/XYShaoKang/refined-leetcode/commit/477939ae7bd455d796256f6716dde58fcb074578))
+* 修复 useObserverAncestor 逻辑 ([deffc02](https://github.com/XYShaoKang/refined-leetcode/commit/deffc027f55c49759bc0ef0a41d6726a3061d130))
+* 修复弹出框的偏移量 ([a55a49d](https://github.com/XYShaoKang/refined-leetcode/commit/a55a49da139f41242f9ff597ac2777d7b7dd484c))
+* 修复快捷键提交偶尔失效 ([26c3db0](https://github.com/XYShaoKang/refined-leetcode/commit/26c3db0d0207856025d1d5a9047827a3ada1c961))
+* 调整按钮和输入框的样式 ([acc47ff](https://github.com/XYShaoKang/refined-leetcode/commit/acc47ffb2b53d01c01d13a1a9311c0c164480f01))
+
+
+### Features
+
+* 添加实时预测功能 ([20fbd6d](https://github.com/XYShaoKang/refined-leetcode/commit/20fbd6ddb64b3f698a091a509c7799a28f3fab18))
+
 ## [0.11.13](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.12...v0.11.13) (2023-03-10)
 
 
