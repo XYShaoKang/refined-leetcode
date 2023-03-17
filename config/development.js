@@ -72,10 +72,10 @@ const development = env => ({
         if (file.filename === 'content.bundle.js') {
           return `
           const frame = document.createElement('frame')
+          frame.style.display = 'none'
           document.body.append(frame)
           const console = frame.contentWindow.console
-          window.console = console
-          frame.remove();`
+          window.console = console;`
         }
         return ''
       },
