@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 
-import { useAppSelector, useEffectMount, useObserverAncestor } from '@/hooks'
+import { useAppSelector, useObserverAncestor } from '@/hooks'
 
 import { selectOptions } from '../global/optionsSlice'
 import Timer from './Timer'
@@ -14,8 +14,8 @@ const Beta: FC<{ beta?: boolean }> = () => {
   const [timerRoot, setTimerRoot] = useState<HTMLElement>()
   const [randomRoot, setRandomRoot] = useState<HTMLElement>()
 
-  useEffectMount(async state => {
-    //#region 设置「随机一题」
+  useObserverAncestor(async state => {
+    // 创建「随机一题」按钮根元素
     const nav = await findElement(
       '#__next > div > div > div > nav > div > div > div:nth-child(2)'
     )
@@ -25,10 +25,11 @@ const Beta: FC<{ beta?: boolean }> = () => {
     setRandomRoot(randomRoot)
     nav.append(randomRoot)
     state.unmount.push(() => randomRoot && randomRoot.remove())
-    //#endregion
-  }, [])
+    return randomRoot
+  })
 
   useObserverAncestor(async state => {
+    // 创建「计时器」按钮根元素
     const parent = await getRoot()
     if (!state.isMount) return
 
