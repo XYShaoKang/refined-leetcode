@@ -1,3 +1,10 @@
+## [0.12.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.0...v0.12.1) (2023-03-17)
+
+
+### Bug Fixes
+
+* 修复编译后函数名被修改，导致worker运行错误 ([53e5e83](https://github.com/XYShaoKang/refined-leetcode/commit/53e5e83360bff7d75224244aeb097c60aa2af6f2))
+
 # [0.12.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.11.13...v0.12.0) (2023-03-17)
 
 
