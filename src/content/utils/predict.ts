@@ -57,19 +57,18 @@ export function predictHelper(
   return d
 }
 const script = `
-  const predictHelper = ${predictHelper.toString()}
-  self.onmessage = ({
-    data: { previousRatings, rating, rank, attendedContestsCount },
-  }) => {
-    const res = predictHelper(
-      previousRatings,
-      rating,
-      rank,
-      attendedContestsCount
-    )
-    self.postMessage(res)
-  }
-    `
+const predictHelper = ${predictHelper.toString()}
+self.onmessage = ({
+  data: { previousRatings, rating, rank, attendedContestsCount },
+}) => {
+  const res = predictHelper(
+    previousRatings,
+    rating,
+    rank,
+    attendedContestsCount
+  )
+  self.postMessage(res)
+}`
 const blob = new Blob([script], { type: 'application/javascript' })
 export const predict = async (
   previousRatings: number[],
