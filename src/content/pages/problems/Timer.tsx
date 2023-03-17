@@ -19,6 +19,7 @@ import {
 import { useTimer } from './useTimer'
 import { logger } from '../../../utils'
 import { Portal } from '@/components/Portal'
+import ResetIcon from '@/components/icons/ResetIcon'
 
 const log = logger.child({ prefix: 'Clock' })
 
@@ -405,14 +406,19 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
           >
             {!hidden && hover && (
               <ToolTip title="点击重置按钮,可重置计时">
-                <Button
-                  onClick={restart}
-                  center={true}
-                  width={20}
-                  height={beta ? 33 : 35}
+                <div
+                  style={{
+                    border: '1px solid palevioletred',
+                    borderRight: 0,
+                    height: '100%',
+                    width: 20,
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                  }}
                 >
-                  重置
-                </Button>
+                  <ResetIcon onClick={restart} width={19} height={19} />
+                </div>
               </ToolTip>
             )}
             <ToolTip title={!hidden ? '点击隐藏实时计时' : '点击显示实时计时'}>
