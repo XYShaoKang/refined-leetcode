@@ -57,7 +57,7 @@ export function predictHelper(
   return d
 }
 const script = `
-  ${predictHelper.toString()}
+  const predictHelper = ${predictHelper.toString()}
   self.onmessage = ({
     data: { previousRatings, rating, rank, attendedContestsCount },
   }) => {
