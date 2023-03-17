@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { DependencyList, useEffect, useRef } from 'react'
 import { useEvent } from './useEvent'
 import { State, useUnMount } from './useIsMount'
 
@@ -18,7 +18,8 @@ import { State, useUnMount } from './useIsMount'
 export const useObserverAncestor = (
   onChange: (
     state: State
-  ) => HTMLElement | undefined | null | Promise<HTMLElement | undefined | null>
+  ) => HTMLElement | undefined | null | Promise<HTMLElement | undefined | null>,
+  deps: DependencyList = []
 ): void => {
   const state = useUnMount()
   const ancestorRef = useRef({
@@ -83,5 +84,11 @@ export const useObserverAncestor = (
 
   useEffect(() => {
     mount()
-  }, [])
+    return () => {
+      while (state.unmount.length) {
+        const fn = state.unmount.pop()
+        if (fn instanceof Function) fn()
+      }
+    }
+  }, deps)
 }
