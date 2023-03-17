@@ -84,7 +84,6 @@ const App: FC = () => {
   const contestInfo = useAppSelector(state =>
     selectContestInfo(state, param.contestId)
   )
-  if (!contestInfo || !rows) return null
 
   const showPredictordelta = !!options?.contestRankingPage.ratingPredictor
   const showLanguageIcon = !!options?.contestRankingPage.languageIcon
@@ -92,6 +91,27 @@ const App: FC = () => {
   const showOldRating = !!options?.contestRankingPage.showOldRating
   const showPredict = !!options?.contestRankingPage.showPredict
   const realTimePredict = !!options?.contestRankingPage.realTimePredict
+  const widescreen =
+    (showPredict || realTimePredict) &&
+    (showPredictordelta || showNewRating || showOldRating)
+  console.log(widescreen)
+  useEffectMount(
+    async state => {
+      if (!widescreen) return
+
+      const container = await findElement('#contest-app .container')
+      if (!state.isMount) return
+      container.style.width = '98%'
+      container.style.maxWidth = '1440px'
+      state.unmount.push(() => {
+        container.style.width = ''
+        container.style.maxWidth = ''
+      })
+    },
+    [widescreen]
+  )
+
+  if (!contestInfo || !rows) return null
 
   return (
     <>
