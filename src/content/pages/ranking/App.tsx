@@ -94,7 +94,7 @@ const App: FC = () => {
   const widescreen =
     (showPredict || realTimePredict) &&
     (showPredictordelta || showNewRating || showOldRating)
-  console.log(widescreen)
+
   useEffectMount(
     async state => {
       if (!widescreen) return
