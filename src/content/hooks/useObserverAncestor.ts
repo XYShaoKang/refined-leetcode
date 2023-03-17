@@ -28,8 +28,9 @@ export const useObserverAncestor = (
   })
 
   const mount = useEvent(async () => {
-    let el = await onChange(state)
-    if (!el) return
+    const root = await onChange(state)
+    if (!root) return
+    let el = root
     const { ancestors, ancestorSet, observers } = ancestorRef.current
     const els: HTMLElement[] = []
 
@@ -38,21 +39,32 @@ export const useObserverAncestor = (
       el = el.parentElement!
       els.push(el)
     }
+    const pop = () => {
+      const ancestor = ancestors.pop()!
+      ancestorSet.delete(ancestor)
+      observers.pop()!.disconnect()
+      return ancestor
+    }
+
+    while (ancestors.length) {
+      const ancestor = pop()
+      if (el === ancestor) break
+    }
+
     //#endregion
 
     // 添加新元素变化的部分祖先结点，并添加对应的 MutationObserver
     // 要判断当前结点是否被删除，必须要将 MutationObserver 挂载到父元素上
 
-    while ((el = els.pop())) {
+    while (els.length) {
+      const el = els.pop()!
       const observer = new MutationObserver(mutations => {
         const checked = mutations.some(({ removedNodes }) =>
           Array.prototype.some.call(removedNodes, node => node === el)
         )
         if (checked) {
-          while (els.length) {
-            const ancestor = ancestors.pop()!
-            ancestorSet.delete(ancestor)
-            observers.pop()!.disconnect()
+          while (ancestors.length) {
+            const ancestor = pop()
             if (ancestor === el) break
           }
           mount()
@@ -62,17 +74,14 @@ export const useObserverAncestor = (
       ancestorSet.add(el)
       observers.push(observer)
       observer.observe(el.parentElement!, { childList: true })
-      state.unmount.push(() => observer.disconnect())
     }
+
+    state.unmount.push(() => {
+      while (observers.length) pop()
+    })
   })
 
   useEffect(() => {
     mount()
-    return () => {
-      let observer
-      while ((observer = ancestorRef.current.observers.pop())) {
-        observer.disconnect()
-      }
-    }
   }, [])
 }
