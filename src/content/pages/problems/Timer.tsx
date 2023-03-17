@@ -29,12 +29,14 @@ const Container = styled.div`
   font-size: 14px;
 `
 
-const Content = styled.div`
+const Content = styled.div<{ beta: boolean }>`
+  height: ${props => (props.beta ? 33 : 35)}px;
   border-radius: 3px 0 0 3px;
   border: 1px solid palevioletred;
   border-right-width: 0;
-  /* margin-left: 15px; */
-  padding: 6px 15px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
   white-space: nowrap;
 `
 
@@ -42,7 +44,11 @@ const Button = styled.button<{
   primary?: boolean
   width: number
   center: boolean
+  height: number
 }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
 
   color: palevioletred;
@@ -51,6 +57,7 @@ const Button = styled.button<{
   border: 1px solid palevioletred;
   border-radius: 0;
   width: ${props => props.width}px;
+  height: ${props => props.height}px;
   ${({ center }) =>
     center
       ? css`
@@ -61,8 +68,7 @@ const Button = styled.button<{
         `
       : css`
           border-radius: 0 3px 3px 0;
-          /* margin-right: 15px; */
-          padding: 6px 15px;
+          padding: 0px 15px;
         `}
 `
 
@@ -384,17 +390,25 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
     <Portal container={root}>
       <Container>
         {!hidden && (
-          <Content>
+          <Content beta={!!beta}>
             {`${isDone ? '本次耗时: ' : ''}${time
               .map(t => t.toString().padStart(2, '0'))
               .join(' : ')}`}
           </Content>
         )}
         {!isDone ? (
-          <div ref={hoverRef} style={{ display: 'flex' }}>
+          <div
+            ref={hoverRef}
+            style={{ display: 'flex', height: beta ? 33 : 35 }}
+          >
             {!hidden && hover && (
               <ToolTip title="点击重置按钮,可重置计时">
-                <Button onClick={restart} center={true} width={20}>
+                <Button
+                  onClick={restart}
+                  center={true}
+                  width={20}
+                  height={beta ? 33 : 35}
+                >
                   重置
                 </Button>
               </ToolTip>
@@ -404,6 +418,7 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
                 onClick={handleHidden}
                 center={false}
                 width={!hidden && hover ? 80 : 100}
+                height={beta ? 33 : 35}
                 style={
                   hidden
                     ? { borderTopLeftRadius: 3, borderBottomLeftRadius: 3 }
@@ -415,7 +430,12 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
             </ToolTip>
           </div>
         ) : (
-          <Button onClick={restart} center={false} width={100}>
+          <Button
+            onClick={restart}
+            center={false}
+            width={100}
+            height={beta ? 33 : 35}
+          >
             重新开始
           </Button>
         )}
