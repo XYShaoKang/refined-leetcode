@@ -58,32 +58,36 @@ Refined LeetCode 是一个 Chrome 浏览器。理论上来说大多数基于 Chr
 - 解压文件夹
 - crx 文件
 
+#### 启用开发者模式
+
+1. 打开 Chrome 浏览器
+2. 转到 `chrome://extensions/` 页面,直接在地址栏输入 `chrome://extensions/` 即可
+3. 切换页面右上角的开发者模式为启用的状态，并「刷新页面」
+
+> 测试的时候，发现有时候不用「刷新页面」，后续也可以正常操作，但为了防止意外，最好是刷新一下页面
+
 #### 解压文件夹
 
 从 https://github.com/XYShaoKang/refined-leetcode/releases 下载最新版本的 `refined-leetcode-v[xxx].zip`,解压 `refined-leetcode-v[xxx].zip` （其中 xxx 表示版本号）
 
-安装
+- 方式 1: 直接将前面解压的 refined-leetcode 文件夹拖入 `chrome://extensions/` 页面即可
+- 方式 2:
+  1.  点击页面左上角的 `加载以解压的扩展程序` 按钮
+  2.  选择上面解压的 refined-leetcode 文件夹,再点击确定即可
 
-1. 打开 Chrome 浏览器
-2. 转到 `chrome://extensions/` 页面,直接在地址栏输入 `chrome://extensions/` 即可
-3. 切换页面右上角的开发者模式为启用的状态
-4. 加载扩展
-   - 方式 1: 直接将前面解压的 refined-leetcode 文件夹拖入 `chrome://extensions/` 页面即可
-   - 方式 2:
-     1. 点击页面左上角的 `加载以解压的扩展程序` 按钮
-     2. 选择上面解压的 refined-leetcode 文件夹,再点击确定即可
+操作视频
+
+https://user-images.githubusercontent.com/38753204/226101191-9be75d42-c218-4005-b718-6aa43790f134.mov
 
 #### crx 文件
 
 从 https://github.com/XYShaoKang/refined-leetcode/releases 下载最新版本的 `refined-leetcode-[xxx].crx` 文件，或者 `refined-leetcode-[xxx].crx.zip` 进行解压 （其中 xxx 表示版本号）
 
-安装
+- 直接将 crx 文件拖入 `chrome://extensions/` 页面，会弹出一个提示，点击`添加扩展程序`按钮即可
 
-1. 打开 Chrome 浏览器
-2. 转到 `chrome://extensions/` 页面,直接在地址栏输入 `chrome://extensions/` 即可
-3. 切换页面右上角的开发者模式为启用的状态
-4. 加载扩展
-   - 直接将 crx 文件拖入 `chrome://extensions/` 页面，会弹出一个提示，点击`添加扩展程序`按钮即可
+操作视频
+
+https://user-images.githubusercontent.com/38753204/226101189-92b915dd-e1ef-4173-882e-70ec0fecdc53.mov
 
 ## 相关项目
 
