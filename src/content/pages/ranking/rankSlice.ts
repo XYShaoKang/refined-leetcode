@@ -380,6 +380,7 @@ export const contestInfosSlice = createSlice({
       .addCase(fetchPrediction.fulfilled, (state, action) => {
         const { contestSlug } = action.meta.arg
         setDefaultState(state, contestSlug)
+        if (!action.payload) return
         for (const {
           username,
           data_region,
