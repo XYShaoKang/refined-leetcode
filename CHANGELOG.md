@@ -1,3 +1,13 @@
+## [0.12.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.2...v0.12.3) (2023-03-19)
+
+
+### Bug Fixes
+
+* **background:** 修复缓存 ([3ec4ade](https://github.com/XYShaoKang/refined-leetcode/commit/3ec4ade3be1a0af1ecd51ef17c6c90bc05e746ee))
+* **background:** 请求预测数据添加重试机制 ([7423ed9](https://github.com/XYShaoKang/refined-leetcode/commit/7423ed9d20a6d7ffbc7081c5e47961319d55c9d1))
+* **ranking:** 修复没有获取到数据的错误 ([c824642](https://github.com/XYShaoKang/refined-leetcode/commit/c824642c3accc4675ef02f6fb76e0b621e85bc1d))
+* **ranking:** 统一获取用户预测数据 ([8865628](https://github.com/XYShaoKang/refined-leetcode/commit/8865628ad6185d7b3577e9b825897b1f8f66b8d0))
+
 ## [0.12.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.1...v0.12.2) (2023-03-17)
 
 
