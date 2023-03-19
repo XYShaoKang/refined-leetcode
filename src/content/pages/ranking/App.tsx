@@ -31,6 +31,7 @@ const App: FC = () => {
 
   useEffect(() => {
     void (async () => {
+      if (!rows?.length) return
       const res = await dispatch(
         fetchContestRanking({
           contestSlug: param.contestId,
@@ -50,7 +51,7 @@ const App: FC = () => {
       }
       setUserInfos(userInfos)
     })()
-  }, [dispatch, param, hasMyRank])
+  }, [dispatch, param, hasMyRank, rows])
 
   useEffect(() => {
     dispatch(fetchContestInfo(param.contestId))
