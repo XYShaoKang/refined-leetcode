@@ -54,27 +54,33 @@ async function getFileIcons(
   sendResponse(res)
 }
 
-const cache = new Map<string, LbaoPredictorType>()
+const cache = new Map<string, Map<string, LbaoPredictorType>>()
 async function getPredictionHandle(
   message: GetPredictionMessage,
   sender: chrome.runtime.MessageSender,
   sendResponse: (response?: any) => void
 ) {
   const { contestSlug, users } = message
-
+  let userCache = cache.get(contestSlug)!
+  if (!userCache) {
+    userCache = new Map()
+    cache.set(contestSlug, userCache)
+  }
   try {
     const tmp = users
-      .filter(a => !cache.has(gkey(a.region, a.username)))
+      .filter(a => !userCache.has(gkey(a.region, a.username)))
       .map(a => ({ data_region: a.region, username: a.username }))
     if (tmp.length) {
       const data = await predictorApi(contestSlug, tmp)
       for (const item of data) {
         const key = gkey(item.data_region, item.username)
-        cache.set(key, item)
+        userCache.set(key, item)
       }
     }
 
-    sendResponse(users.map(user => cache.get(gkey(user.region, user.username))))
+    sendResponse(
+      users.map(user => userCache.get(gkey(user.region, user.username)))
+    )
   } catch (error) {
     // TODO
   }
