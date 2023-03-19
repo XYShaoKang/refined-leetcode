@@ -1,3 +1,5 @@
+import { sleep } from '@/utils'
+
 export type LbaoPredictorType = {
   data_region: string
   username: string
@@ -6,11 +8,12 @@ export type LbaoPredictorType = {
   newRating?: number
 }
 
-export const lbaoPredictorApi = (
+export const lbaoPredictorApi = async (
   contest_name: string,
-  users: { data_region: string; username: string }[]
+  users: { data_region: string; username: string }[],
+  retry = 5
 ): Promise<LbaoPredictorType[]> => {
-  return fetch('https://lccn.lbao.site/predict_records', {
+  const res = await fetch('https://lccn.lbao.site/predict_records', {
     method: 'POST',
     body: JSON.stringify({
       contest_name,
@@ -18,20 +21,19 @@ export const lbaoPredictorApi = (
     }),
     headers: { 'content-type': 'application/json' },
   })
-    .then(res => res.json())
-    .then(
-      (
-        data: {
-          old_rating: number
-          new_rating: number
-          delta_rating: number
-        }[]
-      ) =>
-        users.map((user, i) => ({
-          ...user,
-          oldRating: data[i]?.old_rating,
-          delta: data[i]?.delta_rating,
-          newRating: data[i]?.new_rating,
-        }))
-    )
+  if (retry && res.status === 503) {
+    await sleep(2000)
+    return lbaoPredictorApi(contest_name, users, retry - 1)
+  }
+  const data: {
+    old_rating: number
+    new_rating: number
+    delta_rating: number
+  }[] = await res.json()
+  return users.map((user, i) => ({
+    ...user,
+    oldRating: data[i]?.old_rating,
+    delta: data[i]?.delta_rating,
+    newRating: data[i]?.new_rating,
+  }))
 }
