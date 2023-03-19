@@ -1,3 +1,10 @@
+## [0.12.4](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.3...v0.12.4) (2023-03-19)
+
+
+### Bug Fixes
+
+* **ranking:** 计算排名错误 ([96506b6](https://github.com/XYShaoKang/refined-leetcode/commit/96506b6285f51984613730f7f6d3bdb090828354))
+
 ## [0.12.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.2...v0.12.3) (2023-03-19)
 
 
