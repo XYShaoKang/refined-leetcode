@@ -166,7 +166,7 @@ export const usePredict = ({
         l = m + 1
       }
     }
-    return l + 1
+    return l
   }, [user, previousRatingData])
 
   useEffect(() => {
