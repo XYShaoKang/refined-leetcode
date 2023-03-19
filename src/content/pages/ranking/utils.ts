@@ -151,8 +151,8 @@ export const usePredict = ({
     const check = (m: number) => {
       const { score, finish_time } = totalRank[m]
       return (
-        user.score > score ||
-        (user.score === score && user.finishTime < finish_time)
+        user.score < score ||
+        (user.score === score && user.finishTime > finish_time)
       )
     }
     let l = 0,
@@ -161,12 +161,12 @@ export const usePredict = ({
     while (l < r) {
       const m = (l + r) >> 1
       if (check(m)) {
-        r = m
-      } else {
         l = m + 1
+      } else {
+        r = m
       }
     }
-    return l
+    return l + 1
   }, [user, previousRatingData])
 
   useEffect(() => {
