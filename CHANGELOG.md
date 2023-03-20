@@ -1,3 +1,11 @@
+## [0.12.5](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.4...v0.12.5) (2023-03-20)
+
+
+### Bug Fixes
+
+* **ranking:** 对于相同分数相同时间的选手，按照相同排名处理 ([797f22c](https://github.com/XYShaoKang/refined-leetcode/commit/797f22c12fb4a650157d44bab9c3a61ac285d91e))
+* **ranking:** 预处理 erank 提升性能，并使用 FFT 来优化预处理的性能 ([4ad361a](https://github.com/XYShaoKang/refined-leetcode/commit/4ad361adc2a54785cccec7d00fe6436bdbe70e48))
+
 ## [0.12.4](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.3...v0.12.4) (2023-03-19)
 
 
