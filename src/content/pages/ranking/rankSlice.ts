@@ -1,6 +1,7 @@
 import { createApi, BaseQueryFn } from '@reduxjs/toolkit/query/react'
 
 import {
+  calcSeed,
   ContestInfo,
   ContestRanking,
   getExtensionId,
@@ -8,6 +9,7 @@ import {
   gkey,
   LeetCodeApi,
   MyRanking,
+  predict,
   PreviousRatingDataType,
   RankingDataType,
   Rating,
@@ -20,6 +22,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit'
 import { RootState } from '@/app/store'
+import { findRank } from './utils'
 
 export type ParamType = {
   contestSlug: string
@@ -220,7 +223,7 @@ type State = {
     // ranking: Ranking
     previous: {
       RatingData?: PreviousRatingDataType
-      Ratings?: number[]
+      seeds?: number[]
       status: Status
     }
     users: { [key: string]: User }
@@ -231,6 +234,7 @@ type State = {
       }
     }
     realPredict: { [key: string]: RealPredict }
+    fetchContestRankingState: Status
   }
 } & { myRating?: ContestRanking }
 
@@ -242,6 +246,7 @@ const setDefaultState = (state: State, contestSlug: string) => {
       predict: {},
       realPredict: {},
       previous: { status: 'idle' },
+      fetchContestRankingState: 'idle',
     }
   }
 }
@@ -313,17 +318,36 @@ export const contestInfosSlice = createSlice({
           state[contestSlug].previous.status = 'succeeded'
           return
         }
-
         state[contestSlug].previous.RatingData = action.payload
-        for (const [i, rank] of totalRank.entries()) {
+        const {
+          realPredict,
+          users,
+          previous: { RatingData },
+        } = state[contestSlug]
+        for (const rank of totalRank) {
           const key = gkey(rank.data_region, rank.username)
-          state[contestSlug].realPredict[key] = {
+          realPredict[key] = {
             oldRating: rank.rating,
             acc: rank.acc,
-            rank: i + 1,
           }
         }
-        state[contestSlug].previous.Ratings = totalRank.map(a => a.rating)
+
+        const ratings = totalRank.filter(a => a.score).map(a => a.rating)
+        const seeds = calcSeed(ratings)
+
+        for (const { region, username, score, finishTime } of Object.values(
+          users
+        )) {
+          const key = gkey(region, username)
+          if (!realPredict[key]) continue
+          const { oldRating, acc } = realPredict[key]
+          const rank = findRank(RatingData!, score, finishTime)
+          const delta = predict(seeds, oldRating!, rank, acc ?? 0)
+          const preCache = rank * 1e4 + oldRating!
+          Object.assign(realPredict[key], { rank, preCache, delta })
+        }
+
+        state[contestSlug].previous.seeds = seeds
         state[contestSlug].previous.status = 'succeeded'
       })
       .addCase(fetchMyRank.fulfilled, (state, action) => {
@@ -352,11 +376,26 @@ export const contestInfosSlice = createSlice({
         const { contestSlug, region, username } = action.meta.arg
         state[contestSlug].realPredict[gkey(region, username)] = action.payload
       })
+      .addCase(fetchContestRanking.rejected, (state, action) => {
+        const { contestSlug } = action.meta.arg
+        setDefaultState(state, contestSlug)
+        state[contestSlug].fetchContestRankingState = 'failed'
+      })
+      .addCase(fetchContestRanking.pending, (state, action) => {
+        const { contestSlug } = action.meta.arg
+        setDefaultState(state, contestSlug)
+        state[contestSlug].fetchContestRankingState = 'loading'
+      })
       .addCase(fetchContestRanking.fulfilled, (state, action) => {
         const { contestSlug } = action.meta.arg
         setDefaultState(state, contestSlug)
         const { submissions, total_rank } = action.payload
         const n = total_rank.length
+        const {
+          realPredict,
+          users,
+          previous: { RatingData, seeds },
+        } = state[contestSlug]
         for (let i = 0; i < n; i++) {
           const {
             username,
@@ -365,7 +404,7 @@ export const contestInfosSlice = createSlice({
             data_region: region,
           } = total_rank[i]
           const key = gkey(region, username)
-          const user = state[contestSlug].users[key]
+          const user = users[key]
           if (!user || user.score !== score || user.finishTime !== finishTime) {
             state[contestSlug].users[key] = {
               username,
@@ -375,7 +414,18 @@ export const contestInfosSlice = createSlice({
               submission: submissions[i],
             }
           }
+          const { oldRating, acc, preCache } = realPredict[key] ?? {}
+          if (RatingData && seeds && oldRating !== undefined) {
+            const rank = findRank(RatingData, score, finishTime)
+            const cache = rank * 1e4 + oldRating!
+            if (cache !== preCache) {
+              const delta = predict(seeds, oldRating, rank, acc ?? 0)
+              realPredict[key].delta = delta
+              realPredict[key].preCache = cache
+            }
+          }
         }
+        state[contestSlug].fetchContestRankingState = 'succeeded'
       })
       .addCase(fetchPrediction.fulfilled, (state, action) => {
         const { contestSlug } = action.meta.arg
@@ -406,10 +456,10 @@ export const selectPreviousRatingData = (
   contestSlug: string
 ): PreviousRatingDataType | undefined =>
   state.contestInfos[contestSlug]?.previous.RatingData
-export const selectPreviousRatings = (
+export const selectPreviousSeeds = (
   state: RootState,
   contestSlug: string
-): number[] | undefined => state.contestInfos[contestSlug]?.previous.Ratings
+): number[] | undefined => state.contestInfos[contestSlug]?.previous.seeds
 
 export const selectMyRanking = (
   state: RootState,
@@ -426,6 +476,13 @@ export const selectPreviousRatingDataStatus = (
   contestSlug?: string
 ): Status | undefined =>
   contestSlug ? state.contestInfos[contestSlug].previous.status : undefined
+export const selectFetchContestRankingState = (
+  state: RootState,
+  contestSlug?: string
+): Status | undefined =>
+  contestSlug
+    ? state.contestInfos[contestSlug].fetchContestRankingState
+    : undefined
 
 export const selectUserRanking = (
   state: RootState,

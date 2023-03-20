@@ -4,18 +4,19 @@ import {
   useEffectMount,
   useEvent,
 } from '@/hooks'
-import { predict, gkey } from '@/utils'
+import { predict, gkey, PreviousRatingDataType } from '@/utils'
 import { useEffect, useMemo, useState } from 'react'
 import { debounce } from 'src/utils'
 import {
   fetchPreviousRatingData,
   selectUserPredict,
-  selectPreviousRatings,
+  selectPreviousSeeds,
   setUserDelta,
   selectPreviousRatingDataStatus,
   fetchUserRating,
   selectUserRanking,
   selectPreviousRatingData,
+  selectFetchContestRankingState,
 } from './rankSlice'
 
 export type User = { region: string; username: string }
@@ -123,25 +124,33 @@ export const usePredict = ({
   contestSlug: string
 }): void => {
   const dispatch = useAppDispatch()
-  const { oldRating, acc, preCache } =
-    useAppSelector(state =>
-      selectUserPredict(state, contestSlug, region, username, true)
-    ) ?? {}
+  const {
+    oldRating,
+    acc,
+    preCache,
+    rank: userRank,
+  } = useAppSelector(state =>
+    selectUserPredict(state, contestSlug, region, username, true)
+  ) ?? {}
 
-  const previousRatings = useAppSelector(state =>
-    selectPreviousRatings(state, contestSlug)
-  )
+  const seeds = useAppSelector(state => selectPreviousSeeds(state, contestSlug))
   const previousRatingDataStatus = useAppSelector(state =>
     selectPreviousRatingDataStatus(state, contestSlug)
   )
+  const fetchContestRankingState = useAppSelector(state =>
+    selectFetchContestRankingState(state, contestSlug)
+  )
+
   const previousRatingData = useAppSelector(state =>
     selectPreviousRatingData(state, contestSlug)
   )
+
   const user = useAppSelector(state =>
     selectUserRanking(state, contestSlug, region, username)
   )
 
   const rank = useMemo(() => {
+    if (userRank) return userRank
     if (!previousRatingData || !user) return 0
 
     // 通过用户当前的分数和完成时间，计算 Rank
@@ -167,10 +176,14 @@ export const usePredict = ({
       }
     }
     return l + 1
-  }, [user, previousRatingData])
+  }, [user, previousRatingData, userRank])
 
   useEffect(() => {
-    if (previousRatingDataStatus === 'succeeded' && oldRating === undefined) {
+    if (
+      previousRatingDataStatus === 'succeeded' &&
+      fetchContestRankingState === 'succeeded' &&
+      oldRating === undefined
+    ) {
       // 表示 previousRatingData 中不包含指定用户的数据，这时需要实时从 LeetCode 中获取数据，以完成实时预测
       dispatch(fetchUserRating({ region, username, contestSlug }))
     }
@@ -181,16 +194,25 @@ export const usePredict = ({
     region,
     username,
     contestSlug,
+    fetchContestRankingState,
   ])
 
   useEffectMount(async () => {
-    if (previousRatingDataStatus !== 'succeeded' || !user) return
+    if (
+      previousRatingDataStatus !== 'succeeded' ||
+      fetchContestRankingState !== 'succeeded' ||
+      !user
+    )
+      return
 
-    if (previousRatings && rank && oldRating !== undefined) {
+    if (seeds && rank && oldRating !== undefined) {
       const cache = rank * 1e4 + oldRating
-      if (preCache === cache) return // 如果 rank 和 oldRating 一样的话，则计算结果也会一样，就没必要重复计算了
 
-      const delta = await predict(previousRatings, oldRating, rank, acc ?? 0)
+      // 如果 rank 和 oldRating 一样的话，则计算结果也会一样，就没必要重复计算了
+      if (preCache === cache) return
+
+      const delta = predict(seeds, oldRating, rank, acc ?? 0)
+
       const key = gkey(region, username)
       dispatch(
         setUserDelta({
@@ -203,7 +225,7 @@ export const usePredict = ({
     }
   }, [
     rank,
-    previousRatings,
+    seeds,
     acc,
     oldRating,
     region,
@@ -212,6 +234,37 @@ export const usePredict = ({
     contestSlug,
     preCache,
     previousRatingDataStatus,
+    fetchContestRankingState,
     user,
   ])
+}
+
+export function findRank(
+  previousRatingData: PreviousRatingDataType,
+  user_score: number,
+  user_finishTime: number
+): number {
+  // 通过用户当前的分数和完成时间，计算 Rank
+  // 对于正在进行的比赛来说，榜单上的 Rank 并不是实时的，会有一定的延迟
+  // 而这种方式计算 Rank 则比较依赖于 previousRatingData 数据的准确性
+  const { totalRank } = previousRatingData
+  const check = (m: number) => {
+    const { score, finish_time } = totalRank[m]
+    return (
+      user_score < score ||
+      (user_score === score && user_finishTime > finish_time)
+    )
+  }
+  let l = 0,
+    r = totalRank.length
+
+  while (l < r) {
+    const m = (l + r) >> 1
+    if (check(m)) {
+      l = m + 1
+    } else {
+      r = m
+    }
+  }
+  return l + 1
 }
