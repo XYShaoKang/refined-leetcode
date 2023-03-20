@@ -310,20 +310,14 @@ export const contestInfosSlice = createSlice({
         })
         const { contestSlug } = action.meta.arg
         setDefaultState(state, contestSlug)
-
-        const cur = JSON.stringify(
-          current(state[contestSlug]).previous.RatingData ?? {}
-        )
+        const { previous, realPredict, users } = state[contestSlug]
+        const cur = JSON.stringify(current(previous).RatingData ?? {})
         if (cur === JSON.stringify(action.payload)) {
-          state[contestSlug].previous.status = 'succeeded'
+          previous.status = 'succeeded'
           return
         }
-        state[contestSlug].previous.RatingData = action.payload
-        const {
-          realPredict,
-          users,
-          previous: { RatingData },
-        } = state[contestSlug]
+        const ratingData = (previous.RatingData = action.payload)
+
         for (const rank of totalRank) {
           const key = gkey(rank.data_region, rank.username)
           realPredict[key] = {
@@ -341,14 +335,14 @@ export const contestInfosSlice = createSlice({
           const key = gkey(region, username)
           if (!realPredict[key]) continue
           const { oldRating, acc } = realPredict[key]
-          const rank = findRank(RatingData!, score, finishTime)
+          const rank = findRank(ratingData!, score, finishTime)
           const delta = predict(seeds, oldRating!, rank, acc ?? 0)
           const preCache = rank * 1e4 + oldRating!
           Object.assign(realPredict[key], { rank, preCache, delta })
         }
 
-        state[contestSlug].previous.seeds = seeds
-        state[contestSlug].previous.status = 'succeeded'
+        previous.seeds = seeds
+        previous.status = 'succeeded'
       })
       .addCase(fetchMyRank.fulfilled, (state, action) => {
         const contestSlug = action.meta.arg
