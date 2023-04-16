@@ -19,7 +19,7 @@ export const defaultOptions = {
     disableShortcutkey: false,
   },
   contestRankingPage: {
-    languageIcon: true,
+    languageIcon: false,
     showPredict: true,
     realTimePredict: false,
     showOldRating: false,
