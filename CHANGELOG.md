@@ -1,3 +1,13 @@
+## [0.12.6](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.5...v0.12.6) (2023-04-16)
+
+
+### Bug Fixes
+
+* **ranking:** 修复对于第一次参赛的选手，获取初始分数错误 ([70e5603](https://github.com/XYShaoKang/refined-leetcode/commit/70e5603dbd2de38310cdc1345bcbc37ea16d3510))
+* **ranking:** 当 delta 不存在时，则不需要显示 delta 和 newRating ([a8b3e8b](https://github.com/XYShaoKang/refined-leetcode/commit/a8b3e8be990b6da963f36543a06fd3d2d13193c6))
+* **ranking:** 添加关于实时预测的提示信息 ([05e12f0](https://github.com/XYShaoKang/refined-leetcode/commit/05e12f0d75f55aa0fe941cee0159fda0f00497e6))
+* **ranking:** 添加期望排名 ([e6972b1](https://github.com/XYShaoKang/refined-leetcode/commit/e6972b10acb060d94c00f2180d811afe34907a45))
+
 ## [0.12.5](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.4...v0.12.5) (2023-03-20)
 
 
