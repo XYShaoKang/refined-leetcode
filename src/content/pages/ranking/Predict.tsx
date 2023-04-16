@@ -12,6 +12,7 @@ interface PredictItemProps {
   showOldRating: boolean
   showPredictordelta: boolean
   showNewRating: boolean
+  showExpectingRanking: boolean
   index: number
   row: HTMLElement
 }
@@ -34,6 +35,7 @@ interface PredictProps {
   showOldRating: boolean
   showPredictordelta: boolean
   showNewRating: boolean
+  showExpectingRanking: boolean
   userInfos: User[]
 }
 const Predict = memo(function Predict({

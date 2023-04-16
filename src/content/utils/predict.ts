@@ -31,7 +31,6 @@ export const predict = (
   rank: number,
   attendedContestsCount: number
 ): number => {
-  rating = Math.round(rating * ACCURACY)
   const erank = getERank(seeds, rating)
 
   const m = Math.sqrt(erank * rank)
@@ -47,7 +46,7 @@ export const predict = (
     }
   }
 
-  const d = (l - rating) / (1 + f(attendedContestsCount))
+  const d = (l - rating * ACCURACY) / (1 + f(attendedContestsCount))
   return d / ACCURACY
 }
 
@@ -84,6 +83,7 @@ export const calcSeed = (previousRatings: number[]): number[] => {
  * @returns
  */
 export const getERank = (seeds: number[], x: number): number => {
+  x = Math.round(x * ACCURACY)
   return seeds[x + MAX_RATING] + 0.5
 }
 

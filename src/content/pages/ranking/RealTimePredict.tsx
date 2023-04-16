@@ -10,6 +10,7 @@ interface RealTimePredictItemProps {
   showOldRating: boolean
   showPredictordelta: boolean
   showNewRating: boolean
+  showExpectingRanking: boolean
   index: number
   row: HTMLElement
 }
@@ -38,6 +39,7 @@ interface RealTimePredictProps {
   showOldRating: boolean
   showPredictordelta: boolean
   showNewRating: boolean
+  showExpectingRanking: boolean
 }
 
 export const RealTimePredict: FC<RealTimePredictProps> = ({

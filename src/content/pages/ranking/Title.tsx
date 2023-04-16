@@ -44,6 +44,8 @@ interface TitleProps {
   showOldRating: boolean
   showPredictordelta: boolean
   showNewRating: boolean
+  showExpectingRanking: boolean
+  realTime: boolean
   help?: string | ReactNode
 }
 
@@ -51,6 +53,8 @@ const Title: FC<TitleProps> = ({
   showNewRating,
   showPredictordelta,
   showOldRating,
+  showExpectingRanking,
+  realTime,
   help,
 }) => {
   return (
@@ -81,11 +85,13 @@ const Title: FC<TitleProps> = ({
         )}
 
         {showNewRating && (
-          <div>
+          <div style={{ width: 70 }}>
             新分数
             {help && <Help content={help} />}
           </div>
         )}
+
+        {showExpectingRanking && realTime && <div>期望全球排名</div>}
       </div>
     </>
   )

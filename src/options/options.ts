@@ -25,6 +25,7 @@ export const defaultOptions = {
     showOldRating: false,
     ratingPredictor: true,
     showNewRating: true,
+    expectingRanking: false,
   },
 }
 
@@ -56,4 +57,5 @@ export const labelMap: { [key: string]: string } = {
   showNewRating: '显示新分数',
   showPredict: '显示预测',
   realTimePredict: '显示实时预测',
+  expectingRanking: '期望全球排名',
 }

@@ -4,6 +4,7 @@ import {
   calcSeed,
   ContestInfo,
   ContestRanking,
+  getERank,
   getExtensionId,
   getPreviousRatingData,
   gkey,
@@ -113,7 +114,7 @@ export const fetchContestRanking = createAsyncThunk<
   return res
 })
 
-/** 获取预测数据源获取预测数据
+/** 从预测数据源获取预测数据
  *
  */
 export const fetchPrediction = createAsyncThunk<
@@ -213,6 +214,7 @@ type RealPredict = {
   acc?: number
   rank?: number
   preCache?: number // 用以保存上次计算时的缓存，避免重复计算，由 rank*1e4+oldRating 计算而成
+  erank?: number
 }
 
 export type Status = 'idle' | 'loading' | 'succeeded' | 'failed'
@@ -334,11 +336,21 @@ export const contestInfosSlice = createSlice({
         )) {
           const key = gkey(region, username)
           if (!realPredict[key]) continue
-          const { oldRating, acc } = realPredict[key]
-          const rank = findRank(ratingData!, score, finishTime)
-          const delta = predict(seeds, oldRating!, rank, acc ?? 0)
-          const preCache = rank * 1e4 + oldRating!
-          Object.assign(realPredict[key], { rank, preCache, delta })
+          let { oldRating, acc } = realPredict[key]
+
+          if (oldRating === undefined) oldRating = 1500
+          if (acc === undefined) acc = 0
+
+          const rank = findRank(ratingData, score, finishTime)
+          const delta = predict(seeds, oldRating, rank, acc)
+          const preCache = rank * 1e4 + oldRating
+          const erank = getERank(seeds, oldRating)
+          Object.assign(realPredict[key], {
+            rank,
+            preCache,
+            delta,
+            erank,
+          })
         }
 
         previous.seeds = seeds
@@ -416,6 +428,7 @@ export const contestInfosSlice = createSlice({
               const delta = predict(seeds, oldRating, rank, acc ?? 0)
               realPredict[key].delta = delta
               realPredict[key].preCache = cache
+              realPredict[key].erank = getERank(seeds, oldRating)
             }
           }
         }
@@ -473,14 +486,10 @@ export const selectPreviousRatingDataStatus = (
 export const selectPreviousRatingUpdateTime = (
   state: RootState,
   contestSlug?: string
-): number | undefined => {
-  if (contestSlug && state.contestInfos[contestSlug]) {
-    console.log(state.contestInfos[contestSlug])
-  }
-  return contestSlug
+): number | undefined =>
+  contestSlug
     ? state.contestInfos[contestSlug]?.previous?.RatingData?.update
     : undefined
-}
 export const selectFetchContestRankingState = (
   state: RootState,
   contestSlug?: string

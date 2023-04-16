@@ -13,6 +13,7 @@ type ItmeType = {
   showOldRating: boolean
   showPredictordelta: boolean
   showNewRating: boolean
+  showExpectingRanking: boolean
   realTime: boolean
 }
 
@@ -73,9 +74,10 @@ export const Item: FC<ItmeType> = memo(function Item({
   showOldRating,
   showPredictordelta,
   showNewRating,
+  showExpectingRanking,
   realTime,
 }) {
-  let { delta, oldRating } =
+  let { delta, oldRating, erank } =
     useAppSelector(state =>
       selectUserPredict(state, contestSlug, region, username, !!realTime)
     ) ?? {}
@@ -108,6 +110,7 @@ export const Item: FC<ItmeType> = memo(function Item({
           showPredictordelta
             ? // 如果有显示分数变化，则新分数只需要区分颜色
               css`
+                width: 70px;
                 font-weight: bold;
                 color: ${delta >= 0
                   ? `rgb(0 136 0 / ${Math.min(delta / 100, 1) * 70 + 30}%)`
@@ -115,6 +118,7 @@ export const Item: FC<ItmeType> = memo(function Item({
               `
             : // 如果没有显示分数变化，则需要将分数变化反应到颜色的深浅中
               css`
+                width: 70px;
                 font-weight: bold;
                 color: ${delta >= 0
                   ? `rgb(0 136 0 / ${Math.min(delta / 100, 1) * 70 + 30}%)`
@@ -138,6 +142,9 @@ export const Item: FC<ItmeType> = memo(function Item({
       {showOldRating && <div style={{ width: 60 }}>{oldRating}</div>}
       {showPredictordelta && deltaEl}
       {showNewRating && newRatingEl}
+      {showExpectingRanking && realTime && erank && (
+        <div>{Math.round(erank)}</div>
+      )}
     </div>
   )
 })

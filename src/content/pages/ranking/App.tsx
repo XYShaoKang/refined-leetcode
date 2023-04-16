@@ -98,6 +98,7 @@ const App: FC = () => {
   const showOldRating = !!options?.contestRankingPage.showOldRating
   const showPredict = !!options?.contestRankingPage.showPredict
   const realTimePredict = !!options?.contestRankingPage.realTimePredict
+  const showExpectingRanking = !!options?.contestRankingPage.expectingRanking
   const widescreen =
     (showPredict || realTimePredict) &&
     (showPredictordelta || showNewRating || showOldRating)
@@ -119,11 +120,12 @@ const App: FC = () => {
   )
 
   if (!contestInfo || !rows) return null
-  console.log(updateTime)
+
   return (
     <>
-      {(showPredictordelta || showNewRating || showOldRating) &&
-        (showPredict || realTimePredict) &&
+      {(((showPredictordelta || showNewRating || showOldRating) &&
+        (showPredict || realTimePredict)) ||
+        showExpectingRanking) &&
         titleRoot && (
           <Portal container={titleRoot}>
             {showPredict && (
@@ -132,6 +134,8 @@ const App: FC = () => {
                   showOldRating={showOldRating}
                   showPredictordelta={showPredictordelta}
                   showNewRating={showNewRating}
+                  showExpectingRanking={showExpectingRanking}
+                  realTime={false}
                   help={
                     <>
                       预测数据来自
@@ -155,21 +159,14 @@ const App: FC = () => {
                     border: 2px dashed #ddd;
                     border-bottom-style: solid;
                   }
-                  &&::before {
-                    content: '实时预测';
-                    position: fixed;
-                    transform: translate(-10%, -110%);
-                    background: #fafafa;
-                    padding: 0 5px;
-                    font-size: 12px;
-                    color: #999;
-                  }
                 `}
               >
                 <Title
                   showOldRating={showOldRating}
                   showPredictordelta={showPredictordelta}
                   showNewRating={showNewRating}
+                  showExpectingRanking={showExpectingRanking}
+                  realTime={true}
                   help={
                     <div>
                       实时预测，仅供参考，详细说明查看帖子
@@ -194,8 +191,9 @@ const App: FC = () => {
             )}
           </Portal>
         )}
-      {(showPredictordelta || showNewRating || showOldRating) &&
-        (showPredict || realTimePredict) &&
+      {(((showPredictordelta || showNewRating || showOldRating) &&
+        (showPredict || realTimePredict)) ||
+        showExpectingRanking) &&
         rows && (
           <>
             <Predict
@@ -205,6 +203,7 @@ const App: FC = () => {
               showOldRating={showOldRating}
               showPredictordelta={showPredictordelta}
               showNewRating={showNewRating}
+              showExpectingRanking={showExpectingRanking}
             />
             {realTimePredict && (
               <RealTimePredict
@@ -213,6 +212,7 @@ const App: FC = () => {
                 showOldRating={showOldRating}
                 showPredictordelta={showPredictordelta}
                 showNewRating={showNewRating}
+                showExpectingRanking={showExpectingRanking}
               />
             )}
           </>
