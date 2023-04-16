@@ -83,11 +83,11 @@ export const Item: FC<ItmeType> = memo(function Item({
   if (!oldRating) return <></>
 
   let deltaEl, newRatingEl
-  if (delta === undefined) {
+  if (typeof delta !== 'number') {
     deltaEl = <></>
     newRatingEl = <></>
   } else {
-    const deltaNum = Number((delta ?? 0).toFixed(1))
+    const deltaNum = Number(delta.toFixed(1))
     deltaEl = (
       <div
         css={css`
