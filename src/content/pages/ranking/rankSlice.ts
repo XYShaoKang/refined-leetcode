@@ -470,6 +470,17 @@ export const selectPreviousRatingDataStatus = (
   contestSlug?: string
 ): Status | undefined =>
   contestSlug ? state.contestInfos[contestSlug].previous.status : undefined
+export const selectPreviousRatingUpdateTime = (
+  state: RootState,
+  contestSlug?: string
+): number | undefined => {
+  if (contestSlug && state.contestInfos[contestSlug]) {
+    console.log(state.contestInfos[contestSlug])
+  }
+  return contestSlug
+    ? state.contestInfos[contestSlug]?.previous?.RatingData?.update
+    : undefined
+}
 export const selectFetchContestRankingState = (
   state: RootState,
   contestSlug?: string

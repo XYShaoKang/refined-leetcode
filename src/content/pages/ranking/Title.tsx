@@ -29,10 +29,11 @@ const Content = styled.div`
 const Help = ({ content }: { content: string | ReactNode }) => {
   return (
     <ToolTip
-      placement="bottom"
-      arrow={true}
+      placement="left"
+      arrow={false}
       keep={true}
       title={<Content>{content}</Content>}
+      offset={{ left: 70, top: 40 }}
     >
       <HelpIcon />
     </ToolTip>

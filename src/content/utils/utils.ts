@@ -389,7 +389,8 @@ export type PreviousRatingDataType = {
     score: number
     finish_time: number
   }[]
-  rankUpdate: number
+  rankUpdate?: number
+  update?: number
 }
 
 export const getPreviousRatingData = async (

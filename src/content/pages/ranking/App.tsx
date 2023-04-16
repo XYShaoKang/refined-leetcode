@@ -16,9 +16,12 @@ import {
   fetchContestInfo,
   selectContestInfo,
   fetchMyRank,
+  selectPreviousRatingUpdateTime,
 } from './rankSlice'
 import { RealTimePredict } from './RealTimePredict'
 import { User } from './utils'
+import { format } from 'date-fns'
+import { css } from 'styled-components/macro'
 
 const App: FC = () => {
   const options = useAppSelector(selectOptions)
@@ -85,6 +88,9 @@ const App: FC = () => {
   const contestInfo = useAppSelector(state =>
     selectContestInfo(state, param.contestId)
   )
+  const updateTime = useAppSelector(state =>
+    selectPreviousRatingUpdateTime(state, param.contestId)
+  )
 
   const showPredictordelta = !!options?.contestRankingPage.ratingPredictor
   const showLanguageIcon = !!options?.contestRankingPage.languageIcon
@@ -113,7 +119,7 @@ const App: FC = () => {
   )
 
   if (!contestInfo || !rows) return null
-
+  console.log(updateTime)
   return (
     <>
       {(showPredictordelta || showNewRating || showOldRating) &&
@@ -144,16 +150,45 @@ const App: FC = () => {
             )}
             {realTimePredict && (
               <th
-                style={{
-                  border: '2px dashed #ddd',
-                  borderBottomStyle: 'solid',
-                }}
+                css={css`
+                  &&&& {
+                    border: 2px dashed #ddd;
+                    border-bottom-style: solid;
+                  }
+                  &&::before {
+                    content: '实时预测';
+                    position: fixed;
+                    transform: translate(-10%, -110%);
+                    background: #fafafa;
+                    padding: 0 5px;
+                    font-size: 12px;
+                    color: #999;
+                  }
+                `}
               >
                 <Title
                   showOldRating={showOldRating}
                   showPredictordelta={showPredictordelta}
                   showNewRating={showNewRating}
-                  help={<>实时预测，仅供参考</>}
+                  help={
+                    <div>
+                      实时预测，仅供参考，详细说明查看帖子
+                      <a
+                        href="https://leetcode.cn/circle/discuss/0OHPDu/"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        实时预测功能
+                      </a>
+                      <br />
+                      {updateTime
+                        ? `当前数据更新时间为：「${format(
+                            new Date(updateTime),
+                            'yyyy-MM-dd HH:mm'
+                          )}」`
+                        : ''}
+                    </div>
+                  }
                 />
               </th>
             )}
