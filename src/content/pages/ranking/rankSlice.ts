@@ -181,9 +181,9 @@ export const fetchUserRating = createAsyncThunk<
       res = await query({ message: { type: 'get-user-ranking', username } })
     }
     const { start_time } = getState().contestInfos[contestSlug].info!.contest
-    const history = res.userContestRankingHistory.filter(a => a.attended)
 
-    let l = 0,
+    const history = res.userContestRankingHistory?.filter(a => a.attended) ?? []
+    let l = -1,
       r = history.length - 1
     while (l < r) {
       const m = (l + r + 1) >> 1
@@ -194,7 +194,7 @@ export const fetchUserRating = createAsyncThunk<
       }
     }
 
-    return { oldRating: history[l].rating ?? 1500, acc: l + 1 }
+    return { oldRating: history[l]?.rating ?? 1500, acc: l + 1 }
   }
 )
 
