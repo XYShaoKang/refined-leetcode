@@ -50,7 +50,7 @@ export const predict = (
   return d / ACCURACY
 }
 
-//#region 由 [@tiger2005](https://leetcode.cn/u/u/tiger2005/) 编写
+//#region 由 [@tiger2005](https://leetcode.cn/u/tiger2005/) 编写
 const ACCURACY = 10
 const MAX_RATING = 8000 * ACCURACY
 
