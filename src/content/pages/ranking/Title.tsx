@@ -91,7 +91,12 @@ const Title: FC<TitleProps> = ({
           </div>
         )}
 
-        {showExpectingRanking && realTime && <div>期望全球排名</div>}
+        {showExpectingRanking && realTime && (
+          <div>
+            <span>Rk/Exp</span>{' '}
+            <Help content={'当前全球排名(Rk)/期望全球排名(Exp)'} />
+          </div>
+        )}
       </div>
     </>
   )

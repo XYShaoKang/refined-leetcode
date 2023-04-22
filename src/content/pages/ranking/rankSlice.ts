@@ -426,6 +426,7 @@ export const contestInfosSlice = createSlice({
             const cache = rank * 1e4 + oldRating!
             if (cache !== preCache) {
               const delta = predict(seeds, oldRating, rank, acc ?? 0)
+              realPredict[key].rank = rank
               realPredict[key].delta = delta
               realPredict[key].preCache = cache
               realPredict[key].erank = getERank(seeds, oldRating)

@@ -77,7 +77,7 @@ export const Item: FC<ItmeType> = memo(function Item({
   showExpectingRanking,
   realTime,
 }) {
-  let { delta, oldRating, erank } =
+  let { delta, oldRating, erank, rank } =
     useAppSelector(state =>
       selectUserPredict(state, contestSlug, region, username, !!realTime)
     ) ?? {}
@@ -143,7 +143,11 @@ export const Item: FC<ItmeType> = memo(function Item({
       {showPredictordelta && deltaEl}
       {showNewRating && newRatingEl}
       {showExpectingRanking && realTime && erank && (
-        <div>{Math.round(erank)}</div>
+        <div style={{ display: 'flex' }}>
+          <span>{rank}</span>
+          <span style={{ margin: '0 10px' }}>/</span>
+          <span>{Math.round(erank)}</span>
+        </div>
       )}
     </div>
   )
