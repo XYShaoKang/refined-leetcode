@@ -1,3 +1,10 @@
+## [0.12.8](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.7...v0.12.8) (2023-04-22)
+
+
+### Bug Fixes
+
+* **problemset:** 修复题库页的题单列表([#9](https://github.com/XYShaoKang/refined-leetcode/issues/9)) ([c3bb6df](https://github.com/XYShaoKang/refined-leetcode/commit/c3bb6dfb47f324517e82a3fb195853fb9f201ae7))
+
 ## [0.12.7](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.6...v0.12.7) (2023-04-22)
 
 
