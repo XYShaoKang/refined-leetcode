@@ -1,3 +1,11 @@
+## [0.12.7](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.6...v0.12.7) (2023-04-22)
+
+
+### Bug Fixes
+
+* **home:** 修复点击删除时会关闭面板 ([ebeefd5](https://github.com/XYShaoKang/refined-leetcode/commit/ebeefd5a3affc0f43fd1d0ae958af92e2a35e4d0))
+* **ranking:** 添加当前实时排名 ([1946599](https://github.com/XYShaoKang/refined-leetcode/commit/1946599747e6695d1321629e4d1193e5371b029b))
+
 ## [0.12.6](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.5...v0.12.6) (2023-04-16)
 
 
