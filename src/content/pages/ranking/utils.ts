@@ -4,8 +4,8 @@ import {
   useEffectMount,
   useEvent,
 } from '@/hooks'
-import { predict, gkey, PreviousRatingDataType } from '@/utils'
-import { useEffect, useMemo, useState } from 'react'
+import { gkey, PreviousRatingDataType } from '@/utils'
+import { useEffect, useState } from 'react'
 import { debounce } from 'src/utils'
 import {
   fetchPreviousRatingData,
@@ -15,7 +15,6 @@ import {
   selectPreviousRatingDataStatus,
   fetchUserRating,
   selectUserRanking,
-  selectPreviousRatingData,
   selectFetchContestRankingState,
 } from './rankSlice'
 
@@ -124,14 +123,10 @@ export const usePredict = ({
   contestSlug: string
 }): void => {
   const dispatch = useAppDispatch()
-  const {
-    oldRating,
-    acc,
-    preCache,
-    rank: userRank,
-  } = useAppSelector(state =>
-    selectUserPredict(state, contestSlug, region, username, true)
-  ) ?? {}
+  const { oldRating, acc, preCache, rank } =
+    useAppSelector(state =>
+      selectUserPredict(state, contestSlug, region, username, true)
+    ) ?? {}
 
   const seeds = useAppSelector(state => selectPreviousSeeds(state, contestSlug))
   const previousRatingDataStatus = useAppSelector(state =>
@@ -141,42 +136,9 @@ export const usePredict = ({
     selectFetchContestRankingState(state, contestSlug)
   )
 
-  const previousRatingData = useAppSelector(state =>
-    selectPreviousRatingData(state, contestSlug)
-  )
-
   const user = useAppSelector(state =>
     selectUserRanking(state, contestSlug, region, username)
   )
-
-  const rank = useMemo(() => {
-    if (userRank) return userRank
-    if (!previousRatingData || !user) return 0
-
-    // 通过用户当前的分数和完成时间，计算 Rank
-    // 对于正在进行的比赛来说，榜单上的 Rank 并不是实时的，会有一定的延迟
-    // 而这种方式计算 Rank 则比较依赖于 previousRatingData 数据的准确性
-    const { totalRank } = previousRatingData
-    const check = (m: number) => {
-      const { score, finish_time } = totalRank[m]
-      return (
-        user.score < score ||
-        (user.score === score && user.finishTime > finish_time)
-      )
-    }
-    let l = 0,
-      r = totalRank.length
-
-    while (l < r) {
-      const m = (l + r) >> 1
-      if (check(m)) {
-        l = m + 1
-      } else {
-        r = m
-      }
-    }
-    return l + 1
-  }, [user, previousRatingData, userRank])
 
   useEffect(() => {
     if (
@@ -205,21 +167,17 @@ export const usePredict = ({
     )
       return
 
-    if (seeds && rank && oldRating !== undefined) {
-      const cache = rank * 1e4 + oldRating
-
-      // 如果 rank 和 oldRating 一样的话，则计算结果也会一样，就没必要重复计算了
-      if (preCache === cache) return
-
-      const delta = predict(seeds, oldRating, rank, acc ?? 0)
-
+    if (seeds && oldRating !== undefined) {
+      if (rank) {
+        const cache = rank * 1e4 + oldRating
+        // 如果 rank 和 oldRating 一样的话，则计算结果也会一样，就没必要重复计算了
+        if (preCache === cache) return
+      }
       const key = gkey(region, username)
       dispatch(
         setUserDelta({
           contestSlug,
           key,
-          delta,
-          preCache: cache,
         })
       )
     }

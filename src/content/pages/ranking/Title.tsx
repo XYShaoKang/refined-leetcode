@@ -93,8 +93,17 @@ const Title: FC<TitleProps> = ({
 
         {showExpectingRanking && realTime && (
           <div>
-            <span>Rk/Exp</span>{' '}
-            <Help content={'当前全球排名(Rk)/期望全球排名(Exp)'} />
+            <span>Rk/Exp</span>
+            <Help
+              content={
+                <div>
+                  <div>当前全球排名(Rk)/期望全球排名(Exp)</div>
+                  <div>
+                    榜单数据更新有延迟，全球排名可能不准确，未确定排名会标灰色。
+                  </div>
+                </div>
+              }
+            />
           </div>
         )}
       </div>

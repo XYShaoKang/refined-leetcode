@@ -4,7 +4,7 @@ import { css } from 'styled-components/macro'
 
 import { debounce } from 'src/utils'
 
-import { selectUserPredict } from './rankSlice'
+import { selectUserPredict, selectContestInfo } from './rankSlice'
 
 type ItmeType = {
   contestSlug: string
@@ -77,12 +77,12 @@ export const Item: FC<ItmeType> = memo(function Item({
   showExpectingRanking,
   realTime,
 }) {
-  let { delta, oldRating, erank, rank } =
+  let { delta, oldRating, erank, rank, isStable } =
     useAppSelector(state =>
       selectUserPredict(state, contestSlug, region, username, !!realTime)
     ) ?? {}
-
-  if (!oldRating) return <></>
+  const info = useAppSelector(state => selectContestInfo(state, contestSlug))
+  if (!oldRating || !info) return <></>
 
   let deltaEl, newRatingEl
   if (typeof delta !== 'number') {
@@ -132,6 +132,8 @@ export const Item: FC<ItmeType> = memo(function Item({
   }
 
   oldRating = Number(oldRating.toFixed(1))
+  const { start_time, duration } = info.contest
+  const inContest = new Date().valueOf() <= (start_time + duration) * 1000
 
   return (
     <div
@@ -144,7 +146,9 @@ export const Item: FC<ItmeType> = memo(function Item({
       {showNewRating && newRatingEl}
       {showExpectingRanking && realTime && erank && (
         <div style={{ display: 'flex' }}>
-          <span>{rank}</span>
+          <span style={{ color: isStable || !inContest ? '#000' : '#bbb' }}>
+            {rank}
+          </span>
           <span style={{ margin: '0 10px' }}>/</span>
           <span>{Math.round(erank)}</span>
         </div>

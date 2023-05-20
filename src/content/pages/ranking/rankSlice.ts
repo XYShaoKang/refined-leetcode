@@ -20,6 +20,7 @@ import {
   createAsyncThunk,
   createSlice,
   current,
+  Draft,
   PayloadAction,
 } from '@reduxjs/toolkit'
 import { RootState } from '@/app/store'
@@ -215,19 +216,23 @@ type RealPredict = {
   rank?: number
   preCache?: number // 用以保存上次计算时的缓存，避免重复计算，由 rank*1e4+oldRating 计算而成
   erank?: number
+  isStable?: boolean
 }
 
 export type Status = 'idle' | 'loading' | 'succeeded' | 'failed'
+
+type Previous = {
+  RatingData?: PreviousRatingDataType
+  seeds?: number[]
+  status: Status
+  lastTime?: number
+}
 type State = {
   [contestSlug: string]: {
     info?: ContestInfo
     myRanking?: MyRanking
     // ranking: Ranking
-    previous: {
-      RatingData?: PreviousRatingDataType
-      seeds?: number[]
-      status: Status
-    }
+    previous: Previous
     users: { [key: string]: User }
     predict: {
       [key: string]: {
@@ -249,6 +254,29 @@ const setDefaultState = (state: State, contestSlug: string) => {
       realPredict: {},
       previous: { status: 'idle' },
       fetchContestRankingState: 'idle',
+    }
+  }
+}
+
+const setRealPredict = (
+  realPredict: Draft<{ [key: string]: RealPredict }>,
+  key: string,
+  score: number,
+  finishTime: number,
+  previous: Previous
+) => {
+  const { oldRating, acc, preCache } = realPredict[key] ?? {}
+  const { RatingData, seeds, lastTime } = previous
+  if (RatingData && seeds && oldRating !== undefined) {
+    const rank = findRank(RatingData, score, finishTime)
+    const cache = rank * 1e4 + oldRating!
+    if (cache !== preCache) {
+      const delta = predict(seeds, oldRating, rank, acc ?? 0)
+      realPredict[key].rank = rank
+      realPredict[key].delta = delta
+      realPredict[key].preCache = cache
+      realPredict[key].erank = getERank(seeds, oldRating)
+      realPredict[key].isStable = finishTime <= lastTime!
     }
   }
 }
@@ -278,14 +306,12 @@ export const contestInfosSlice = createSlice({
       action: PayloadAction<{
         contestSlug: string
         key: string
-        delta?: number
-        preCache?: number
       }>
     ) {
-      const { contestSlug, key, delta, preCache } = action.payload
-      setDefaultState(state, contestSlug)
-      state[contestSlug].realPredict[key].delta = delta
-      state[contestSlug].realPredict[key].preCache = preCache
+      const { contestSlug, key } = action.payload
+      const { realPredict, users, previous } = state[contestSlug]
+      const { score, finishTime } = users[key]
+      setRealPredict(realPredict, key, score, finishTime, previous)
     },
   },
   extraReducers(builder) {
@@ -318,7 +344,7 @@ export const contestInfosSlice = createSlice({
           previous.status = 'succeeded'
           return
         }
-        const ratingData = (previous.RatingData = action.payload)
+        previous.RatingData = action.payload
 
         for (const rank of totalRank) {
           const key = gkey(rank.data_region, rank.username)
@@ -331,29 +357,26 @@ export const contestInfosSlice = createSlice({
         const ratings = totalRank.filter(a => a.score).map(a => a.rating)
         const seeds = calcSeed(ratings)
 
+        let lastCNTime = 0,
+          lastEUTime = 0
+        for (const rank of totalRank) {
+          const time = rank.finish_time - (rank.fail_count ?? 0) * 5 * 60
+          if (rank.data_region.toLocaleLowerCase() === 'cn') {
+            lastCNTime = Math.max(lastCNTime, time)
+          } else {
+            lastEUTime = Math.max(lastEUTime, time)
+          }
+        }
+        previous.seeds = seeds
+        previous.lastTime = Math.min(lastCNTime, lastEUTime)
         for (const { region, username, score, finishTime } of Object.values(
           users
         )) {
           const key = gkey(region, username)
           if (!realPredict[key]) continue
-          let { oldRating, acc } = realPredict[key]
-
-          if (oldRating === undefined) oldRating = 1500
-          if (acc === undefined) acc = 0
-
-          const rank = findRank(ratingData, score, finishTime)
-          const delta = predict(seeds, oldRating, rank, acc)
-          const preCache = rank * 1e4 + oldRating
-          const erank = getERank(seeds, oldRating)
-          Object.assign(realPredict[key], {
-            rank,
-            preCache,
-            delta,
-            erank,
-          })
+          setRealPredict(realPredict, key, score, finishTime, previous)
         }
 
-        previous.seeds = seeds
         previous.status = 'succeeded'
       })
       .addCase(fetchMyRank.fulfilled, (state, action) => {
@@ -397,11 +420,7 @@ export const contestInfosSlice = createSlice({
         setDefaultState(state, contestSlug)
         const { submissions, total_rank } = action.payload
         const n = total_rank.length
-        const {
-          realPredict,
-          users,
-          previous: { RatingData, seeds },
-        } = state[contestSlug]
+        const { realPredict, users, previous } = state[contestSlug]
         for (let i = 0; i < n; i++) {
           const {
             username,
@@ -420,18 +439,7 @@ export const contestInfosSlice = createSlice({
               submission: submissions[i],
             }
           }
-          const { oldRating, acc, preCache } = realPredict[key] ?? {}
-          if (RatingData && seeds && oldRating !== undefined) {
-            const rank = findRank(RatingData, score, finishTime)
-            const cache = rank * 1e4 + oldRating!
-            if (cache !== preCache) {
-              const delta = predict(seeds, oldRating, rank, acc ?? 0)
-              realPredict[key].rank = rank
-              realPredict[key].delta = delta
-              realPredict[key].preCache = cache
-              realPredict[key].erank = getERank(seeds, oldRating)
-            }
-          }
+          setRealPredict(realPredict, key, score, finishTime, previous)
         }
         state[contestSlug].fetchContestRankingState = 'succeeded'
       })

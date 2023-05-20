@@ -388,6 +388,7 @@ export type PreviousRatingDataType = {
     acc: number
     score: number
     finish_time: number
+    fail_count?: number
   }[]
   rankUpdate?: number
   update?: number
