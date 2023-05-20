@@ -1,3 +1,10 @@
+## [0.12.9](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.8...v0.12.9) (2023-05-20)
+
+
+### Bug Fixes
+
+* **ranking:** 优化RK/Exp的呈现 ([187ec85](https://github.com/XYShaoKang/refined-leetcode/commit/187ec857380c055e39c79d6c3c58d5f23b3cf34a))
+
 ## [0.12.8](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.7...v0.12.8) (2023-04-22)
 
 
