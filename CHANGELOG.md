@@ -1,3 +1,10 @@
+## [0.12.10](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.9...v0.12.10) (2023-05-20)
+
+
+### Bug Fixes
+
+* **ranking:** 优化提示信息 ([ee0f859](https://github.com/XYShaoKang/refined-leetcode/commit/ee0f859d63152974840c4ae7ee7b9529807defce))
+
 ## [0.12.9](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.8...v0.12.9) (2023-05-20)
 
 
