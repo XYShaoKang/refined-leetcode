@@ -99,7 +99,10 @@ const Title: FC<TitleProps> = ({
                 <div>
                   <div>当前全球排名(Rk)/期望全球排名(Exp)</div>
                   <div>
-                    榜单数据更新有延迟，全球排名可能不准确，未确定排名会标灰色。
+                    榜单数据更新有延迟，对于还不确定的「当前全球排名」标记为
+                    <span style={{ color: '#bbb' }}>灰色</span>
+                    ，如果已经确定，则标记为
+                    <span style={{ color: '#000' }}>黑色</span>
                   </div>
                 </div>
               }
