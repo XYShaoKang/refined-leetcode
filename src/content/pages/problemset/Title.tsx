@@ -153,7 +153,7 @@ const RankTitle: FC<RankTitleProps> = ({ otherRoots }) => {
               title={title}
               onSort={
                 // 帐号有会员权限，才会获取「出现频率」数据，需要根据帐号状态，决定是否可用
-                isPremium || key !== 'FREQUENCY'
+                isPremium || (key !== 'FREQUENCY' && key != 'STATUS')
                   ? handleCustomSort(key, true)
                   : undefined
               }

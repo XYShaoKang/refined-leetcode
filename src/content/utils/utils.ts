@@ -548,7 +548,7 @@ export const getGitHubCommit = async (
 
 // 通过页面包含的一些独特特征判断是否已经跳转到某个页面
 export const problemsetPageIsLoad = async (): Promise<boolean> => {
-  const el = await findElementByXPath(`//li[text()="题库"]`)
+  const el = await findElementByXPath(`//li[text()="Problems"]`)
   const hr = el.parentElement?.nextElementSibling
   if (!hr) return false
   return getComputedStyle(hr)['visibility'] === 'visible'

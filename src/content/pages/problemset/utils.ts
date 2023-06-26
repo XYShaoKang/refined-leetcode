@@ -2,6 +2,7 @@ import { CategorySlugType, ProblemsetQuestionListFilterType } from '@/utils'
 import { Option } from './questionsSlice'
 
 export type OrderBy =
+  | 'STATUS'
   | 'FRONTEND_ID'
   | 'SOLUTION_NUM'
   | 'AC_RATE'
@@ -10,11 +11,12 @@ export type OrderBy =
   | 'RANKING'
 
 export const SORT_KEY: { key: OrderBy; title: string }[] = [
-  { key: 'FRONTEND_ID', title: '题目' },
-  { key: 'SOLUTION_NUM', title: '题解' },
-  { key: 'AC_RATE', title: '通过率' },
-  { key: 'DIFFICULTY', title: '难度' },
-  { key: 'FREQUENCY', title: '出现频率' },
+  { key: 'STATUS', title: 'Status' },
+  { key: 'FRONTEND_ID', title: 'Title' },
+  { key: 'SOLUTION_NUM', title: 'Solution' },
+  { key: 'AC_RATE', title: 'Acceptance' },
+  { key: 'DIFFICULTY', title: 'Difficulty' },
+  { key: 'FREQUENCY', title: 'Frequency' },
 ]
 
 export type CustomFilter = {
