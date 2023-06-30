@@ -1,5 +1,3 @@
-import SvgIcon from '@/components/SvgIcon'
-import { ToolTip } from '@/components/ToolTip'
 import { css } from 'styled-components/macro'
 import Popper from '@/components/PopperUnstyled'
 import { useHover, useAppSelector, useAppDispatch } from '@/hooks'
@@ -131,7 +129,7 @@ const AddQuestion: React.FC = () => {
   }, [])
   return (
     <>
-      <ToolTip
+      {/* <ToolTip
         title={`将当前筛选出的题目添加到题单中`}
         placement="top"
         open={hover}
@@ -141,7 +139,7 @@ const AddQuestion: React.FC = () => {
             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
           </SvgIcon>
         </Box>
-      </ToolTip>
+      </ToolTip> */}
       {openPopper && (
         <Popper
           anchorEl={ref.current}

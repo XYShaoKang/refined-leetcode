@@ -85,15 +85,17 @@ const Option: FC = () => {
             display: flex;
             align-items: center;
             justify-content: flex-end;
+            margin-bottom: 10px;
           `}
         >
           <label
             htmlFor="selectAll"
             css={css`
               cursor: pointer;
+              margin-right: 5px;
             `}
           >
-            {hasEnable ? '全部禁用' : '全部启用'}
+            {hasEnable ? 'Disable All' : 'Enable All'}
           </label>
           <Checkbox
             id="selectAll"
@@ -130,13 +132,15 @@ const Option: FC = () => {
                 css={css`
                   display: flex;
                   align-items: center;
-                  margin-top: 5px;
+                  margin-top: 10px;
+                  margin-bottom: 5px;
                 `}
               >
                 <h2
                   css={css`
                     font-size: 16px;
                     margin: 0;
+                    margin-right: 5px;
                   `}
                 >
                   {labelMap[page]}

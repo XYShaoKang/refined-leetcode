@@ -47,7 +47,6 @@ export function intercept(): void {
                 const sortOrder = body.variables.filters?.sortOrder
 
                 const params = parseParams()
-                console.log(sortOrder, params)
                 if (params.custom) {
                   const listId = body.variables.filters?.listId
                   // 如果参数中包含某个题单，当前有没有这个题单的数据，则需要去请求这个题单的数据
@@ -69,7 +68,6 @@ export function intercept(): void {
                           state,
                           body.variables
                         )
-                        console.log('custom data', data)
                         return JSON.stringify(data)
                       },
                       configurable: true,

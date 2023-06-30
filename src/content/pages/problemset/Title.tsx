@@ -159,9 +159,6 @@ const RankTitle: FC<RankTitleProps> = ({ otherRoots }) => {
               }
               isSort={orderBy === key}
               sortOrder={sortOrder}
-              help={
-                key === 'FREQUENCY' ? '题目在真实面试的出题频率' : undefined
-              }
             />
           </Portal>
         )
@@ -175,14 +172,14 @@ const RankTitle: FC<RankTitleProps> = ({ otherRoots }) => {
         `}
       >
         <TitleBase
-          title="题目评分"
+          title="Ranking"
           onSort={handleCustomSort('RANKING', true)}
           isSort={params.custom?.sort?.orderBy === 'RANKING'}
           sortOrder={params.custom?.sort?.sortOrder}
           showHelpIcon={true}
           help={
             <div style={{ width: 350 }}>
-              题目评分数据来自
+              Ranking data is provided by{' '}
               <a
                 href="https://github.com/zerotrac/leetcode_problem_rating"
                 target="_blank"

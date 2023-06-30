@@ -35,10 +35,9 @@ export const fetchAllQuestions = createAsyncThunk<
   { state: RootState }
 >('questions/fetchAllQuestions', async (_, { getState, dispatch }) => {
   const questions = getState().questions
-  console.log('state questions', questions)
   const date = new Date(questions.update)
   const dif = differenceInHours(date)(new Date())
-  let total: number | undefined = undefined
+  const total: number | undefined = undefined
 
   // if (dif < 24) {
   //   total = (await api.getProblemsetQuestionList({ skip: 0, limit: 1 })).total
@@ -127,7 +126,6 @@ export const selectQuestonsByOption = (
 ): { data: { problemsetQuestionList: ProblemsetQuestionList } } => {
   let res: ProblemsetQuestion[] = []
   const { questions } = state
-  console.log({ questions })
   let ids = questions.ids
   if (option?.filters?.listId) {
     const map = new Map<string, ProblemsetQuestion>()

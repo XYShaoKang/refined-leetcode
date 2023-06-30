@@ -94,14 +94,20 @@ const RankRange: FC = () => {
   }
   return (
     <>
-      <ToolTip title={includePremium ? '包含会员题' : '不含会员题'}>
+      <ToolTip
+        title={
+          includePremium
+            ? 'Include Premium Problems'
+            : 'Exclude Premium Problems'
+        }
+      >
         <Box onClick={handleChangeIncludePremium}>
           <CrownIcon
             color={includePremium ? 'rgb(255, 161, 22)' : 'rgb(104, 104, 104)'}
           />
         </Box>
       </ToolTip>
-      <span>难度范围：</span>
+      <span>Ranking Range: </span>
       <StyledInput value={min} setValue={setMin} onKeyDown={handleEnter} />-
       <StyledInput value={max} setValue={setMax} onKeyDown={handleEnter} />
       <Button
@@ -113,7 +119,7 @@ const RankRange: FC = () => {
           }
         `}
       >
-        应用
+        Apply
       </Button>
     </>
   )

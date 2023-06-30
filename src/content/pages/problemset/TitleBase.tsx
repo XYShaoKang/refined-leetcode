@@ -68,6 +68,7 @@ const TitleBase = forwardRef<HTMLDivElement, TitleProps>(function TitleBase(
                     border-bottom-color: #2a2a2a;
                   }
                 `}
+          z-index: 9999;
         `}
         title={help ?? ''}
         offset={{ top: 2 }}
