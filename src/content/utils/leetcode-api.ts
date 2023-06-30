@@ -407,17 +407,10 @@ export type GlobalData = {
     userSlug: string
     isAdmin: boolean
     checkedInToday: boolean
-    useTranslation: boolean
-    premiumExpiredAt: number
     isTranslator: boolean
     isSuperuser: boolean
-    isPhoneVerified: boolean
     isVerified: boolean
   }
-  jobsMyCompany: {
-    nameSlug: string
-  } | null
-  commonNojPermissionTypes: any[]
 }
 
 export type ProblemsetQuestion = {
@@ -1618,17 +1611,10 @@ class LeetCodeApi {
             userSlug
             isAdmin
             checkedInToday
-            useTranslation
-            premiumExpiredAt
             isTranslator
             isSuperuser
-            isPhoneVerified
             isVerified
           }
-          jobsMyCompany {
-            nameSlug
-          }
-          commonNojPermissionTypes
         }
       `,
     }
@@ -1658,40 +1644,30 @@ class LeetCodeApi {
           $skip: Int
           $filters: QuestionListFilterInput
         ) {
-          problemsetQuestionList(
+          problemsetQuestionList: questionList(
             categorySlug: $categorySlug
             limit: $limit
             skip: $skip
             filters: $filters
           ) {
-            hasMore
-            total
-            questions {
+            total: totalNum
+            questions: data {
               acRate
               difficulty
               freqBar
-              frontendQuestionId
+              frontendQuestionId: questionFrontendId
               isFavor
-              paidOnly
-              solutionNum
+              paidOnly: isPaidOnly
               status
               title
-              titleCn
               titleSlug
               topicTags {
                 name
-                nameTranslated
                 id
                 slug
               }
-              extra {
-                hasVideoSolution
-                topCompanyTags {
-                  imgUrl
-                  slug
-                  numSubscribed
-                }
-              }
+              hasSolution
+              hasVideoSolution
             }
           }
         }
@@ -1733,7 +1709,7 @@ class LeetCodeApi {
 
     const str = [...new Array(n).keys()].map(
       i => /* GraphQL */ `
-      q${i}: problemsetQuestionList(
+      q${i}: questionList(
         categorySlug: "${categorySlug}", 
         limit: 100, 
         skip: ${i * 100}, 
@@ -1749,35 +1725,25 @@ class LeetCodeApi {
         query problemsetQuestionList {
           ${str}
         }
-        fragment questionFragment on QuestionListNode {
-          hasMore
-          total
-          questions {
+        fragment questionFragment on PagifiedQuestionNode {
+          total: totalNum
+          questions: data {
             acRate
             difficulty
             freqBar
-            frontendQuestionId
+            frontendQuestionId: questionFrontendId
             isFavor
-            paidOnly
-            solutionNum
+            paidOnly: isPaidOnly
             status
             title
-            titleCn
             titleSlug
             topicTags {
               name
-              nameTranslated
               id
               slug
             }
-            extra {
-              hasVideoSolution
-              topCompanyTags {
-                imgUrl
-                slug
-                numSubscribed
-              }
-            }
+            hasSolution
+            hasVideoSolution
           }
           __typename
         }

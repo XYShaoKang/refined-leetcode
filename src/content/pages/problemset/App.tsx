@@ -19,7 +19,7 @@ const App: FC = () => {
     if (state.isMount) setIsLoad(true)
   })
   useSetProblemListRoot(
-    '//*[@id="__next"]/*//div[text()="热门企业题库"]/../../..',
+    '//*[@id="__next"]/*//div[text()="Companies"]/../../..',
     isLoad,
     setProblemListRoot
   )

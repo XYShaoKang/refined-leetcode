@@ -35,23 +35,24 @@ export const fetchAllQuestions = createAsyncThunk<
   { state: RootState }
 >('questions/fetchAllQuestions', async (_, { getState, dispatch }) => {
   const questions = getState().questions
+  console.log('state questions', questions)
   const date = new Date(questions.update)
   const dif = differenceInHours(date)(new Date())
   let total: number | undefined = undefined
 
-  if (dif < 24) {
-    total = (await api.getProblemsetQuestionList({ skip: 0, limit: 1 })).total
-    // 如果上次更新时间不超过一天，并且题目总数没有变化时，则不用去更新全部内容，
-    // 只需要更新一些最新的变化既可以，比如在上次更新时间之后的成功提交，会造成 status 的变化
-    // 另外如果原本没有会员，新开了会员之后，是可以获取到 freqBar [出现频率] 这个信息的，
-    // 这时候就需要重新去获取一下。
-    if (total === questions.total) {
-      // 更新最近提交的题目状态
-      await dispatch(fetchLastACQuestions({ last: date, status: 'ACCEPTED' }))
-      await dispatch(fetchLastACQuestions({ last: date, status: 'FAILED' }))
-      return null
-    }
-  }
+  // if (dif < 24) {
+  //   total = (await api.getProblemsetQuestionList({ skip: 0, limit: 1 })).total
+  //   // 如果上次更新时间不超过一天，并且题目总数没有变化时，则不用去更新全部内容，
+  //   // 只需要更新一些最新的变化既可以，比如在上次更新时间之后的成功提交，会造成 status 的变化
+  //   // 另外如果原本没有会员，新开了会员之后，是可以获取到 freqBar [出现频率] 这个信息的，
+  //   // 这时候就需要重新去获取一下。
+  //   if (total === questions.total) {
+  //     // 更新最近提交的题目状态
+  //     await dispatch(fetchLastACQuestions({ last: date, status: 'ACCEPTED' }))
+  //     await dispatch(fetchLastACQuestions({ last: date, status: 'FAILED' }))
+  //     return null
+  //   }
+  // }
 
   return api.getProblemsetQuestionListAll({}, total)
 })
@@ -126,6 +127,7 @@ export const selectQuestonsByOption = (
 ): { data: { problemsetQuestionList: ProblemsetQuestionList } } => {
   let res: ProblemsetQuestion[] = []
   const { questions } = state
+  console.log({ questions })
   let ids = questions.ids
   if (option?.filters?.listId) {
     const map = new Map<string, ProblemsetQuestion>()

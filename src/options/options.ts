@@ -1,31 +1,6 @@
 export const defaultOptions = {
-  homePage: {
-    block: true,
-  },
   problemsetPage: {
-    problemList: true,
     problemRating: false,
-  },
-  problemListPage: {
-    problemList: true,
-    problemRating: false,
-    fixRandomQuestion: true,
-  },
-  problemsPage: {
-    timer: true,
-    randomQuestion: true,
-  },
-  contestProblemsPage: {
-    disableShortcutkey: false,
-  },
-  contestRankingPage: {
-    languageIcon: false,
-    showPredict: true,
-    realTimePredict: false,
-    showOldRating: false,
-    ratingPredictor: true,
-    showNewRating: true,
-    expectingRanking: false,
   },
 }
 

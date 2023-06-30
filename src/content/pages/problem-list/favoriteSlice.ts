@@ -44,12 +44,12 @@ export const fetchFavoriteMyFavorites = createAsyncThunk<
 >('favorites/fetchFavoriteMyFavorites', () => api.getFavoriteMyFavorites())
 
 export const fetchFavoriteDetails = createAsyncThunk<
-  FavoriteDetail[],
+  {},
   string[],
   { state: RootState }
->('favorites/fetchFavoriteDetails', favoriteIds =>
-  api.getFavoriteDetail(favoriteIds)
-)
+>('favorites/fetchFavoriteDetails', _ => {
+  return {}
+})
 
 export const saveFavorite = createAsyncThunk<
   AddFavoriteResult,
