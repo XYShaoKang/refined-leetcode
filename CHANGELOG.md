@@ -1,3 +1,11 @@
+## [0.12.11](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.10...v0.12.11) (2023-07-02)
+
+
+### Bug Fixes
+
+* **problems:** 增加时钟更新频率 ([6ac0008](https://github.com/XYShaoKang/refined-leetcode/commit/6ac00088f8167693898f5736d6508ec1065e4c94))
+* **ranking:** 如果还没 AK 则排名还有可能发生变化 ([d33c1c7](https://github.com/XYShaoKang/refined-leetcode/commit/d33c1c7cc185498473f0b86a16cadb23db4ea121))
+
 ## [0.12.10](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.9...v0.12.10) (2023-05-20)
 
 
