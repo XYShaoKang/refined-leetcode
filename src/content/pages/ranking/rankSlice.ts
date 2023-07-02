@@ -263,10 +263,12 @@ const setRealPredict = (
   key: string,
   score: number,
   finishTime: number,
-  previous: Previous
+  previous: Previous,
+  totalScore: number
 ) => {
   const { oldRating, acc, preCache } = realPredict[key] ?? {}
   const { RatingData, seeds, lastTime } = previous
+  console.log(totalScore, lastTime)
   if (RatingData && seeds && oldRating !== undefined) {
     const rank = findRank(RatingData, score, finishTime)
     const cache = rank * 1e4 + oldRating!
@@ -276,7 +278,8 @@ const setRealPredict = (
       realPredict[key].delta = delta
       realPredict[key].preCache = cache
       realPredict[key].erank = getERank(seeds, oldRating)
-      realPredict[key].isStable = finishTime <= lastTime!
+      realPredict[key].isStable =
+        score === totalScore && finishTime <= lastTime!
     }
   }
 }
@@ -311,7 +314,10 @@ export const contestInfosSlice = createSlice({
       const { contestSlug, key } = action.payload
       const { realPredict, users, previous } = state[contestSlug]
       const { score, finishTime } = users[key]
-      setRealPredict(realPredict, key, score, finishTime, previous)
+      const totalScore =
+        state[contestSlug].info?.questions.reduce((a, b) => a + b.credit, 0) ??
+        Infinity
+      setRealPredict(realPredict, key, score, finishTime, previous, totalScore)
     },
   },
   extraReducers(builder) {
@@ -374,7 +380,19 @@ export const contestInfosSlice = createSlice({
         )) {
           const key = gkey(region, username)
           if (!realPredict[key]) continue
-          setRealPredict(realPredict, key, score, finishTime, previous)
+          const totalScore =
+            state[contestSlug].info?.questions.reduce(
+              (a, b) => a + b.credit,
+              0
+            ) ?? Infinity
+          setRealPredict(
+            realPredict,
+            key,
+            score,
+            finishTime,
+            previous,
+            totalScore
+          )
         }
 
         previous.status = 'succeeded'
@@ -439,7 +457,19 @@ export const contestInfosSlice = createSlice({
               submission: submissions[i],
             }
           }
-          setRealPredict(realPredict, key, score, finishTime, previous)
+          const totalScore =
+            state[contestSlug].info?.questions.reduce(
+              (a, b) => a + b.credit,
+              0
+            ) ?? Infinity
+          setRealPredict(
+            realPredict,
+            key,
+            score,
+            finishTime,
+            previous,
+            totalScore
+          )
         }
         state[contestSlug].fetchContestRankingState = 'succeeded'
       })
