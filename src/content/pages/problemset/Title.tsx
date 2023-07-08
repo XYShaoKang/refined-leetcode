@@ -172,7 +172,7 @@ const RankTitle: FC<RankTitleProps> = ({ otherRoots }) => {
         `}
       >
         <TitleBase
-          title="Ranking"
+          title="Rating"
           onSort={handleCustomSort('RANKING', true)}
           isSort={params.custom?.sort?.orderBy === 'RANKING'}
           sortOrder={params.custom?.sort?.sortOrder}

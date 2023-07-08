@@ -107,7 +107,7 @@ const RankRange: FC = () => {
           />
         </Box>
       </ToolTip>
-      <span>Ranking Range: </span>
+      <span>Rating Range: </span>
       <StyledInput value={min} setValue={setMin} onKeyDown={handleEnter} />-
       <StyledInput value={max} setValue={setMax} onKeyDown={handleEnter} />
       <Button
