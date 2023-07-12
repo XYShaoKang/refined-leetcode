@@ -1,3 +1,10 @@
+## [0.12.14](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.13...v0.12.14) (2023-07-12)
+
+
+### Bug Fixes
+
+* **random:** 官方已经修复了随机一题，可以不用提供这些功能了 ([87a81b4](https://github.com/XYShaoKang/refined-leetcode/commit/87a81b4dd2a37bc516cb150a3ccb27a008dfcced))
+
 ## [0.12.13](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.12...v0.12.13) (2023-07-12)
 
 
