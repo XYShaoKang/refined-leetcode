@@ -9,11 +9,9 @@ export const defaultOptions = {
   problemListPage: {
     problemList: true,
     problemRating: false,
-    fixRandomQuestion: true,
   },
   problemsPage: {
     timer: true,
-    randomQuestion: true,
   },
   contestProblemsPage: {
     disableShortcutkey: false,
@@ -47,9 +45,7 @@ export const labelMap: { [key: string]: string } = {
   block: '黑名单',
   problemList: '题单列表',
   problemRating: '题目评分',
-  fixRandomQuestion: '修复随机一题按钮',
   timer: '计时器',
-  randomQuestion: '随机一题',
   disableShortcutkey: '禁用快捷键',
   languageIcon: '语言图标',
   showOldRating: '显示旧分数',

@@ -15,7 +15,7 @@ const Beta: FC<{ beta?: boolean }> = () => {
   const [randomRoot, setRandomRoot] = useState<HTMLElement>()
 
   const showTimer = !!options?.problemsPage.timer
-  const showRandomQuestion = !!options?.problemsPage.randomQuestion
+  const showRandomQuestion = false
   useObserverAncestor(
     async state => {
       if (!showRandomQuestion) return

@@ -6,7 +6,7 @@ import { awaitFn, problemsetPageIsLoad } from '@/utils'
 import { Portal } from '@/components/Portal'
 import ProblemList from './ProblemList'
 import { withPage } from '@/hoc'
-import { fixRandom } from './fixRandom'
+// import { fixRandom } from './fixRandom'
 import { useSetProblemListRoot } from './useSetProblemListRoot'
 
 const App: FC = () => {
@@ -28,7 +28,7 @@ const App: FC = () => {
 
   useEffect(() => {
     if (!isLoad) return
-    fixRandom()
+    // fixRandom()
   }, [isLoad])
 
   if (!isLoad) return null
