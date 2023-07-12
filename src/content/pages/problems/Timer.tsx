@@ -6,6 +6,7 @@ import {
   LeetCodeApi,
   SuccessCheckReturnType,
   findElement,
+  findElementByXPath,
 } from '@/utils'
 import { useEvent, useHover, useObserverAncestor } from '@/hooks'
 import { ToolTip } from '@/components/ToolTip'
@@ -76,9 +77,10 @@ const Button = styled.button<{
 interface TimerProps {
   beta?: boolean
   root?: HTMLElement
+  dynamicLayout?: boolean
 }
 
-const Timer: FC<TimerProps> = ({ beta, root }) => {
+const Timer: FC<TimerProps> = ({ beta, root, dynamicLayout }) => {
   const pathnames = location.pathname.split('/').filter(Boolean)
   const slug = pathnames[1]
 
@@ -267,7 +269,11 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
 
   const getSubMitBtn = async () => {
     let submitBtn: HTMLElement
-    if (beta) {
+    if (dynamicLayout) {
+      const xpath = "//span[text()='提交']"
+      submitBtn = await findElementByXPath(xpath)
+      submitBtn = submitBtn.parentElement!
+    } else if (beta) {
       const parent = await getRoot()
       if (parent) {
         submitBtn = [...parent.children].slice(-1)[0] as HTMLElement
@@ -405,7 +411,10 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
             style={{ display: 'flex', height: beta ? 33 : 35 }}
           >
             {!hidden && hover && (
-              <ToolTip title="点击重置按钮,可重置计时">
+              <ToolTip
+                title="点击重置按钮,可重置计时"
+                placement={dynamicLayout ? 'bottom' : 'top'}
+              >
                 <div
                   style={{
                     border: '1px solid palevioletred',
@@ -421,7 +430,10 @@ const Timer: FC<TimerProps> = ({ beta, root }) => {
                 </div>
               </ToolTip>
             )}
-            <ToolTip title={!hidden ? '点击隐藏实时计时' : '点击显示实时计时'}>
+            <ToolTip
+              title={!hidden ? '点击隐藏实时计时' : '点击显示实时计时'}
+              placement={dynamicLayout ? 'bottom' : 'top'}
+            >
               <Button
                 onClick={handleHidden}
                 center={false}

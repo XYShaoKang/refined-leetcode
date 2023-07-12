@@ -143,7 +143,16 @@ const checkIfGlobalSubmitIsDisabled = (): boolean =>
  *
  * 根据是否为新版 UI 选择不同的元素
  */
-async function getRoot(): Promise<HTMLElement> {
+async function getRoot(dynamicLayout?: boolean): Promise<HTMLElement> {
+  if (dynamicLayout) {
+    const xpath = "//span[text()='提交']"
+    let parent = await findElementByXPath(xpath)
+    for (let i = 0; i < 10; i++) {
+      if (!parent) break
+      parent = parent.parentElement!
+    }
+    return parent
+  }
   const useBetaUI = await isBetaUI()
   if (useBetaUI) {
     const xpath = "//button[text()='提交']"
