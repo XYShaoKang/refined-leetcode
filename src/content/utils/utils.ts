@@ -620,11 +620,11 @@ export function getPageName(): PageName | undefined {
     // 题单页
     return 'problemListPage'
   } else if (paths[0] === 'problems') {
-    if (paths[2] === 'solutions' && paths[3]) {
-      // 新版题解 solutions
-      // 旧版题解 solution
-      return 'solutionsPage'
-    }
+    // if (paths[2] === 'solutions' && paths[3]) {
+    //   // 新版题解 solutions
+    //   // 旧版题解 solution
+    //   return 'solutionsPage'
+    // }
     // 答题页
     return 'problemsPage'
   } else if (paths[0] === 'contest') {
