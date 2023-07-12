@@ -1,3 +1,10 @@
+## [0.12.13](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.12...v0.12.13) (2023-07-12)
+
+
+### Bug Fixes
+
+* **problems:** 新版题解不会在新开一页 ([2f4b182](https://github.com/XYShaoKang/refined-leetcode/commit/2f4b1829cfbefb4723b969b7410b0a87ce54b1bb))
+
 ## [0.12.12](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.11...v0.12.12) (2023-07-12)
 
 
