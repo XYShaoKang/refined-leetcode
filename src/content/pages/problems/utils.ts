@@ -136,8 +136,20 @@ const checkIfSubmitKey = (e: KeyboardEvent): boolean => {
 /** 检查全局提交快捷键是否被禁用
  *
  */
-const checkIfGlobalSubmitIsDisabled = (): boolean =>
-  localStorage.getItem('global_disabled_submit_code') === 'false'
+const checkIfGlobalSubmitIsDisabled = async (): Promise<boolean> => {
+  const useBetaUI = await isBetaUI()
+  if (useBetaUI) {
+    try {
+      const editorSetting = JSON.parse(
+        localStorage.getItem('EDITOR_SETTING') || '{}'
+      )
+      return !editorSetting?.state?.shortcuts?.enableQuickSubmit
+    } catch (error) {
+      return false
+    }
+  }
+  return localStorage.getItem('global_disabled_submit_code') === 'false'
+}
 
 /** 答题页内获取需要放置计时组件的 root
  *

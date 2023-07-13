@@ -363,11 +363,12 @@ const Timer: FC<TimerProps> = ({ beta, root, dynamicLayout }) => {
   //#region 快捷键提交
   /** 使用快捷键提交的事件
    */
-  const handleKeydown = (e: KeyboardEvent) => {
-    if (checkIfSubmitKey(e) && !checkIfGlobalSubmitIsDisabled()) {
-      log.debug('使用快捷键提交')
-      handleClick()
-    }
+  const handleKeydown = async (e: KeyboardEvent) => {
+    if (!checkIfSubmitKey(e)) return
+    const globalSubmitIsDisabled = await checkIfGlobalSubmitIsDisabled()
+    if (globalSubmitIsDisabled) return
+    log.debug('使用快捷键提交')
+    handleClick()
   }
 
   const getEditEl = async () => {
@@ -388,6 +389,7 @@ const Timer: FC<TimerProps> = ({ beta, root, dynamicLayout }) => {
   })
   useEffect(() => {
     if (!editEl) return
+    console.log(editEl)
     editEl.addEventListener('keydown', handleKeydown)
     return () => editEl.removeEventListener('keydown', handleKeydown)
   }, [editEl])
