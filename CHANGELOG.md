@@ -1,3 +1,10 @@
+## [0.12.15](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.14...v0.12.15) (2023-07-13)
+
+
+### Bug Fixes
+
+* **problems:** 修复快捷键提交 ([8ed9257](https://github.com/XYShaoKang/refined-leetcode/commit/8ed9257d6005896e2759472dea47532a70accec6))
+
 ## [0.12.14](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.13...v0.12.14) (2023-07-12)
 
 
