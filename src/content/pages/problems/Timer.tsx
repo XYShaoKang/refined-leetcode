@@ -376,11 +376,14 @@ const Timer: FC<TimerProps> = ({ beta, root, dynamicLayout }) => {
     let editEl: HTMLElement
 
     if (beta) {
-      const editEls = await findAllElement('.monaco-editor')
+      const editEls = await findAllElement(
+        '.monaco-editor',
+        els =>
+          !!els.find(el => el.parentElement?.dataset.modeId !== 'plaintext')
+      )
       editEl = editEls.find(
         el => el.parentElement?.dataset.modeId !== 'plaintext'
       )!
-      if (!editEl) throw new Error('未找到编辑器元素')
     } else {
       editEl = await findElement('.euyvu2f0')
     }
