@@ -7,6 +7,7 @@ import {
   SuccessCheckReturnType,
   findElement,
   findElementByXPath,
+  findAllElement,
 } from '@/utils'
 import { useEvent, useHover, useObserverAncestor } from '@/hooks'
 import { ToolTip } from '@/components/ToolTip'
@@ -375,7 +376,11 @@ const Timer: FC<TimerProps> = ({ beta, root, dynamicLayout }) => {
     let editEl: HTMLElement
 
     if (beta) {
-      editEl = await findElement('.monaco-editor')
+      const editEls = await findAllElement('.monaco-editor')
+      editEl = editEls.find(
+        el => el.parentElement?.dataset.modeId !== 'plaintext'
+      )!
+      if (!editEl) throw new Error('未找到编辑器元素')
     } else {
       editEl = await findElement('.euyvu2f0')
     }
