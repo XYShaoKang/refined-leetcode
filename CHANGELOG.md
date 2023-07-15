@@ -1,3 +1,10 @@
+## [0.12.16](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.15...v0.12.16) (2023-07-15)
+
+
+### Bug Fixes
+
+* **problems:** 修复查找编辑器元素的逻辑 ([379a757](https://github.com/XYShaoKang/refined-leetcode/commit/379a757d723ffeed7aea0f4b6c0e6ed4a5421a98))
+
 ## [0.12.15](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.14...v0.12.15) (2023-07-13)
 
 
