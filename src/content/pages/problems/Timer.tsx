@@ -238,7 +238,7 @@ const Timer: FC<TimerProps> = ({ beta, root, dynamicLayout }) => {
     )
 
     log.debug('已添加备注')
-    if (!beta) {
+    if (!beta || localStorage.getItem('dynamicLayoutGuide') === 'true') {
       // 新版 UI 会自动刷新备注,所以不需要再手动刷新了
       // 对当前提交添加备注
       await sleep(500)
