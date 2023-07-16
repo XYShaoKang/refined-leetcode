@@ -23,8 +23,8 @@ export const useObserverAncestor = (
 ): void => {
   const state = useUnMount()
   const ancestorRef = useRef({
-    ancestors: [] as HTMLElement[],
-    ancestorSet: new Set<HTMLElement>(),
+    nodes: [] as HTMLElement[],
+    nodeSet: new Set<HTMLElement>(),
     observers: [] as MutationObserver[],
   })
 
@@ -32,24 +32,24 @@ export const useObserverAncestor = (
     const root = await onChange(state)
     if (!root) return
     let el = root
-    const { ancestors, ancestorSet, observers } = ancestorRef.current
+    const { nodes, nodeSet, observers } = ancestorRef.current
     const els: HTMLElement[] = []
 
     //#region 找到新元素和旧元素的公共祖先结点，然后将旧元素到公共祖先结点之间的元素删除，并删除对应的 MutationObserver
-    while (el && !ancestorSet.has(el) && el !== document.body) {
-      el = el.parentElement!
+    while (el && !nodeSet.has(el) && el !== document.body) {
       els.push(el)
+      el = el.parentElement!
     }
     const pop = () => {
-      const ancestor = ancestors.pop()!
-      ancestorSet.delete(ancestor)
+      const node = nodes.pop()!
+      nodeSet.delete(node)
       observers.pop()!.disconnect()
-      return ancestor
+      return node
     }
 
-    while (ancestors.length) {
-      const ancestor = pop()
-      if (el === ancestor) break
+    while (nodes.length) {
+      const node = pop()
+      if (el === node) break
     }
 
     //#endregion
@@ -64,15 +64,15 @@ export const useObserverAncestor = (
           Array.prototype.some.call(removedNodes, node => node === el)
         )
         if (checked) {
-          while (ancestors.length) {
+          while (nodes.length) {
             const ancestor = pop()
             if (ancestor === el) break
           }
           mount()
         }
       })
-      ancestors.push(el)
-      ancestorSet.add(el)
+      nodes.push(el)
+      nodeSet.add(el)
       observers.push(observer)
       observer.observe(el.parentElement!, { childList: true })
     }
