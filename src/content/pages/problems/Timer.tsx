@@ -7,8 +7,9 @@ import {
   SuccessCheckReturnType,
   findElement,
   findElementByXPath,
+  findAllElement,
 } from '@/utils'
-import { useEvent, useHover } from '@/hooks'
+import { useEvent, useHover, useObserverAncestor } from '@/hooks'
 import { ToolTip } from '@/components/ToolTip'
 
 import {
@@ -73,14 +74,6 @@ const Button = styled.button<{
           padding: 0px 15px;
         `}
 `
-
-function isEditor(node: unknown): node is HTMLElement {
-  return (
-    node instanceof HTMLElement &&
-    node.classList.contains('monaco-editor') &&
-    node.parentElement?.dataset.modeId !== 'plaintext'
-  )
-}
 
 interface TimerProps {
   beta?: boolean
@@ -379,6 +372,29 @@ const Timer: FC<TimerProps> = ({ beta, root, dynamicLayout }) => {
     handleClick()
   }
 
+  const getEditEl = async () => {
+    let editEl: HTMLElement
+
+    if (beta) {
+      const editEls = await findAllElement(
+        '.monaco-editor',
+        els =>
+          !!els.find(el => el.parentElement?.dataset.modeId !== 'plaintext')
+      )
+      editEl = editEls.find(
+        el => el.parentElement?.dataset.modeId !== 'plaintext'
+      )!
+    } else {
+      editEl = await findElement('.euyvu2f0')
+    }
+    return editEl
+  }
+  useObserverAncestor(async state => {
+    const editEl: HTMLElement = await getEditEl()
+    if (!state.isMount) return
+    setEditEl(editEl)
+    return editEl
+  })
   useEffect(() => {
     if (!editEl) return
     console.log(editEl)
@@ -386,30 +402,6 @@ const Timer: FC<TimerProps> = ({ beta, root, dynamicLayout }) => {
     return () => editEl.removeEventListener('keydown', handleKeydown)
   }, [editEl])
   //#endregion
-
-  useEffect(() => {
-    const node = Array.from(document.querySelectorAll('.monaco-editor')).find(
-      isEditor
-    )
-    if (node) {
-      setEditEl(node)
-    }
-    const observe = new MutationObserver(mutations => {
-      for (const mutation of mutations) {
-        if (mutation.type === 'childList') {
-          for (const node of mutation.addedNodes) {
-            if (isEditor(node)) {
-              setEditEl(node)
-            }
-          }
-        }
-      }
-    })
-    observe.observe(document.body, { childList: true, subtree: true })
-    return () => {
-      observe.disconnect()
-    }
-  }, [])
 
   if (!root) return null
 
