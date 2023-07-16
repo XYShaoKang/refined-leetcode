@@ -1,3 +1,11 @@
+## [0.12.19](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.18...v0.12.19) (2023-07-16)
+
+
+### Bug Fixes
+
+* **problems:** 修复灵动布局下不显示备注的情况 ([9ce24a3](https://github.com/XYShaoKang/refined-leetcode/commit/9ce24a326fd2a9764e55aa795012ba126bec61e3))
+* **problems:** 修复灵动布局下编辑器元素的查找 ([bb16aad](https://github.com/XYShaoKang/refined-leetcode/commit/bb16aadba6ec7ea2e93edbab787bbb121a779aae))
+
 ## [0.12.18](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.17...v0.12.18) (2023-07-16)
 
 
