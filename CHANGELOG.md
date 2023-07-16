@@ -1,3 +1,10 @@
+## [0.12.20](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.19...v0.12.20) (2023-07-16)
+
+
+### Reverts
+
+* Revert "fix(problems): 修复灵动布局下编辑器元素的查找" ([829db5a](https://github.com/XYShaoKang/refined-leetcode/commit/829db5a42db24df18c4073a46a77ae8a3db442c7))
+
 ## [0.12.19](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.18...v0.12.19) (2023-07-16)
 
 
