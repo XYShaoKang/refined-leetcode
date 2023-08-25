@@ -1,3 +1,10 @@
+## [0.12.21](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.20...v0.12.21) (2023-08-25)
+
+
+### Bug Fixes
+
+* 修复题库页评分组件不加载 ([20f4d24](https://github.com/XYShaoKang/refined-leetcode/commit/20f4d2492cc3f44df5b89fa3deade07dfe54db42))
+
 ## [0.12.20](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.19...v0.12.20) (2023-07-16)
 
 
