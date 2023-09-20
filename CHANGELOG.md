@@ -1,3 +1,12 @@
+## [0.12.22](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.21...v0.12.22) (2023-09-20)
+
+
+### Bug Fixes
+
+* **problemset:** 修复元素的查找 ([253ec7d](https://github.com/XYShaoKang/refined-leetcode/commit/253ec7d054d1b3748f5a0580baf892014021e8ea))
+* **problems:** 修复从灵动布局退回到两栏布局时，定时器失效 ([38a6887](https://github.com/XYShaoKang/refined-leetcode/commit/38a6887d2e7486bcd3bcbbc6639d0df4e324fdd0))
+* 修复判断题库页是否加载 ([6b3ac3e](https://github.com/XYShaoKang/refined-leetcode/commit/6b3ac3efa5ef140743895dd1c2d65c9aa0a045c4))
+
 ## [0.12.21](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.20...v0.12.21) (2023-08-25)
 
 
