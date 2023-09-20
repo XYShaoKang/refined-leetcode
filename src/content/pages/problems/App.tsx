@@ -15,8 +15,7 @@ const App: FC<{ beta?: boolean }> = () => {
     if (!state.isMount) return
     setBeta(beta)
   }, [])
-  // TODO: 这个判断在第一次进入灵动布局时不会生效，需要刷新页面才能生效
-  if (localStorage.getItem('dynamicLayoutGuide') === 'true') {
+  if (localStorage.getItem('used-dynamic-layout') === 'true') {
     return <DynamicLayout />
   }
 
