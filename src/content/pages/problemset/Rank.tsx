@@ -98,10 +98,15 @@ const Rank: FC<{ enable: boolean }> = ({ enable }) => {
     dispatch(enableProblemRating(currentPage!))
   }
   async function handleSetTableEl() {
-    const tableEl = await findElementByXPath('//div[@role="table"]')
+    const tableEl = await findElementByXPath(
+      {
+        xpath: '//div[@role="table"]',
+        nodeType: 'UNORDERED_NODE_ITERATOR_TYPE',
+      },
+      els => !!els.filter(el => el.childElementCount > 0)
+    )
     if (!mountState.isMount) return
-
-    setTableEl(tableEl)
+    setTableEl(tableEl.find(el => el.childElementCount > 0))
   }
 
   useEffect(() => {
