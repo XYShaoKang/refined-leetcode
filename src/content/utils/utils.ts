@@ -548,10 +548,8 @@ export const getGitHubCommit = async (
 
 // 通过页面包含的一些独特特征判断是否已经跳转到某个页面
 export const problemsetPageIsLoad = async (): Promise<boolean> => {
-  const el = await findElementByXPath(`//li[//text()="题库"]`)
-  const hr = el.parentElement?.nextElementSibling
-  if (!hr) return false
-  return getComputedStyle(hr)['visibility'] === 'visible'
+  const el = await findElementByXPath(`//li/a[text()="题库"]/..`)
+  return el.classList.contains('nav-li-after')
 }
 
 export function routerTo(url: string, shallow = true): void {
