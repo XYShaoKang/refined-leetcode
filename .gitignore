@@ -31,3 +31,6 @@ node_modules/
 
 dist
 *.pem
+
+# WebStorm
+.idea

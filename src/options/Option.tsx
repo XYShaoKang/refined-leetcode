@@ -153,7 +153,7 @@ const Option: FC = () => {
                 />
               </div>
               {features.map(([key, enable]) => (
-                <div
+                labelMap[key] && <div
                   key={key}
                   css={css`
                     margin-left: 10px;
