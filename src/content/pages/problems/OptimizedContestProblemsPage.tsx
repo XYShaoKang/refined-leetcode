@@ -1,10 +1,12 @@
 import { createGlobalStyle } from 'styled-components/macro'
-import { useAppDispatch, useAppSelector, useEffectMount } from '@/hooks'
-import { debounce } from 'src/utils'
+import { useAppDispatch, useAppSelector } from '@/hooks'
 import { useCallback, useEffect, useState } from 'react'
-import { selectOptions } from '@/pages/global/optionsSlice'
+import {
+  selectOptions,
+  setContestProblemViewWidth,
+} from '@/pages/global/optionsSlice'
 import { Portal } from '@/components/Portal'
-import { setContestProblemViewWidth } from '../global/optionsSlice'
+import { withPage } from '@/hoc'
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -107,17 +109,9 @@ const Variables = createGlobalStyle<{
   }
 `
 
-const checkUrl = () =>
-  // 插件暂时没支持国际服，先留着吧
-  /^https:\/\/leetcode.(cn|com)\/contest\/(bi)?weekly-contest-\d+\/problems\/.+$/.test(
-    window.location.href
-  )
-
 export const OptimizedContestProblemsPage = (): JSX.Element => {
   const options = useAppSelector(selectOptions)
   const dispatch = useAppDispatch()
-
-  const [isTargetPage, setIsTargetPage] = useState(checkUrl())
 
   const modifyPageLayout = !!options?.contestProblemsPage.modifyPageLayout
   const reverseLayout = !!options?.contestProblemsPage.reverseLayout
@@ -143,19 +137,6 @@ export const OptimizedContestProblemsPage = (): JSX.Element => {
     baseContent.insertBefore($resizeContainer, baseContent.children[1])
     $resizeContainer.classList.add('resize-container')
   }
-
-  useEffectMount(state => {
-    const handle = debounce(() => {
-      if (state.isMount) {
-        setIsTargetPage(checkUrl())
-      }
-    }, 100)
-    window.addEventListener('urlchange', handle)
-    state.unmount.push(() => {
-      handle.cancel()
-      window.removeEventListener('urlchange', handle)
-    })
-  }, [])
 
   const onMouseDown = useCallback(e => {
     if (!baseContent?.children[0]) return
@@ -214,7 +195,7 @@ export const OptimizedContestProblemsPage = (): JSX.Element => {
 
   return (
     <>
-      {modifyPageLayout && isTargetPage && <GlobalStyle />}
+      {modifyPageLayout && <GlobalStyle />}
       <Variables
         $layoutDirection={reverseLayout ? 'row-reverse' : 'row'}
         $problemViewWidth={
@@ -234,8 +215,9 @@ export const OptimizedContestProblemsPage = (): JSX.Element => {
           >
             {Array(3)
               .fill(0)
-              .map(() => (
+              .map((_, i) => (
                 <div
+                  key={i}
                   className={'resize-dot'}
                   style={{
                     background: currentResize.isResizing ? 'white' : undefined,
@@ -248,3 +230,5 @@ export const OptimizedContestProblemsPage = (): JSX.Element => {
     </>
   )
 }
+
+export default withPage('contestProblemsPage')(OptimizedContestProblemsPage)
