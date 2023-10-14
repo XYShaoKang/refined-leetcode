@@ -1,3 +1,16 @@
+# [0.13.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.22...v0.13.0) (2023-10-14)
+
+
+### Bug Fixes
+
+* **problems:** 优化一下页面判断逻辑 ([711ae8b](https://github.com/XYShaoKang/refined-leetcode/commit/711ae8b72b1340168ccaa32e1d63fff9c158aed8))
+* 修复代码格式 ([e8d2cee](https://github.com/XYShaoKang/refined-leetcode/commit/e8d2ceee9df9198063a3d2e9653d646c96d6d766))
+
+
+### Features
+
+* 添加竞赛答题页自定义布局功能 ([bf5c00f](https://github.com/XYShaoKang/refined-leetcode/commit/bf5c00f3af97856b164ad2109fe4baab4c40a21c))
+
 ## [0.12.22](https://github.com/XYShaoKang/refined-leetcode/compare/v0.12.21...v0.12.22) (2023-09-20)
 
 
