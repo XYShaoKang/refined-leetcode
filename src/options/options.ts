@@ -15,7 +15,7 @@ export const defaultOptions = {
   },
   contestProblemsPage: {
     disableShortcutkey: false,
-    modifyPageLayout: true,
+    modifyPageLayout: false,
     reverseLayout: false,
     problemViewWidth: '40%',
   },
