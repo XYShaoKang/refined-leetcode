@@ -1,5 +1,5 @@
 import { createGlobalStyle } from 'styled-components/macro'
-import { useAppDispatch, useAppSelector, useEffectMount } from '@/hooks'
+import { useAppDispatch, useAppSelector } from '@/hooks'
 import { useCallback, useEffect, useState } from 'react'
 import {
   selectOptions,
@@ -7,8 +7,6 @@ import {
 } from '@/pages/global/optionsSlice'
 import { Portal } from '@/components/Portal'
 import { withPage } from '@/hoc'
-import { findElement } from '@/utils'
-import { HelpIcon } from '@/components/icons'
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -111,34 +109,6 @@ const Variables = createGlobalStyle<{
   }
 `
 
-const FeatureTips = () => {
-  const [root, setRoot] = useState<HTMLElement | null>(null)
-
-  useEffectMount(async state => {
-    const languageSelectWrapper = await findElement('.language-select-wrapper')
-    if (!state.isMount) return
-    const root = document.createElement('div')
-    root.style.margin = '15px 0'
-    const control = languageSelectWrapper.parentElement?.parentElement
-    if (control) {
-      control.parentElement?.insertBefore(root, control)
-    }
-    setRoot(root)
-    state.unmount.push(() => root.remove())
-  }, [])
-
-  if (!root) return null
-
-  return (
-    <Portal container={root}>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <HelpIcon width={'16px'} /> 提示：此布局由 Refined LeetCode
-        扩展提供，如需关闭，可以在扩展的配置选项中关闭。
-      </div>
-    </Portal>
-  )
-}
-
 const OptimizedContestProblemsPage = (): JSX.Element => {
   const options = useAppSelector(selectOptions)
   const dispatch = useAppDispatch()
@@ -226,7 +196,6 @@ const OptimizedContestProblemsPage = (): JSX.Element => {
   return (
     <>
       {modifyPageLayout && <GlobalStyle />}
-      {modifyPageLayout && <FeatureTips />}
       <Variables
         $layoutDirection={reverseLayout ? 'row-reverse' : 'row'}
         $problemViewWidth={
