@@ -73,6 +73,15 @@ export const optionsSlice = createSlice({
     setOptions: (state, action) => {
       state.options = action.payload
     },
+    setContestProblemViewWidth: (
+      { options },
+      { payload }: PayloadAction<string>
+    ) => {
+      if (options) {
+        options.contestProblemsPage.problemViewWidth = payload
+        saveOption(current(options))
+      }
+    },
   },
 })
 
@@ -82,6 +91,7 @@ export const {
   enableProblemRating,
   toggleContestProblemShortcutKeyOption,
   setOptions,
+  setContestProblemViewWidth,
 } = optionsSlice.actions
 
 export const selectRandomOption = (
