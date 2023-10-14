@@ -1,3 +1,10 @@
+## [0.13.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.13.1...v0.13.2) (2023-10-14)
+
+
+### Bug Fixes
+
+* **problems:** 自定义布局选项默认关闭 ([29f6564](https://github.com/XYShaoKang/refined-leetcode/commit/29f6564887efa9c6a3f87ec755e95b43450b73cc))
+
 ## [0.13.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.13.0...v0.13.1) (2023-10-14)
 
 
