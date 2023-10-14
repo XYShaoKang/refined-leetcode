@@ -152,27 +152,30 @@ const Option: FC = () => {
                   color={enableItems.length ? 'rgb(144, 202, 249)' : ''}
                 />
               </div>
-              {features.map(([key, enable]) => (
-                labelMap[key] && <div
-                  key={key}
-                  css={css`
-                    margin-left: 10px;
-                  `}
-                >
-                  <div
-                    onClick={handleChange([[page, key]])}
-                    css={css`
-                      display: flex;
-                      justify-content: space-between;
-                      align-items: center;
-                      cursor: pointer;
-                    `}
-                  >
-                    <div>{labelMap[key]}</div>
-                    <Switch enable={enable} />
-                  </div>
-                </div>
-              ))}
+              {features.map(
+                ([key, enable]) =>
+                  labelMap[key] && (
+                    <div
+                      key={key}
+                      css={css`
+                        margin-left: 10px;
+                      `}
+                    >
+                      <div
+                        onClick={handleChange([[page, key]])}
+                        css={css`
+                          display: flex;
+                          justify-content: space-between;
+                          align-items: center;
+                          cursor: pointer;
+                        `}
+                      >
+                        <div>{labelMap[key]}</div>
+                        <Switch enable={enable} />
+                      </div>
+                    </div>
+                  )
+              )}
             </div>
           )
         })}
