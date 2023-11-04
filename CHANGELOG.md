@@ -1,3 +1,10 @@
+## [0.13.4](https://github.com/XYShaoKang/refined-leetcode/compare/v0.13.3...v0.13.4) (2023-11-04)
+
+
+### Bug Fixes
+
+* **background:** 更新 lccn.lbao.site 的 api 地址 ([1cab345](https://github.com/XYShaoKang/refined-leetcode/commit/1cab3456f8e3eed3d88a34e6b4b1e9023030ec02))
+
 ## [0.13.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.13.2...v0.13.3) (2023-10-14)
 
 
