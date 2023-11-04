@@ -13,14 +13,17 @@ export const lbaoPredictorApi = async (
   users: { data_region: string; username: string }[],
   retry = 5
 ): Promise<LbaoPredictorType[]> => {
-  const res = await fetch('https://lccn.lbao.site/predict_records', {
-    method: 'POST',
-    body: JSON.stringify({
-      contest_name,
-      users,
-    }),
-    headers: { 'content-type': 'application/json' },
-  })
+  const res = await fetch(
+    'https://lccn.lbao.site/api/v1/contest-records/predicted-rating',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        contest_name,
+        users,
+      }),
+      headers: { 'content-type': 'application/json' },
+    }
+  )
   if (retry && res.status === 503) {
     await sleep(2000)
     return lbaoPredictorApi(contest_name, users, retry - 1)
