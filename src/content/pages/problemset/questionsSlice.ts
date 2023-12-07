@@ -30,7 +30,7 @@ const questionsAdapter = createEntityAdapter<
 })
 
 export const fetchAllQuestions = createAsyncThunk<
-  ProblemsetQuestion[] | null,
+  Map<CategorySlugType, ProblemsetQuestion[]> | null,
   undefined,
   { state: RootState }
 >('questions/fetchAllQuestions', async (_, { getState, dispatch }) => {
@@ -53,7 +53,7 @@ export const fetchAllQuestions = createAsyncThunk<
     }
   }
 
-  return api.getProblemsetQuestionListAll({}, total)
+  return api.getAllQuestion()
 })
 
 export const fetchLastACQuestions = createAsyncThunk<
@@ -70,10 +70,15 @@ export const fetchAllQuestionIds = createAsyncThunk<
   { state: RootState }
 >('questions/fetchAllQuestionIds', async () => api.getAllQuestions())
 
-const initialState = questionsAdapter.getInitialState({
+const initData = {
   total: 0,
   update: 0,
-})
+} as {
+  total: number
+  update: number
+} & { [key in CategorySlugType]: string[] }
+
+const initialState = questionsAdapter.getInitialState(initData)
 
 const questionsSlice = createSlice({
   name: 'posts',
@@ -82,10 +87,16 @@ const questionsSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(fetchAllQuestions.fulfilled, (state, action) => {
-        if (action.payload) {
-          questionsAdapter.upsertMany(state, action.payload)
-          state.total = action.payload.length
+        const map = action.payload
+        if (map) {
+          const allQuestions = map.get('all-code-essentials')!
+          questionsAdapter.upsertMany(state, allQuestions)
+          state.total = allQuestions.length
           state.update = new Date().valueOf()
+          for (const [category, questions] of map) {
+            if (category === 'all-code-essentials') continue
+            state[category] = questions.map(q => q.frontendQuestionId)
+          }
         }
       })
       .addCase(fetchAllQuestionIds.fulfilled, (state, action) => {
@@ -154,26 +165,12 @@ export const selectQuestonsByOption = (
         .filter(Boolean) as EntityId[]) ?? []
   }
 
-  if (option.categorySlug) {
-    const categorySlugs = new Set(['database', 'shell', 'concurrency'])
+  if (option.categorySlug && option.categorySlug !== 'all-code-essentials') {
+    const set = new Set(questions[option.categorySlug])
     for (const id of ids) {
       const question = questions.entities[id]
-      if (!question) continue
-      if (option.categorySlug === 'algorithms') {
-        // 力扣没有将 「剑指」和「面试题」 的题目归为 algorithms 这个分类，
-        // 为了保持跟力扣的一致，如果分类是 algorithms 也过滤掉这些题目
-        if (
-          !question.frontendQuestionId.startsWith('剑指') &&
-          !question.frontendQuestionId.startsWith('面试题') &&
-          question.topicTags.every(a => !categorySlugs.has(a.slug))
-        ) {
-          res.push(question)
-        }
-      } else {
-        if (question.topicTags.some(a => a.slug === option.categorySlug)) {
-          res.push(question)
-        }
-      }
+      if (!question || !set.has(question.frontendQuestionId)) continue
+      res.push(question)
     }
   } else {
     res = ids.map(id => questions.entities[id]!)

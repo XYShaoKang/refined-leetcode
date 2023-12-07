@@ -90,7 +90,7 @@ export const getERank = (seeds: number[], x: number): number => {
 /** 获取某个分数 x 的期望胜率
  *
  * @param seeds 种子数据
- * @param x
+ * @param x 真实分数*ACCURACY
  * @returns
  */
 export const getSeed = (seeds: number[], x: number): number => {

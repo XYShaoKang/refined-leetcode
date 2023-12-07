@@ -532,10 +532,14 @@ export type ProblemsetPageProps = {
 
 export type CategorySlugType =
   | ''
+  | 'all-code-essentials'
   | 'algorithms'
   | 'database'
   | 'shell'
   | 'concurrency'
+  | 'pandas'
+  | 'javascript'
+
 export type ProblemsetQuestionListFilterType = {
   listId?: string
   difficulty?: 'EASY' | 'MEDIUM' | 'HARD'
@@ -1788,6 +1792,37 @@ class LeetCodeApi {
     const res: ProblemsetQuestion[] = []
     for (let i = 0; i < n; i++) {
       res.push(...data[`q${i}`].questions)
+    }
+    return res
+  }
+
+  public async getAllQuestion(): Promise<
+    Map<CategorySlugType, ProblemsetQuestion[]>
+  > {
+    const CategorySlugs = [
+      'algorithms',
+      'database',
+      'shell',
+      'concurrency',
+      'pandas',
+      'javascript',
+    ] as const
+    const res = new Map<CategorySlugType, ProblemsetQuestion[]>([
+        ['all-code-essentials', []],
+      ]),
+      set = new Set<string>()
+    for (const categorySlug of CategorySlugs) {
+      if (!res.has(categorySlug)) res.set(categorySlug, [])
+      const questions = await this.getProblemsetQuestionListAll({
+        categorySlug,
+      })
+      for (const question of questions) {
+        if (!set.has(question.titleSlug)) {
+          res.get('all-code-essentials')!.push(question)
+          set.add(question.titleSlug)
+        }
+        res.get(categorySlug)!.push(question)
+      }
     }
     return res
   }
