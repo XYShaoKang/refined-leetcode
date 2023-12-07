@@ -1,3 +1,10 @@
+## [0.13.5](https://github.com/XYShaoKang/refined-leetcode/compare/v0.13.4...v0.13.5) (2023-12-07)
+
+
+### Bug Fixes
+
+* **problemset:** 修复本地题目过滤失效 ([186c5c8](https://github.com/XYShaoKang/refined-leetcode/commit/186c5c88d05de5a05194fdc02538bd40f1405d5c))
+
 ## [0.13.4](https://github.com/XYShaoKang/refined-leetcode/compare/v0.13.3...v0.13.4) (2023-11-04)
 
 
