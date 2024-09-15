@@ -3,6 +3,7 @@ import { Portal } from '@/components/Portal'
 import { Item, useUrlChange } from './Item'
 
 import { useFetchPreviousRatingData, usePredict, useUser } from './utils'
+import { TDWrap } from './Predict'
 
 interface RealTimePredictItemProps {
   isVirtual?: boolean
@@ -13,14 +14,16 @@ interface RealTimePredictItemProps {
   showExpectingRanking: boolean
   index: number
   row: HTMLElement
+  beta?: boolean
 }
 export const RealTimePredictItem: FC<RealTimePredictItemProps> = ({
   hasMyRank,
   index,
   row,
+  beta,
   ...props
 }) => {
-  const { username, region } = useUser(hasMyRank, index, row)
+  const { username, region } = useUser(hasMyRank, index, row, beta)
   const [{ contestId: contestSlug }] = useUrlChange()
 
   usePredict({
@@ -30,7 +33,11 @@ export const RealTimePredictItem: FC<RealTimePredictItemProps> = ({
   })
 
   return (
-    <Item realTime={true} {...{ ...props, contestSlug, region, username }} />
+    <Item
+      realTime={true}
+      {...{ ...props, contestSlug, region, username }}
+      beta={beta}
+    />
   )
 }
 interface RealTimePredictProps {
@@ -40,6 +47,7 @@ interface RealTimePredictProps {
   showPredictordelta: boolean
   showNewRating: boolean
   showExpectingRanking: boolean
+  beta?: boolean
 }
 
 export const RealTimePredict: FC<RealTimePredictProps> = ({
@@ -50,22 +58,29 @@ export const RealTimePredict: FC<RealTimePredictProps> = ({
   const [{ contestId: contestSlug }] = useUrlChange()
   useFetchPreviousRatingData(contestSlug)
 
+  const borderColor = props.beta ? '#888' : '#ddd'
+
   return (
     <>
       {rows.map((row, i) => (
         <Portal container={row} key={i}>
-          <td
+          <TDWrap
             style={{
-              borderLeft: '2px dashed #ddd',
-              borderRight: '2px dashed #ddd',
-              borderBottom: i === rows.length - 1 ? '2px dashed #ddd' : '',
+              borderLeft: `2px dashed ${borderColor}`,
+              borderRight: `2px dashed ${borderColor}`,
+              borderBottom:
+                i === rows.length - 1 ? `2px dashed ${borderColor}` : '',
+              height: '100%',
+              width: 300,
+              padding: 8,
             }}
+            beta={props.beta}
           >
             <RealTimePredictItem
               row={row}
               {...{ ...props, hasMyRank, index: i }}
             />
-          </td>
+          </TDWrap>
         </Portal>
       ))}
     </>

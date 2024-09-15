@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useState } from 'react'
+import { FC, memo, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components/macro'
 
 import { debounce } from '../../../utils'
@@ -15,6 +15,7 @@ import { useUser } from './utils'
 type ItmeType = {
   parent: HTMLElement
   lang?: string
+  beta?: boolean
 }
 
 const DefaultIcon = styled.span`
@@ -37,7 +38,7 @@ const StyleSvg = styled.svg<{ size?: number }>`
 `
 
 function setDisplay(el: Element | undefined, display: string) {
-  if (el instanceof HTMLElement) {
+  if (el instanceof HTMLElement || el instanceof SVGElement) {
     el.style.display = display
   }
 }
@@ -45,17 +46,18 @@ function isShow(parent: HTMLElement) {
   return parent.textContent && !!parent.textContent.trim()
 }
 
-const LanguageIcon: FC<ItmeType> = ({ parent, lang }) => {
+const LanguageIcon: FC<ItmeType> = ({ parent, lang, beta }) => {
   const [show, setShow] = useState(isShow(parent))
   const { data: iconFiles } = useGetFileIconsQuery()
 
   useEffect(() => {
+    const p = beta ? parent.children[0].children[0] : parent.children[0]
     const handleChange = debounce(() => {
       const show = isShow(parent)
       setShow(show)
       if (show) {
-        if (parent.childNodes[0].nodeName === 'A') {
-          setDisplay(parent.children[0]?.children[0], 'none')
+        if (p?.nodeName !== 'DIV') {
+          setDisplay(p?.children[0], 'none')
         }
       }
     }, 10)
@@ -65,21 +67,27 @@ const LanguageIcon: FC<ItmeType> = ({ parent, lang }) => {
     return () => {
       handleChange.cancel()
       observer.disconnect()
-      setDisplay(parent.children[0]?.children[0], '')
+      setDisplay(p?.children[0], '')
     }
-  }, [])
+  }, [beta])
 
   if (!show || !lang || !iconFiles) return null
-
   if (parent.childNodes[0]?.nodeName === '#text') {
     // 当前处于比赛中，则需要手动创建一个元素用于图标的渲染
     const span = document.createElement('span')
     parent.insertBefore(span, parent.childNodes[0])
+    span.style.display = 'inline-block'
   }
 
   const iconFile = iconFiles[lang]
   return (
-    <Portal container={parent.children[0] as HTMLElement}>
+    <Portal
+      container={
+        beta
+          ? (parent.children[0].children[0] as HTMLElement)
+          : (parent.children[0] as HTMLElement)
+      }
+    >
       {!iconFile ? (
         <DefaultIcon className="fa fa-file-code-o" />
       ) : (
@@ -96,8 +104,9 @@ export const LanguageIconRow: FC<{
   row: HTMLElement
   i: number
   hasMyRank: boolean
-}> = memo(function LanguageIconRow({ contestSlug, row, i, hasMyRank }) {
-  const { username, region } = useUser(hasMyRank, i, row)
+  beta?: boolean
+}> = memo(function LanguageIconRow({ contestSlug, row, i, hasMyRank, beta }) {
+  const { username, region } = useUser(hasMyRank, i, row, beta)
 
   const user = useAppSelector(state =>
     selectUserRanking(state, contestSlug, region, username)
@@ -106,9 +115,17 @@ export const LanguageIconRow: FC<{
     selectContestInfo(state, contestSlug)
   )
 
+  const tds = useMemo(() => {
+    if (beta) {
+      return Array.prototype.slice.call(row.children, 3, 7)
+    }
+    return Array.prototype.slice.call(row.children, 4, 8)
+  }, [beta, row])
+
   if (!user || !contestInfo) return null
+
   const { questions } = contestInfo
-  const tds = Array.prototype.slice.call(row.children, 4, 8)
+
   return (
     <>
       {tds.map((td, j) => (
@@ -116,6 +133,7 @@ export const LanguageIconRow: FC<{
           key={j}
           parent={td}
           lang={user.submission[questions[j].question_id]?.lang}
+          beta={beta}
         />
       ))}
     </>

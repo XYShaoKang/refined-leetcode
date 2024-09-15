@@ -268,7 +268,6 @@ const setRealPredict = (
 ) => {
   const { oldRating, acc, preCache } = realPredict[key] ?? {}
   const { RatingData, seeds, lastTime } = previous
-  console.log(totalScore, lastTime)
   if (RatingData && seeds && oldRating !== undefined) {
     const rank = findRank(RatingData, score, finishTime)
     const cache = rank * 1e4 + oldRating!

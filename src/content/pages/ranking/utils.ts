@@ -30,7 +30,8 @@ export type User = { region: string; username: string }
 export function getUsername(
   hasMyRank: boolean,
   index: number,
-  row: HTMLElement
+  row: HTMLElement,
+  beta?: boolean
 ): User {
   let region = '',
     username = ''
@@ -38,13 +39,24 @@ export function getUsername(
     region = 'CN'
     username = (window as any).LeetCodeData.userStatus.username
   } else {
-    const a = row.children[1].children[0] as HTMLAnchorElement
-    if (a.host === 'leetcode.com') {
-      region = 'US'
-      username = a.pathname.split('/').filter(Boolean)[0]
+    if (beta) {
+      const a = row.children[0].children[0].children[0] as HTMLAnchorElement
+      if (a.host === 'leetcode.com') {
+        region = 'US'
+        username = a.pathname.split('/').filter(Boolean)[0]
+      } else {
+        region = 'CN'
+        username = a.pathname.split('/').filter(Boolean)[1]
+      }
     } else {
-      region = 'CN'
-      username = a.pathname.split('/').filter(Boolean)[1]
+      const a = row.children[1].children[0] as HTMLAnchorElement
+      if (a.host === 'leetcode.com') {
+        region = 'US'
+        username = a.pathname.split('/').filter(Boolean)[0]
+      } else {
+        region = 'CN'
+        username = a.pathname.split('/').filter(Boolean)[1]
+      }
     }
   }
   return { region, username }
@@ -52,18 +64,21 @@ export function getUsername(
 
 /** 当前行发生改变是触发事件
  */
-export const useRowChange = (row: HTMLElement, onChange: () => void): void => {
+export const useRowChange = (
+  row: HTMLElement,
+  onChange: () => void,
+  beta?: boolean
+): void => {
   useEffect(() => {
     const handleChange = debounce(() => {
       onChange()
     }, 10)
     handleChange()
     const observer = new MutationObserver(handleChange)
-
-    observer.observe(row.children[1].children[0], {
-      attributes: true,
-    })
-
+    const a = beta
+      ? row.children[0].children[0].children[0].children[0]
+      : row.children[1].children[0]
+    observer.observe(a, { attributes: true })
     return () => {
       handleChange.cancel()
       observer.disconnect()
@@ -76,13 +91,14 @@ export const useRowChange = (row: HTMLElement, onChange: () => void): void => {
 export const useUser = (
   hasMyRank: boolean,
   index: number,
-  row: HTMLElement
+  row: HTMLElement,
+  beta?: boolean
 ): User => {
-  const [state, setState] = useState(getUsername(hasMyRank, index, row))
+  const [state, setState] = useState(getUsername(hasMyRank, index, row, beta))
   const handleChange = useEvent(() => {
-    setState(getUsername(hasMyRank, index, row))
+    setState(getUsername(hasMyRank, index, row, beta))
   })
-  useRowChange(row, handleChange)
+  useRowChange(row, handleChange, beta)
   return state
 }
 

@@ -1,11 +1,10 @@
 import { FC, useEffect, useState } from 'react'
 
-import { withPage } from '@/hoc'
 import { useAppDispatch, useAppSelector, useEffectMount } from '@/hooks'
 
 import { selectOptions } from '../global/optionsSlice'
 import { Portal } from '@/components/Portal'
-import { findElement, findAllElement, isBetaUI } from '@/utils'
+import { findElement, findAllElement, findElementByXPath } from '@/utils'
 import Predict from './Predict'
 import { useUrlChange } from './Item'
 import Title from './Title'
@@ -22,23 +21,8 @@ import { RealTimePredict } from './RealTimePredict'
 import { User } from './utils'
 import { format } from 'date-fns'
 import { css } from 'styled-components/macro'
-import { BetaApp } from './BetaApp'
 
-const App = () => {
-  const [beta, setBeta] = useState<boolean>()
-
-  useEffectMount(async state => {
-    const beta = await isBetaUI()
-    if (!state.isMount) return
-    setBeta(beta)
-  }, [])
-  if (beta === undefined) return null
-  if (beta) {
-    return <BetaApp />
-  }
-  return <LegacyApp />
-}
-const LegacyApp: FC = () => {
+export const BetaApp: FC = () => {
   const options = useAppSelector(selectOptions)
   const [titleRoot, setTitleRoot] = useState<HTMLElement>()
   const [rows, setRows] = useState<HTMLElement[]>()
@@ -77,16 +61,37 @@ const LegacyApp: FC = () => {
 
   useEffectMount(async state => {
     const handleChange = debounce(async () => {
-      const parent = await findElement('.table-responsive>table>thead>tr')
-      const trs = await findAllElement(
-        '.table-responsive>table>tbody>tr',
-        els =>
-          !!els.length &&
-          (els[0]?.className === 'success' ? els.length > 1 : true)
+      // const parent = await findElement('.table-responsive>table>thead>tr')
+      // console.log('handleChange')
+      const el = await findElementByXPath(
+        '//*[@id="__next"]//div[text()="用户名"]',
+        el => {
+          let p = el
+          while (p && p !== document.body) {
+            if (p.nextElementSibling?.textContent === '得分') {
+              return true
+            }
+            p = p.parentElement
+          }
+          return false
+        }
       )
-      if (state.isMount) {
-        setTitleRoot(parent)
-        setRows([...trs])
+      let p: HTMLElement
+      if (el) {
+        p = el
+        while (p && p !== document.body) {
+          if (p.nextElementSibling?.textContent === '得分') {
+            break
+          }
+          p = p.parentElement!
+        }
+        const trs = p.parentElement!.parentElement!
+          .children as unknown as HTMLElement[]
+        if (state.isMount) {
+          setTitleRoot(trs[0])
+          // console.log([...trs].slice(1).map(a=>a.children[0]))
+          setRows([...trs].slice(1).map(a => a.children[0]) as HTMLElement[])
+        }
       }
     }, 100)
     handleChange()
@@ -121,19 +126,18 @@ const LegacyApp: FC = () => {
   useEffectMount(
     async state => {
       if (!widescreen) return
-
-      const container = await findElement('#contest-app .container')
-      if (!state.isMount) return
-      container.style.width = '98%'
-      container.style.maxWidth = '1440px'
-      state.unmount.push(() => {
-        container.style.width = ''
-        container.style.maxWidth = ''
-      })
+      let p = titleRoot
+      while (p && p !== document.body) {
+        if (getComputedStyle(p).maxWidth !== 'none') {
+          p.style.maxWidth = 'unset'
+          p.style.alignItems = 'center'
+          break
+        }
+        p = p.parentElement!
+      }
     },
-    [widescreen]
+    [widescreen, titleRoot]
   )
-
   if (!contestInfo || !rows) return null
 
   return (
@@ -143,67 +147,83 @@ const LegacyApp: FC = () => {
         showExpectingRanking) &&
         titleRoot && (
           <Portal container={titleRoot}>
-            {showPredict && (
-              <th>
-                <Title
-                  showOldRating={showOldRating}
-                  showPredictordelta={showPredictordelta}
-                  showNewRating={showNewRating}
-                  showExpectingRanking={showExpectingRanking}
-                  realTime={false}
-                  help={
-                    <>
-                      预测数据来自
-                      <a
-                        href="https://lccn.lbao.site/"
-                        target="_blank"
-                        rel="noreferrer"
-                        style={{ paddingLeft: 2 }}
-                      >
-                        lccn.lbao.site
-                      </a>
-                    </>
-                  }
-                />
-              </th>
-            )}
-            {realTimePredict && (
-              <th
-                css={css`
-                  &&&& {
-                    border: 2px dashed #ddd;
-                    border-bottom-style: solid;
-                  }
-                `}
-              >
-                <Title
-                  showOldRating={showOldRating}
-                  showPredictordelta={showPredictordelta}
-                  showNewRating={showNewRating}
-                  showExpectingRanking={showExpectingRanking}
-                  realTime={true}
-                  help={
-                    <div>
-                      实时预测，仅供参考，详细说明查看帖子
-                      <a
-                        href="https://leetcode.cn/circle/discuss/0OHPDu/"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        实时预测功能
-                      </a>
-                      <br />
-                      {updateTime
-                        ? `当前数据更新时间为：「${format(
-                            new Date(updateTime),
-                            'yyyy-MM-dd HH:mm'
-                          )}」`
-                        : ''}
-                    </div>
-                  }
-                />
-              </th>
-            )}
+            <>
+              {showPredict && (
+                <div
+                  style={{
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: 200,
+                  }}
+                >
+                  <Title
+                    showOldRating={showOldRating}
+                    showPredictordelta={showPredictordelta}
+                    showNewRating={showNewRating}
+                    showExpectingRanking={showExpectingRanking}
+                    realTime={false}
+                    help={
+                      <>
+                        预测数据来自
+                        <a
+                          href="https://lccn.lbao.site/"
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ paddingLeft: 2 }}
+                        >
+                          lccn.lbao.site
+                        </a>
+                      </>
+                    }
+                  />
+                </div>
+              )}
+              {realTimePredict && (
+                <div
+                  css={css`
+                    &&&& {
+                      border: 2px dashed #888;
+                      border-bottom-style: solid;
+                    }
+                  `}
+                  style={{
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: 300,
+                    padding: 8,
+                  }}
+                >
+                  <Title
+                    showOldRating={showOldRating}
+                    showPredictordelta={showPredictordelta}
+                    showNewRating={showNewRating}
+                    showExpectingRanking={showExpectingRanking}
+                    realTime={true}
+                    help={
+                      <div>
+                        实时预测，仅供参考，详细说明查看帖子
+                        <a
+                          href="https://leetcode.cn/circle/discuss/0OHPDu/"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          实时预测功能
+                        </a>
+                        <br />
+                        {updateTime
+                          ? `当前数据更新时间为：「${format(
+                              new Date(updateTime),
+                              'yyyy-MM-dd HH:mm'
+                            )}」`
+                          : ''}
+                      </div>
+                    }
+                  />
+                </div>
+              )}
+            </>
           </Portal>
         )}
       {(((showPredictordelta || showNewRating || showOldRating) &&
@@ -219,6 +239,7 @@ const LegacyApp: FC = () => {
               showPredictordelta={showPredictordelta}
               showNewRating={showNewRating}
               showExpectingRanking={showExpectingRanking}
+              beta={true}
             />
             {realTimePredict && (
               <RealTimePredict
@@ -228,6 +249,7 @@ const LegacyApp: FC = () => {
                 showPredictordelta={showPredictordelta}
                 showNewRating={showNewRating}
                 showExpectingRanking={showExpectingRanking}
+                beta={true}
               />
             )}
           </>
@@ -240,10 +262,9 @@ const LegacyApp: FC = () => {
             row={row}
             i={i}
             hasMyRank={hasMyRank}
+            beta={true}
           />
         ))}
     </>
   )
 }
-
-export default withPage('contestRankingPage')(App)

@@ -15,6 +15,7 @@ type ItmeType = {
   showNewRating: boolean
   showExpectingRanking: boolean
   realTime: boolean
+  beta?: boolean
 }
 
 export type PageParamType = {
@@ -76,6 +77,7 @@ export const Item: FC<ItmeType> = memo(function Item({
   showNewRating,
   showExpectingRanking,
   realTime,
+  beta,
 }) {
   let { delta, oldRating, erank, rank, isStable } =
     useAppSelector(state =>
@@ -98,6 +100,7 @@ export const Item: FC<ItmeType> = memo(function Item({
             ? `rgb(0 136 0 / ${Math.min(delta / 100, 1) * 70 + 30}%)`
             : `rgb(64 64 64 / ${Math.min(-delta / 100, 1) * 70 + 30}%)`};
           width: 60px;
+          ${beta && delta < 0 ? `filter: invert(100%);;` : ''}
         `}
       >
         {deltaNum > 0 ? `+${deltaNum}` : deltaNum}
@@ -115,6 +118,7 @@ export const Item: FC<ItmeType> = memo(function Item({
                 color: ${delta >= 0
                   ? `rgb(0 136 0 / ${Math.min(delta / 100, 1) * 70 + 30}%)`
                   : `rgb(64 64 64 / ${Math.min(-delta / 100, 1) * 70 + 30}%)`};
+                ${beta && delta < 0 ? `filter: invert(100%);;` : ''}
               `
             : // 如果没有显示分数变化，则需要将分数变化反应到颜色的深浅中
               css`
@@ -123,6 +127,7 @@ export const Item: FC<ItmeType> = memo(function Item({
                 color: ${delta >= 0
                   ? `rgb(0 136 0 / ${Math.min(delta / 100, 1) * 70 + 30}%)`
                   : `rgb(64 64 64 / ${Math.min(-delta / 100, 1) * 70 + 30}%)`};
+                ${beta && delta < 0 ? `filter: invert(100%);;` : ''}
               `
         }
       >
@@ -135,10 +140,14 @@ export const Item: FC<ItmeType> = memo(function Item({
   const { start_time, duration } = info.contest
   const inContest = new Date().valueOf() <= (start_time + duration) * 1000
 
+  const color = beta ? 'rgba(255, 255, 255, 0.6)' : '#000'
+
   return (
     <div
       css={css`
         display: flex;
+        height: 100%;
+        align-items: center;
       `}
     >
       {showOldRating && <div style={{ width: 60 }}>{oldRating}</div>}
@@ -146,7 +155,7 @@ export const Item: FC<ItmeType> = memo(function Item({
       {showNewRating && newRatingEl}
       {showExpectingRanking && realTime && erank && (
         <div style={{ display: 'flex' }}>
-          <span style={{ color: isStable || !inContest ? '#000' : '#bbb' }}>
+          <span style={{ color: isStable || !inContest ? color : '#bbb' }}>
             {rank}
           </span>
           <span style={{ margin: '0 10px' }}>/</span>
