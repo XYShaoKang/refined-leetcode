@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react'
+import { FC, memo, useEffect } from 'react'
 
 import { fetchPrediction } from './rankSlice'
 import { Portal } from '@/components/Portal'
@@ -83,7 +83,7 @@ type TDWrapProps = React.HTMLAttributes<HTMLElement> & {
   children?: React.ReactNode
 }
 
-export const TDWrap = ({ beta, children, ...props }: TDWrapProps) => {
+export const TDWrap: FC<TDWrapProps> = ({ beta, children, ...props }) => {
   if (beta) {
     return <div {...props}>{children}</div>
   }

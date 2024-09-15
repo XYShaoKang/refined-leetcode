@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector, useEffectMount } from '@/hooks'
 
 import { selectOptions } from '../global/optionsSlice'
 import { Portal } from '@/components/Portal'
-import { findElement, findAllElement, findElementByXPath } from '@/utils'
+import { findElementByXPath } from '@/utils'
 import Predict from './Predict'
 import { useUrlChange } from './Item'
 import Title from './Title'
@@ -123,21 +123,18 @@ export const BetaApp: FC = () => {
     (showPredict || realTimePredict) &&
     (showPredictordelta || showNewRating || showOldRating)
 
-  useEffectMount(
-    async state => {
-      if (!widescreen) return
-      let p = titleRoot
-      while (p && p !== document.body) {
-        if (getComputedStyle(p).maxWidth !== 'none') {
-          p.style.maxWidth = 'unset'
-          p.style.alignItems = 'center'
-          break
-        }
-        p = p.parentElement!
+  useEffectMount(async () => {
+    if (!widescreen) return
+    let p = titleRoot
+    while (p && p !== document.body) {
+      if (getComputedStyle(p).maxWidth !== 'none') {
+        p.style.maxWidth = 'unset'
+        p.style.alignItems = 'center'
+        break
       }
-    },
-    [widescreen, titleRoot]
-  )
+      p = p.parentElement!
+    }
+  }, [widescreen, titleRoot])
   if (!contestInfo || !rows) return null
 
   return (
