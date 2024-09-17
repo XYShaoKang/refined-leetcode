@@ -28,7 +28,9 @@ export const BetaApp: FC = () => {
   const [rows, setRows] = useState<HTMLElement[]>()
   const [param] = useUrlChange()
   const dispatch = useAppDispatch()
-  const hasMyRank = rows?.[0]?.className === 'success' ? true : false
+  const hasMyRank = !!rows?.[0]?.parentElement?.className.includes(
+    'from-ranking-primary'
+  )
   const [userInfos, setUserInfos] = useState<User[]>([])
 
   useEffect(() => {
@@ -41,14 +43,26 @@ export const BetaApp: FC = () => {
           region: param.region,
         })
       ).unwrap()
-      const userInfos = res.total_rank.map(a => ({
-        region: a.data_region,
-        username: a.username,
-      }))
+
+      const userInfos = res.total_rank.map(a => {
+        if (a.data_region.toLocaleLowerCase() === 'cn') {
+          return {
+            region: a.data_region,
+            username: a.user_slug,
+          }
+        }
+        return {
+          region: a.data_region,
+          username: a.username,
+        }
+      })
       if (hasMyRank) {
+        const a = rows[0].children[0].children[0]
+          .children[0] as HTMLAnchorElement
+        const username = a.pathname.split('/').filter(Boolean)[1]
         userInfos.unshift({
           region: 'CN',
-          username: (window as any).LeetCodeData.userStatus.username,
+          username,
         })
       }
       setUserInfos(userInfos)

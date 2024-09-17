@@ -57,10 +57,18 @@ const LegacyApp: FC = () => {
           region: param.region,
         })
       ).unwrap()
-      const userInfos = res.total_rank.map(a => ({
-        region: a.data_region,
-        username: a.username,
-      }))
+      const userInfos = res.total_rank.map(a => {
+        if (a.data_region.toLocaleLowerCase() === 'cn') {
+          return {
+            region: a.data_region,
+            username: a.user_slug,
+          }
+        }
+        return {
+          region: a.data_region,
+          username: a.username,
+        }
+      })
       if (hasMyRank) {
         userInfos.unshift({
           region: 'CN',

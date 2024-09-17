@@ -35,9 +35,9 @@ export function getUsername(
 ): User {
   let region = '',
     username = ''
-  if (index === 0 && hasMyRank) {
+  if (!beta && index === 0 && hasMyRank) {
     region = 'CN'
-    username = (window as any).LeetCodeData.userStatus.username
+    username = (window as any)?.LeetCodeData?.userStatus?.user_slug
   } else {
     if (beta) {
       const a = row.children[0].children[0].children[0] as HTMLAnchorElement

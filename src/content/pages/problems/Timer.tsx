@@ -397,7 +397,6 @@ const Timer: FC<TimerProps> = ({ beta, root, dynamicLayout }) => {
   })
   useEffect(() => {
     if (!editEl) return
-    console.log(editEl)
     editEl.addEventListener('keydown', handleKeydown)
     return () => editEl.removeEventListener('keydown', handleKeydown)
   }, [editEl])
