@@ -1,3 +1,10 @@
+## [0.14.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.14.0...v0.14.1) (2024-09-17)
+
+
+### Bug Fixes
+
+* 修复一些bug ([770a064](https://github.com/XYShaoKang/refined-leetcode/commit/770a0643202be8498505eab898100171618276f2))
+
 # [0.14.0](https://github.com/XYShaoKang/refined-leetcode/compare/v0.13.5...v0.14.0) (2024-09-15)
 
 
