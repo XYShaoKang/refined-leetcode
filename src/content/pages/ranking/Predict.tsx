@@ -25,7 +25,7 @@ const PredictItem = memo(function PredictItem({
   ...props
 }: PredictItemProps) {
   const { username, region } = useUser(hasMyRank, index, row, beta)
-  const [{ contestId: contestSlug }] = useUrlChange()
+  const [{ contestId: contestSlug }] = useUrlChange(beta)
 
   return (
     <Item
@@ -52,12 +52,20 @@ const Predict = memo(function Predict({
   userInfos,
   ...props
 }: PredictProps) {
-  const [{ contestId }] = useUrlChange()
+  const [{ contestId }] = useUrlChange(props.beta)
   const options = useAppSelector(selectOptions)
 
   const dispatch = useAppDispatch()
   useEffect(() => {
-    dispatch(fetchPrediction({ contestSlug: contestId, users: userInfos }))
+    dispatch(
+      fetchPrediction({
+        contestSlug: contestId,
+        users: userInfos.map(a => ({
+          region: a.region,
+          username: a.oldUsername!,
+        })),
+      })
+    )
   }, [dispatch, contestId, JSON.stringify(userInfos)])
 
   const showPredict = !!options?.contestRankingPage.showPredict

@@ -24,7 +24,7 @@ export const RealTimePredictItem: FC<RealTimePredictItemProps> = ({
   ...props
 }) => {
   const { username, region } = useUser(hasMyRank, index, row, beta)
-  const [{ contestId: contestSlug }] = useUrlChange()
+  const [{ contestId: contestSlug }] = useUrlChange(beta)
 
   usePredict({
     username,
@@ -55,7 +55,7 @@ export const RealTimePredict: FC<RealTimePredictProps> = ({
   hasMyRank,
   ...props
 }) => {
-  const [{ contestId: contestSlug }] = useUrlChange()
+  const [{ contestId: contestSlug }] = useUrlChange(props.beta)
   useFetchPreviousRatingData(contestSlug)
 
   const borderColor = props.beta ? '#888' : '#ddd'

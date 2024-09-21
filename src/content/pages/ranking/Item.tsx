@@ -5,6 +5,7 @@ import { css } from 'styled-components/macro'
 import { debounce } from 'src/utils'
 
 import { selectUserPredict, selectContestInfo } from './rankSlice'
+import { findElementByXPath } from '@/utils'
 
 type ItmeType = {
   contestSlug: string
@@ -25,24 +26,38 @@ export type PageParamType = {
   region: 'local' | 'global'
 }
 
-function getParam(): PageParamType {
+function getParam(beta?: boolean): PageParamType {
   const [, contestId, , pageStr = '1'] = location.pathname
     .split('/')
     .filter(Boolean)
   const page = Number(pageStr)
-  const checkbox = document.querySelector(
-    '.checkbox>label>input'
-  ) as HTMLInputElement
-  const region = checkbox?.checked ? 'global' : 'local'
+  let region: 'local' | 'global' = 'local'
+  if (beta) {
+    const btn = document.evaluate(
+      '//*[@id="__next"]//button[text()="全国"]',
+      document,
+      null,
+      XPathResult['FIRST_ORDERED_NODE_TYPE'],
+      null
+    ).singleNodeValue as HTMLButtonElement
+    if (btn && btn.dataset.state !== 'active') {
+      region = 'global'
+    }
+  } else {
+    const checkbox = document.querySelector(
+      '.checkbox>label>input'
+    ) as HTMLInputElement
+    region = checkbox?.checked ? 'global' : 'local'
+  }
 
   return { contestId, page, region }
 }
 
-export function useUrlChange(): [PageParamType] {
-  const [param, setParam] = useState(getParam())
+export function useUrlChange(beta?: boolean): [PageParamType] {
+  const [param, setParam] = useState(getParam(beta))
   useEffectMount(state => {
     const handle = debounce(() => {
-      if (state.isMount) setParam(getParam())
+      if (state.isMount) setParam(getParam(beta))
     }, 100)
     window.addEventListener('urlchange', handle)
     state.unmount.push(() => {
@@ -51,19 +66,30 @@ export function useUrlChange(): [PageParamType] {
     })
   }, [])
   // 是否选中「显示全球」
-  useEffectMount(state => {
-    const checkbox = document.querySelector(
-      '.checkbox>label>input'
-    ) as HTMLInputElement
-    if (!checkbox) return
+  useEffectMount(async state => {
     const handle = debounce((_e: Event) => {
-      if (state.isMount) setParam(getParam())
+      if (state.isMount) setParam(getParam(beta))
     }, 100)
-    checkbox.addEventListener('change', handle)
-    state.unmount.push(() => {
-      handle.cancel()
-      checkbox.removeEventListener('change', handle)
-    })
+    if (beta) {
+      const el = await findElementByXPath(
+        '//*[@id="__next"]//button[text()="全国"]'
+      )
+      el.parentElement!.addEventListener('click', handle)
+      state.unmount.push(() => {
+        handle.cancel()
+        el.parentElement!.removeEventListener('change', handle)
+      })
+    } else {
+      const checkbox = document.querySelector(
+        '.checkbox>label>input'
+      ) as HTMLInputElement
+      if (!checkbox) return
+      checkbox.addEventListener('change', handle)
+      state.unmount.push(() => {
+        handle.cancel()
+        checkbox.removeEventListener('change', handle)
+      })
+    }
   })
   return [param]
 }

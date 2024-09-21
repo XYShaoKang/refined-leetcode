@@ -26,7 +26,7 @@ export const BetaApp: FC = () => {
   const options = useAppSelector(selectOptions)
   const [titleRoot, setTitleRoot] = useState<HTMLElement>()
   const [rows, setRows] = useState<HTMLElement[]>()
-  const [param] = useUrlChange()
+  const [param] = useUrlChange(true)
   const dispatch = useAppDispatch()
   const hasMyRank = !!rows?.[0]?.parentElement?.className.includes(
     'from-ranking-primary'
@@ -45,15 +45,10 @@ export const BetaApp: FC = () => {
       ).unwrap()
 
       const userInfos = res.total_rank.map(a => {
-        if (a.data_region.toLocaleLowerCase() === 'cn') {
-          return {
-            region: a.data_region,
-            username: a.user_slug,
-          }
-        }
         return {
           region: a.data_region,
-          username: a.username,
+          username: a.user_slug,
+          oldUsername: a.username,
         }
       })
       if (hasMyRank) {
@@ -63,6 +58,7 @@ export const BetaApp: FC = () => {
         userInfos.unshift({
           region: 'CN',
           username,
+          oldUsername: username,
         })
       }
       setUserInfos(userInfos)
@@ -75,8 +71,6 @@ export const BetaApp: FC = () => {
 
   useEffectMount(async state => {
     const handleChange = debounce(async () => {
-      // const parent = await findElement('.table-responsive>table>thead>tr')
-      // console.log('handleChange')
       const el = await findElementByXPath(
         '//*[@id="__next"]//div[text()="用户名"]',
         el => {
@@ -103,7 +97,6 @@ export const BetaApp: FC = () => {
           .children as unknown as HTMLElement[]
         if (state.isMount) {
           setTitleRoot(trs[0])
-          // console.log([...trs].slice(1).map(a=>a.children[0]))
           setRows([...trs].slice(1).map(a => a.children[0]) as HTMLElement[])
         }
       }
@@ -111,6 +104,10 @@ export const BetaApp: FC = () => {
     handleChange()
 
     window.addEventListener('urlchange', handleChange)
+    const el = await findElementByXPath(
+      '//*[@id="__next"]//button[text()="全国"]'
+    )
+    el.parentElement!.addEventListener('click', handleChange)
   }, [])
 
   useEffect(() => {

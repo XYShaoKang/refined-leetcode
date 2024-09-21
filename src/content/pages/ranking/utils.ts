@@ -18,7 +18,7 @@ import {
   selectFetchContestRankingState,
 } from './rankSlice'
 
-export type User = { region: string; username: string }
+export type User = { region: string; username: string; oldUsername?: string }
 
 /** 获取当前行的用户信息
  *
@@ -43,11 +43,10 @@ export function getUsername(
       const a = row.children[0].children[0].children[0] as HTMLAnchorElement
       if (a.host === 'leetcode.com') {
         region = 'US'
-        username = a.pathname.split('/').filter(Boolean)[0]
       } else {
         region = 'CN'
-        username = a.pathname.split('/').filter(Boolean)[1]
       }
+      username = a.pathname.split('/').filter(Boolean)[1]
     } else {
       const a = row.children[1].children[0] as HTMLAnchorElement
       if (a.host === 'leetcode.com') {
@@ -72,13 +71,13 @@ export const useRowChange = (
   useEffect(() => {
     const handleChange = debounce(() => {
       onChange()
-    }, 10)
+    }, 100)
     handleChange()
     const observer = new MutationObserver(handleChange)
     const a = beta
       ? row.children[0].children[0].children[0].children[0]
       : row.children[1].children[0]
-    observer.observe(a, { attributes: true })
+    observer.observe(a, { attributes: true, childList: true })
     return () => {
       handleChange.cancel()
       observer.disconnect()

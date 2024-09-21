@@ -58,21 +58,17 @@ const LegacyApp: FC = () => {
         })
       ).unwrap()
       const userInfos = res.total_rank.map(a => {
-        if (a.data_region.toLocaleLowerCase() === 'cn') {
-          return {
-            region: a.data_region,
-            username: a.user_slug,
-          }
-        }
         return {
           region: a.data_region,
-          username: a.username,
+          username: a.user_slug,
+          oldUsername: a.username,
         }
       })
       if (hasMyRank) {
         userInfos.unshift({
           region: 'CN',
-          username: (window as any).LeetCodeData.userStatus.username,
+          username: (window as any).LeetCodeData.userStatus.user_slug,
+          oldUsername: (window as any).LeetCodeData.userStatus.username,
         })
       }
       setUserInfos(userInfos)
