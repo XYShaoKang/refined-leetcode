@@ -1,3 +1,10 @@
+## [0.14.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.14.1...v0.14.2) (2024-09-21)
+
+
+### Bug Fixes
+
+* 修复切换问题 ([49f03fe](https://github.com/XYShaoKang/refined-leetcode/commit/49f03fe85f22f301d29bd3ee3d66f452710e58a4))
+
 ## [0.14.1](https://github.com/XYShaoKang/refined-leetcode/compare/v0.14.0...v0.14.1) (2024-09-17)
 
 
