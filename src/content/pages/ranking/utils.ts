@@ -46,7 +46,7 @@ export function getUsername(
       } else {
         region = 'CN'
       }
-      username = a.pathname.split('/').filter(Boolean)[1]
+      username = a.pathname?.split('/').filter(Boolean)[1]
     } else {
       const a = row.children[1].children[0] as HTMLAnchorElement
       if (a.host === 'leetcode.com') {
@@ -74,10 +74,7 @@ export const useRowChange = (
     }, 100)
     handleChange()
     const observer = new MutationObserver(handleChange)
-    const a = beta
-      ? row.children[0].children[0].children[0].children[0]
-      : row.children[1].children[0]
-    observer.observe(a, { attributes: true, childList: true })
+    observer.observe(row, { attributes: true, childList: true })
     return () => {
       handleChange.cancel()
       observer.disconnect()
