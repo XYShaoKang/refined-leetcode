@@ -1,3 +1,11 @@
+## [0.14.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.14.2...v0.14.3) (2024-09-22)
+
+
+### Bug Fixes
+
+* lint ([8778b17](https://github.com/XYShaoKang/refined-leetcode/commit/8778b17a5016a5818f2f667cfc65d71084a64999))
+* 预测列不显示 ([7e32285](https://github.com/XYShaoKang/refined-leetcode/commit/7e3228517de34e0a19fab21153dfda0c922ab095))
+
 ## [0.14.2](https://github.com/XYShaoKang/refined-leetcode/compare/v0.14.1...v0.14.2) (2024-09-21)
 
 
