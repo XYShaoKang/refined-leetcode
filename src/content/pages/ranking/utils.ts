@@ -63,11 +63,7 @@ export function getUsername(
 
 /** 当前行发生改变是触发事件
  */
-export const useRowChange = (
-  row: HTMLElement,
-  onChange: () => void,
-  beta?: boolean
-): void => {
+export const useRowChange = (row: HTMLElement, onChange: () => void): void => {
   useEffect(() => {
     const handleChange = debounce(() => {
       onChange()
@@ -94,7 +90,7 @@ export const useUser = (
   const handleChange = useEvent(() => {
     setState(getUsername(hasMyRank, index, row, beta))
   })
-  useRowChange(row, handleChange, beta)
+  useRowChange(row, handleChange)
   return state
 }
 
