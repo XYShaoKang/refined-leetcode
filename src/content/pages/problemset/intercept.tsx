@@ -19,10 +19,15 @@ export function intercept(): void {
     password?: string,
     disbaleIntercept?: boolean
   ) {
+    let pathname = url
+    try {
+      const urlObj = new URL(url)
+      pathname = urlObj.pathname
+    } catch (error) {}
     if (
       !disbaleIntercept &&
       method.toLocaleLowerCase() === 'post' &&
-      url === `/graphql/`
+      pathname === `/graphql/`
     ) {
       const originalSend = this.send
 
@@ -115,6 +120,19 @@ export function intercept(): void {
           } catch (error) {
             //
           }
+        } else if (typeof str === 'string') {
+          try {
+            const body = JSON.parse(str)
+            const sortOrder = body?.variables?.filters?.sortOrder
+            if (
+              sortOrder &&
+              sortOrder !== 'DESCENDING' &&
+              sortOrder !== 'ASCENDING'
+            ) {
+              body.variables.filters.sortOrder = 'DESCENDING'
+              str = JSON.stringify(body)
+            }
+          } catch (error) {}
         }
         return originalSend.call(this, str)
       }
