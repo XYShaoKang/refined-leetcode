@@ -1,3 +1,11 @@
+## [0.14.4](https://github.com/XYShaoKang/refined-leetcode/compare/v0.14.3...v0.14.4) (2024-09-29)
+
+
+### Bug Fixes
+
+* lint ([103374e](https://github.com/XYShaoKang/refined-leetcode/commit/103374e9a1edbd85747351667cfd8917738b164a))
+* 修复题库页评分过滤失效 ([3e73745](https://github.com/XYShaoKang/refined-leetcode/commit/3e73745f9bfae624ace4d8b35546487790b3f7a0))
+
 ## [0.14.3](https://github.com/XYShaoKang/refined-leetcode/compare/v0.14.2...v0.14.3) (2024-09-22)
 
 
