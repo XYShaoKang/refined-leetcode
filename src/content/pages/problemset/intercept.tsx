@@ -23,7 +23,9 @@ export function intercept(): void {
     try {
       const urlObj = new URL(url)
       pathname = urlObj.pathname
-    } catch (error) {}
+    } catch (error) {
+      //
+    }
     if (
       !disbaleIntercept &&
       method.toLocaleLowerCase() === 'post' &&
@@ -132,7 +134,9 @@ export function intercept(): void {
               body.variables.filters.sortOrder = 'DESCENDING'
               str = JSON.stringify(body)
             }
-          } catch (error) {}
+          } catch (error) {
+            //
+          }
         }
         return originalSend.call(this, str)
       }
